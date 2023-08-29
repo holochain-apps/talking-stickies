@@ -1,0 +1,18 @@
+---
+manifest_version: "1"
+name: talking-stickies
+description: ~
+roles:
+  - name: talking-stickies
+    provisioning:
+      strategy: create
+      deferred: false
+    dna:
+      bundled: "../dnas/talking-stickies/workdir/talking-stickies.dna"
+      modifiers:
+        network_seed: ~
+        properties: ~
+        origin_time: ~
+        quantum_time: ~
+      version: ~
+      clone_limit: 0
