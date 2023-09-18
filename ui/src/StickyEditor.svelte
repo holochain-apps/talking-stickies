@@ -4,6 +4,7 @@
   import '@shoelace-style/shoelace/dist/components/button/button.js';
   import type { v1 as uuidv1 } from "uuid";
   import type { StickyProps } from "./board";
+  import { onVisible } from "./util";
 
   export let handleSave
   export let handleDelete = undefined
@@ -18,18 +19,29 @@
   let inputElement
 
 
-  const colors=["white","#D4F3EE","#E0D7FF","#FFCCE1","#D7EEFF", "#FAFFC7", "red", "green", "yellow", "LightSkyBlue", "grey"]
+  const colors=["white","#D4F3EE","#E0D7FF","#FFCCE1","#D7EEFF", "#FAFFC7",  "LightSkyBlue", "grey"]
   const setColor = (color) => {
     props.color = color
     props = props
   }
 
+  onMount(async () => {
+    onVisible(inputElement,()=>{
+        inputElement.focus()
+    })
+	});
 
 </script>
 <div class='sticky-editor' style:background-color={props.color}>
   <div class="sticky-elements">
-    <sl-textarea rows=10 class='textarea' value={props.text} bind:this={inputElement}
-    on:sl-input={e=>props.text = e.target.value}></sl-textarea>
+    <sl-textarea size="small" rows=8 style="width:205px" value={props.text} bind:this={inputElement}
+      on:sl-input={e=>props.text = e.target.value}
+      on:keydown={(e)=> {
+        if (e.keyCode == 27) {
+          cancelEdit()
+        }
+    }}>
+    </sl-textarea>
     <div class="color-buttons">
       {#each colors as color}
         <div class="color-button{props.color == color?" selected":""}" on:click={()=>setColor(color)} style:background-color={color}></div>
@@ -55,8 +67,8 @@
   .sticky-editor {
     display: flex;
     background-color: #D7EEFF;
-    flex-basis: 270px;
-    height: 265px;
+    flex-basis: 200px;
+    height: 200px;
     margin: 10px;
     padding: 10px;
     box-shadow: 4px 5px 13px 0px rgba(0,0,0,0.38);
@@ -79,7 +91,7 @@
     box-sizing: border-box;
     border-radius: 3px;
     width: 100%;
-    height: 100%;
+    height: 10px;
     font-weight: normal;
     padding: 2px;
   }
