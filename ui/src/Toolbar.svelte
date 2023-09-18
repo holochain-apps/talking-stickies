@@ -4,13 +4,28 @@
   import Folk from "./Folk.svelte";
   import AboutDialog from "./AboutDialog.svelte";
   import type { ProfilesStore } from "@holochain-open-dev/profiles";
-  import { faBug } from "@fortawesome/free-solid-svg-icons";
+  import { faBug, faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
+  import { getContext } from "svelte";
+  import type { TalkingStickiesStore } from "./tsStore";
+
+  import type WebSdk from '@holo-host/web-sdk'
+
+  export const IS_HOLO = ['true', '1', 't'].includes(import.meta.env.VITE_APP_IS_HOLO?.toLowerCase())
 
   export let profilesStore: ProfilesStore|undefined
 
   let aboutDialog
   $:bugColor = "color: #5536f9"
+
+  const { getStore } :any = getContext("tsStore");
+  let tsStore: TalkingStickiesStore = getStore();
+
+  const holoLogout = async () => {
+    await (tsStore.client as WebSdk).signOut();
+    (tsStore.client as WebSdk).signIn({ cancellable: false })
+  }
+
 </script>
 
   <AboutDialog bind:this={aboutDialog} />
@@ -24,6 +39,9 @@
     <a href="https://github.com/holochain-apps/talking-stickies/issues" title="Report a problem in our GitHub repo" target="_blank">
       <div class="nav-button"><Fa icon={faBug} size=2x style={bugColor} /></div>
     </a>
+    {#if IS_HOLO}
+      <div title="Logout" on:click={() => holoLogout()} class="nav-button"><Fa icon={faArrowUpFromBracket} size=2x  /></div>
+    {/if}
   </div>
 </div>
 
