@@ -7,7 +7,7 @@
 
 <sl-dialog label="TalkingStickies!: UI v0.4.5 for DNA v0.3.x" bind:this={dialog} width={600} >
     <div class="about">
-        <p>TalkingStickies! is a demonstration Holochain app built by Holo.</p>
+        <p>TalkingStickies! is a demonstration Holochain app built by the Holochain Foundation.</p>
         <p> <b>Developers:</b>
             Check out this hApp's source-code <a href="https://github.com/holochain-apps/talking-stickies">in our github repo</a>.
             This project's real-time syncronization is powered by <a href="https://github.com/holochain/syn">Syn</a>, 
