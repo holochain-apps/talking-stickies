@@ -42,7 +42,7 @@
       Delete
     </sl-button>
     {/if}
-    <sl-button size="small" style="margin-left:5px" on:click={()=>{close();cancelEdit()}}>
+    <sl-button size="small" style="margin-left:5px" on:click={()=>{cancelEdit()}}>
       Cancel
     </sl-button>
     <sl-button size="small" style="margin-left:5px" variant="primary" on:click={() => handleSave(groupId, props) }>
