@@ -62,7 +62,7 @@
   $: state = tsStore.boardList.getReadableBoardState($activeHash);
   $: stickies = $state ? $state.stickies : undefined;
   $: sortStickies = sortOption
-    ? sortBy((sticky) => countVotes(sticky.votes, sortOption) * -1)
+    ? sortBy((sticky) => countVotes(sticky.props.votes, sortOption) * -1)
     : (stickies) => stickies;
 
   $: unused = groupStickies(stickies);
@@ -150,26 +150,26 @@
           return;
         }
         let votes = {
-          ...sticky.votes,
+          ...sticky.props.votes,
         }
         if (typeof votes[type] === 'undefined') {
           votes[type] = {}
           votes[type][agent] = 1
         } else {
-          let voteBump = ((sticky.votes[type][agent] || 0) + 1)
+          let voteBump = ((sticky.props.votes[type][agent] || 0) + 1)
           if (voteBump > max) {
             voteBump = 0
           }
           votes = {
-            ...sticky.votes,
+            ...sticky.props.votes,
             [type]: {
-              ...sticky.votes[type],
+              ...sticky.props.votes[type],
               [agent]: voteBump,
             },
           }
         }
         console.log("VOTING", agent);
-        console.log("votes before", sticky.votes);
+        console.log("votes before", sticky.props.votes);
         console.log("votes after", votes);
     
         dispatch("requestChange", [
@@ -360,7 +360,7 @@
           </div>
           <div class="stickies"
             >
-          {#each sorted(stickyIds, sortStickies) as { id, votes, props } (id)}
+          {#each sorted(stickyIds, sortStickies) as { id, props } (id)}
             {#if editingStickyId === id}
               <StickyEditor
                 handleSave={updateSticky}
@@ -396,13 +396,13 @@
                     <div
                       class="vote"
                       title={toolTip}
-                      class:voted={myVotes(votes, type) > 0}
+                      class:voted={myVotes(props.votes, type) > 0}
                       on:click|stopPropagation={() => voteOnSticky(tsStore.myAgentPubKey(), stickies, id, type, maxVotes)}
                     >
                       <EmojiIcon emoji={emoji} class="vote-icon" />
-                      {countVotes(votes, type)}
+                      {countVotes(props.votes, type)}
                       <div class="vote-counts">
-                        {#each new Array(myVotes(votes, type)).map((_, i) => i) as index}
+                        {#each new Array(myVotes(props.votes, type)).map((_, i) => i) as index}
                           <div class="vote-count" />
                         {/each}
                       </div>
