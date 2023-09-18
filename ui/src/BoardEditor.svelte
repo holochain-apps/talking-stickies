@@ -162,7 +162,7 @@
           <sl-button on:click={()=>{showEmojiPicker = index;emojiDialog.show()}} >
             <span style="font-size:180%">{voteTypes[index].emoji}</span>
           </sl-button>
-          <sl-input class='textarea' value={voteTypes[index].maxVotes} title="max votes on type per card"
+          <sl-input class='textarea' style="width:60px" maxlength="2" minlength="1" value={voteTypes[index].maxVotes} title="max votes on type per card"
           on:input={e=>voteTypes[index].maxVotes = e.target.value}> </sl-input>
           <sl-input class='textarea' value={voteTypes[index].toolTip} title="description"
           on:input={e=>voteTypes[index].toolTip = e.target.value}> </sl-input>
@@ -229,6 +229,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    width: 220px;
   }
   .grip {
     margin-right:10px;
