@@ -2,15 +2,12 @@
   import { onMount } from "svelte";
   import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
   import '@shoelace-style/shoelace/dist/components/button/button.js';
-  import { cloneDeep } from "lodash";
   import type { v1 as uuidv1 } from "uuid";
-  import type { StickyProps, VoteType } from "./board";
+  import type { StickyProps } from "./board";
 
   export let handleSave
   export let handleDelete = undefined
   export let cancelEdit
-
-  //export let voteTypes: Array<VoteType>
 
   const DEFAULT_PROPS = {text:"", color:"", votes:{}}
 
