@@ -17,15 +17,9 @@
     import type { BoardRecord } from './boardList';
     import { get } from 'svelte/store';
 
-    type FoundSticky = {
-        board: BoardRecord,
-        sticky: uuidv1,
-        text: string,
-    }
+  
     let newBoardDialog
-    let foundStickies: Array<FoundSticky> = []
-    let foundBoards: Array<BoardRecord> = []
-
+  
     const { getStore } :any = getContext('tsStore');
 
     const store:TalkingStickiesStore = getStore();
@@ -54,44 +48,6 @@
     const unarchiveBoard = (hash: EntryHashB64) => () => {
         store.boardList.unarchiveBoard(hash)
     }
-    const doSearch = (text:string) => {
-        foundBoards = []
-        foundStickies = []
-        showSearchResults = true
-        if (text == "") return
-        const searchText = text.toLocaleLowerCase()
-        $boardList.boards.forEach(b=> {
-            if (b.name.toLocaleLowerCase().includes(searchText)) foundBoards.push(b)
-            const board = store.boardList.getReadableBoardState(b.hash)
-            const boardState = get(board)
-            boardState.stickies.forEach((c)=>{
-                if (c.props.text.toLocaleLowerCase().includes(searchText)) {
-                    foundStickies.push({
-                        board: b,
-                        sticky: c.id,
-                        text: c.props.text,
-                    })
-                }
-            })
-        })
-    }
-    const clearSearch = () => {
-        searchInput.value = ""
-        showSearchResults = false
-    }
-
-    const getStickyGroup = (stickyId: uuidv1) : string => {
-        console.log("GROUPING", $state.grouping)
-        const [gId, cId] = Object.entries($state.grouping).find(([gId, cId])=>cId==stickyId)
-        const g = ($state.groups.find((g)=>g.id == gId))
-        if (g) {
-            return g.name
-        }
-        return "Archived"
-    }
-    let searchInput
-    let showSearchResults = false
-
 </script>
 
 <div class="board-menu">
@@ -127,60 +83,6 @@
     </List>
 </Menu>
 {/if}
-<div style="position:relative; margin-left:10px;">
-    <sl-input
-        bind:this={searchInput}
-        placeholder="Search"
-        pill
-        on:sl-input={(e)=>doSearch(e.target.value)}
-        on:sl-blur={(e)=>showSearchResults=false}
-        on:sl-focus={(e)=>doSearch(e.target.value)}
-    >
-    <span slot="prefix"style="margin-left:10px;"><Fa icon={faSearch}></Fa></span>
-    </sl-input>
-    {#if showSearchResults && (foundBoards.length>0 || foundStickies.length>0)}
-    <sl-menu class="search-results"
-    >
-        {#if foundStickies.length>0}
-            <sl-menu-label>Stickies</sl-menu-label>
-            {#each foundStickies as found}
-                <sl-menu-item
-                    on:mousedown={(e)=>{
-                        if (found.board.hash != $activeHash) {
-                            selectBoard(found.board.hash)
-                        }
-                        //store.boardList.setActiveSticky(found.card)
-                        clearSearch()
-                    }}
-                >
-                <div style="margin-left:10px;display:flex;flex-direction: column;">
-                    <span>{found.text} in {getStickyGroup(found.sticky)}</span>
-                    <span style="font-size:70%;color:gray;line-heigth:50%;">Board: {found.board.name}</span>
-                </div>
-                </sl-menu-item>
-            {/each}
-        {/if}
-        {#if foundBoards.length>0}
-            {#if foundStickies.length> 0}<sl-divider></sl-divider>{/if}
-            <sl-menu-label>Boards</sl-menu-label>
-            {#each foundBoards as found}
-                <sl-menu-item
-                    on:mousedown={(e)=>{
-                        if (found.hash != $activeHash) {
-                            selectBoard(found.hash)
-                        }
-                        clearSearch()
-                    }}
-                >
-                <div style="margin-left:10px;">
-                    {found.name} 
-                </div>
-                </sl-menu-item>
-            {/each}
-        {/if}
-    </sl-menu>
-    {/if}
-</div>
 
 <NewBoardDialog bind:this={newBoardDialog}></NewBoardDialog>
 
@@ -191,9 +93,4 @@
     flex: 0 0 auto;
     align-items: center;
   }
-  .search-results {
-    position: absolute;
-    z-index: 10;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, .15);
-    }
 </style>

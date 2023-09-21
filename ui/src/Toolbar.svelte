@@ -1,11 +1,18 @@
 <script lang="ts">
   import TSLogoIcon from "./icons/TSLogoIcon.svelte";
   import BoardMenu from "./BoardMenu.svelte";
+  import Search from "./Search.svelte";
   import Folk from "./Folk.svelte";
   import AboutDialog from "./AboutDialog.svelte";
   import type { ProfilesStore } from "@holochain-open-dev/profiles";
   import { faBug } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
+  import type { TalkingStickiesStore } from "./tsStore";
+  import { getContext } from "svelte";
+
+  const { getStore } :any = getContext('tsStore');
+  const store:TalkingStickiesStore = getStore();
+  $: uiProps = store.uiProps
 
   export let profilesStore: ProfilesStore|undefined
 
@@ -15,11 +22,13 @@
 
   <AboutDialog bind:this={aboutDialog} />
 <div class='toolbar'>
-  <div class="left-items">
+  <div class="items">
     <div class="logo" title="About TalkingStickies!" on:click={()=>aboutDialog.open()}><TSLogoIcon /></div>
     <BoardMenu ></BoardMenu>
   </div>
-  <div class="right-items">
+  <div class="items"><Search></Search></div>
+
+  <div class="items">
     <Folk profilesStore={profilesStore}></Folk>
     <a href="https://github.com/holochain-apps/talking-stickies/issues" title="Report a problem in our GitHub repo" target="_blank">
       <div class="nav-button"><Fa icon={faBug} size=2x style={bugColor} /></div>
@@ -56,12 +65,7 @@
     padding-bottom: 5px;
     margin-left: 15px;
   }
-  .right-items {
-    display: flex;
-    flex: 0 0 auto;
-    align-items: center;
-  }
-  .left-items {
+  .items {
     display: flex;
     flex: 0 0 auto;
     align-items: center;

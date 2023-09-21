@@ -5,6 +5,7 @@ import {
     type AppAgentCallZomeRequest,
     type RoleName,
     encodeHashToBase64,
+    type EntryHashB64,
   } from '@holochain/client';
 import { RecordBag } from '@holochain-open-dev/utils';
 import { SynStore,  SynClient, type Commit } from '@holochain-syn/core';
@@ -15,6 +16,7 @@ import {toPromise} from '@holochain-open-dev/stores'
 import TimeAgo from "javascript-time-ago"
 import en from 'javascript-time-ago/locale/en'
 
+import { get, writable, type Writable } from "svelte/store";
 
 TimeAgo.addDefaultLocale(en)
 
@@ -34,7 +36,12 @@ export class TalkingStickiesService {
     }
 }
 
-
+export interface UIProps {
+    showArchived: {[key: string]: boolean},
+    showMenu: boolean,
+    recent: Array<EntryHashB64>
+  }
+  
 export class TalkingStickiesStore {
     timeAgo = new TimeAgo('en-US')
     service: TalkingStickiesService;
@@ -43,6 +50,19 @@ export class TalkingStickiesStore {
     updating = false
     synStore: SynStore;
     client: AppAgentClient;
+    uiProps: Writable<UIProps> = writable({
+        showArchived: {},
+        showMenu: true,
+        recent: []
+    })
+
+    setUIprops(props:{}) {
+        this.uiProps.update((n) => {
+            Object.keys(props).forEach(key=>n[key] = props[key])
+            return n
+        })
+    }
+
     myAgentPubKey(): AgentPubKeyB64 {
         return encodeHashToBase64(this.client.myPubKey);
     }
