@@ -1,11 +1,8 @@
 <script lang="ts">
-  import TSLogoIcon from "./icons/TSLogoIcon.svelte";
-  import BoardMenu from "./BoardMenu.svelte";
   import Search from "./Search.svelte";
   import Folk from "./Folk.svelte";
-  import AboutDialog from "./AboutDialog.svelte";
   import type { ProfilesStore } from "@holochain-open-dev/profiles";
-  import { faBug } from "@fortawesome/free-solid-svg-icons";
+  import { faBars, faBug, faClose } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
   import type { TalkingStickiesStore } from "./tsStore";
   import { getContext } from "svelte";
@@ -13,6 +10,7 @@
   const { getStore } :any = getContext('tsStore');
   const store:TalkingStickiesStore = getStore();
   $: uiProps = store.uiProps
+  $: activeHash = store.boardList.activeBoardHash;
 
   export let profilesStore: ProfilesStore|undefined
 
@@ -20,12 +18,16 @@
   $:bugColor = "color: #5536f9"
 </script>
 
-  <AboutDialog bind:this={aboutDialog} />
 <div class='toolbar'>
-  <div class="items">
-    <div class="logo" title="About TalkingStickies!" on:click={()=>aboutDialog.open()}><TSLogoIcon /></div>
-    <BoardMenu ></BoardMenu>
-  </div>
+  {#if $activeHash}
+    {#if $uiProps.showMenu}
+      <span style="display:flex;align-items:center;cursor:pointer" on:click={()=>{store.setUIprops({showMenu:false})}}><div class="close"  title="Hide Board Menu"><Fa icon={faClose} size=2x /></div></span>
+
+    {:else}
+      <div class="nav-button open" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><Fa color="#fff" icon={faBars} size=2x /></div>
+    {/if}
+  {/if}
+
   <div class="items"><Search></Search></div>
 
   <div class="items">
@@ -49,7 +51,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #eeeeee;
+    background: linear-gradient(90.1deg, #143C77 4.43%, #261492 99.36%);
     padding-left: 15px;
     padding-right: 10px;
     padding-top: 16px;

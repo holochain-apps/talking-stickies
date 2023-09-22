@@ -203,6 +203,7 @@
 
   const closeBoard = () => {
     tsStore.boardList.closeActiveBoard();
+    tsStore.setUIprops({showMenu:true})
   };
   const groupWidth = (groupId) : string => {
     let len = Object.keys($state.grouping).length
