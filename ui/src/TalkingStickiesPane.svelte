@@ -7,7 +7,7 @@
   import SortSelector from "./SortSelector.svelte";
   import { Marked, Renderer } from "@ts-stack/markdown";
   import { cloneDeep, isEqual } from "lodash";
-  import { Group, UngroupedId, type Sticky, type StickyProps, type BoardState } from "./board";
+  import { Group, UngroupedId, type Sticky, type StickyProps, type BoardState, Board } from "./board";
   import EditBoardDialog from "./EditBoardDialog.svelte";
   import { faClose, faCog, faFileExport, faPlus } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
@@ -91,6 +91,16 @@
       stickiesMap = {} 
       stickies.forEach(s => stickiesMap[s.id] = cloneDeep(s))
     }
+  };
+
+  const newGroup = (group: uuidv1) => () => {
+    let changes = []
+    const groups = cloneDeep($state.groups)
+    groups.push(new Group(`group ${groups.length}`))
+    changes.push({type: 'set-groups',
+        groups
+        })
+    tsStore.boardList.requestBoardChanges($activeHash, changes)
   };
 
   const newSticky = (group: uuidv1) => () => {
@@ -323,6 +333,14 @@
       <h5>{$state.name}</h5>
     </div>
     <div class="right-items">
+
+      <sl-button style="padding: 0 5px;" size="small" text on:click={newGroup()}>
+        <div style="display: flex;">
+          Add Group
+          <div style="margin-left:5px"><Fa icon={faPlus}/></div>
+        </div>
+      </sl-button>
+
       <div class="sortby">
         Sort: <SortSelector {setSortOption} {sortOption} />
       </div>
