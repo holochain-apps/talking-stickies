@@ -14,6 +14,7 @@
   import { v1 as uuidv1 } from "uuid";
   import sanitize from "sanitize-filename";
   import type { AgentPubKeyB64 } from "@holochain/client";
+  import ClickEdit from "./ClickEdit.svelte";
 
   const dispatch = createEventDispatcher()
 
@@ -350,7 +351,29 @@
       >
           <div class="group-title">
             {#if $state.groups.length > 1}  
-              <b>{#if groupId === UngroupedId}Ungrouped{:else}{groups[groupId].name}{/if}</b>
+              <b>
+                {#if groupId === UngroupedId}
+                  Ungrouped
+                {:else}
+
+                <ClickEdit
+                  text={groups[groupId].name}
+                  handleSave={(text)=>{
+                    const newGroups = cloneDeep($state.groups)
+                    const idx = newGroups.findIndex(g=>g.id==groupId)
+                    if (idx >= 0) {
+                      newGroups[idx].name = text
+                      tsStore.boardList.requestBoardChanges($activeHash, [
+                        {
+                          type: "set-groups",
+                          groups: newGroups
+                        }
+                      ])
+                    }
+                  }}></ClickEdit>
+                  
+                {/if}
+              </b>
             {/if}
             <sl-button style="padding: 0 5px;" size="small" text on:click={newSticky(groupId)}>
               <div style="display: flex;">
