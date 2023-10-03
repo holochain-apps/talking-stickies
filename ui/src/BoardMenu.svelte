@@ -122,17 +122,24 @@
         max-width: 0;
         display: flex;
         flex-direction: column;
-        background: linear-gradient(94.53deg, #164B9A 12.76%, #5B47D6 99.41%);
         flex: 0 0 auto;
         align-items: flex-start;
         position: relative;
         padding: 15px;
         padding-bottom: 50px;
+        background: #FFFFFF;
+        border: 1px solid #EBEBEB;
+        box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
+        border-radius: 5px;
+        height: calc(100vh - 95px);
+        margin-left: 15px;
     }
 
     .wide.board-menu {
-        width: 100vw;
-        height: calc(100vh - 50px);
+        width: calc(100vw - 20px);
+        height: calc(100vh - 95px);
+        position: relative;
+        left: 10px;
     }
 
 
@@ -234,12 +241,12 @@
         position: fixed;
         padding: 10px;
         border-radius: 0;
-        bottom: 0px;
+        bottom: 15px;
         height: 40px;
         display: block;
         align-items: center;
         width: 330px;
-        left: 0;
+        left: 15px;
         background-color: rgba(23, 55, 123, .9);
         animation-duration: .3s;
         animation-name: slideIn;

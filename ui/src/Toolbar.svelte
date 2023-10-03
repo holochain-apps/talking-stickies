@@ -21,20 +21,23 @@
 <div class='toolbar'>
   {#if $activeHash}
     {#if $uiProps.showMenu}
-      <span style="display:flex;align-items:center;cursor:pointer" on:click={()=>{store.setUIprops({showMenu:false})}}><div class="close"  title="Hide Board Menu"><Fa icon={faClose} size=2x /></div></span>
+      <div class="close tool-item menu" on:click={()=>{store.setUIprops({showMenu:false})}}><div title="Hide Board Menu"><Fa icon={faClose} size=2x /></div></div>
 
     {:else}
-      <div class="nav-button open" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><Fa color="#fff" icon={faBars} size=2x /></div>
+      <div class="open tool-item menu" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><Fa icon={faBars} size=2x /></div>
     {/if}
   {/if}
 
-  <div class="items"><Search></Search></div>
+  <div class="tool-item search"><Search></Search></div>
 
   <div class="items">
-    <Folk profilesStore={profilesStore}></Folk>
-    <a href="https://github.com/holochain-apps/talking-stickies/issues" title="Report a problem in our GitHub repo" target="_blank">
-      <div class="nav-button"><Fa icon={faBug} size=2x style={bugColor} /></div>
-    </a>
+      <Folk profilesStore={profilesStore}></Folk>
+      
+    <div class="tool-item bugs">
+      <a href="https://github.com/holochain-apps/talking-stickies/issues" title="Report a problem in our GitHub repo" target="_blank">
+        <div class="nav-button"><Fa icon={faBug} size=2x style={bugColor} /></div>
+      </a>
+    </div>
   </div>
 </div>
 
@@ -51,7 +54,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: linear-gradient(90.1deg, #143C77 4.43%, #261492 99.36%);
     padding-left: 15px;
     padding-right: 10px;
     padding-top: 16px;
@@ -63,6 +65,30 @@
     display: contents;
     cursor: pointer;
   }
+
+  .tool-item {
+    background: #FFFFFF;
+    border: 1px solid #EBEBEB;
+    box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
+    border-radius: 5px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .menu {
+    width: 50px;
+  }
+
+  .search {
+    padding: 0 10px 0 0;
+  }
+
+  .bugs {
+    width: 50px;
+  }
+
   .logo-text {
     padding-bottom: 5px;
     margin-left: 15px;

@@ -29,7 +29,7 @@
     setContext('tsStore', {
       getStore: () => tsStore,
     });
-    const DEFAULT_KD_BG_IMG = "https://images.unsplash.com/photo-1557682250-33bd709cbe85"
+    const DEFAULT_KD_BG_IMG = ""
     //const DEFAULT_KD_BG_IMG = "https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54461.jpg"
     const NO_BOARD_IMG = "https://holochain.org/img/big_logo.png"
     $: boardList = tsStore? tsStore.boardList.stateStore() : undefined
@@ -165,8 +165,7 @@
   }
 
   .background-overlay {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.87) 0%, rgba(148, 179, 205, 0.78) 100%);
-    position: absolute;
+    background: linear-gradient(180deg, #FFFFFF 0%, rgba(251, 245, 223, 0.39) 100%, rgba(182, 176, 157, 0.39) 100%);    position: absolute;
     z-index: 2;
     width: 100%;
     height: 100%;

@@ -45,13 +45,30 @@
     }
 
 </script>
-<div class="nav-button" on:click={()=>{participantsDialog.open()}}  title="Show Participants">
+<div class="nav-button tool-item" on:click={()=>{participantsDialog.open()}}  title="Show Participants">
     <Fa icon={faUserGroup} size=2x/>{$participants.active.length }</div>
 {#if !profilesStore}
-<div class="nav-button" on:click={editAvatar} title={myName ? myName:"Edit Avatar"}>
+<div class="nav-button tool-item" on:click={editAvatar} title={myName ? myName:"Edit Avatar"}>
     <AvatarIcon size={30} avatar={myAvatar} border={false}></AvatarIcon></div>
 {/if}
 
 <ParticipantsDialog bind:this={participantsDialog} avatars={$avatars} profilesStore={profilesStore}/>
 
 <AvatarDialog handleSave={setAvatar} bind:this={editAvatarDialog} avatar={avatar} />
+
+<style>
+    .tool-item {
+        margin-right: 10px;
+        background: #FFFFFF;
+        border: 1px solid #EBEBEB;
+        box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
+        border-radius: 5px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .tool-item:hover {
+        cursor: pointer;
+    }
+</style>
