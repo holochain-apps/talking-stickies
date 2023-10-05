@@ -7,15 +7,41 @@
     import '@shoelace-style/shoelace/dist/components/button/button.js';
     import '@shoelace-style/shoelace/dist/components/input/input.js';
     import Fa from 'svelte-fa'
-    import { faPlus, faGripVertical, faTrash} from '@fortawesome/free-solid-svg-icons';
+    import { faPlus, faGripVertical, faTrash, faFileExport } from '@fortawesome/free-solid-svg-icons';
     import { cloneDeep } from "lodash";
+    import sanitize from "sanitize-filename";
 
     import type { TalkingStickiesStore } from './tsStore';
     import type { EntryHashB64 } from '@holochain/client';
 
+
+    const download = (filename: string, text: string) => {
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+    }
+
     const { getStore } :any = getContext('tsStore');
 
     const store:TalkingStickiesStore = getStore();
+
+
+    $: activeHash = store.boardList.activeBoardHash;
+    $: state = store.boardList.getReadableBoardState($activeHash);
+    
+    const exportBoard = (state: BoardState) => {
+      const prefix = "talking-stickies"
+      const fileName = sanitize(`${prefix}_export_${state.name}.json`)
+      download(fileName, JSON.stringify(state))
+      alert(`Your board was exported to your Downloads folder as: '${fileName}'`)
+    }
 
     export let handleSave
     export let handleDelete = undefined
@@ -179,6 +205,9 @@
     </div>
 
     <div class='controls'>
+      <sl-button circle on:click={() => exportBoard($state)} title="Export">
+        <Fa icon={faFileExport} />
+      </sl-button>
       {#if handleDelete}
         <sl-button on:click={handleDelete}>
           Archive

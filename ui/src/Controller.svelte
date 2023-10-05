@@ -118,11 +118,12 @@
     flex-direction: column;
     min-height: 0;
     background-color: #fff;
-    height: 100vh;
     position: relative;
   }
 
   .board-menu {
+      position: sticky;
+      top: 1000px;
       animation-duration: .3s;
       animation-name: slideIn;
       animation-iteration-count: 1;
@@ -137,10 +138,10 @@
     .board-menu.slideOut {
       animation-duration: .3s;
       animation-name: slideIn;
-      --margin-end-position: -330px;
+      --margin-end-position: -343px;
       animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1.1);
       --margin-start-position: 0px;
-      margin-left: -330px;
+      margin-left: -343px;
     }
 
     @keyframes slideIn {
@@ -241,6 +242,25 @@
   .wrapper {
     position: relative;
     z-index: 10;
+    overflow-y: auto;
+    height: 100vh;
+  }
+
+  .wrapper::-webkit-scrollbar {
+    width: 10px;
+    background-color: transparent;
+  }
+
+  .wrapper::-webkit-scrollbar-thumb {
+      height: 5px;
+      border-radius: 5px;
+      background: rgba(215, 203, 191, 1.0);
+      opacity: 1;
+      width: 8px;
+  }
+
+  .workspace {
+    padding-top: 65px;
   }
 
   /* .my-boards {

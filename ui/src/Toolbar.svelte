@@ -2,8 +2,10 @@
   import Search from "./Search.svelte";
   import Folk from "./Folk.svelte";
   import type { ProfilesStore } from "@holochain-open-dev/profiles";
-  import { faBars, faBug, faClose } from "@fortawesome/free-solid-svg-icons";
+  import EditBoardDialog from "./EditBoardDialog.svelte";
+  import { faBars, faBug, faClose, faCog } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
+  import cloneDeep from "lodash";
   import type { TalkingStickiesStore } from "./tsStore";
   import { getContext } from "svelte";
 
@@ -11,6 +13,9 @@
   const store:TalkingStickiesStore = getStore();
   $: uiProps = store.uiProps
   $: activeHash = store.boardList.activeBoardHash;
+  $: state = store.boardList.getReadableBoardState($activeHash);
+
+  let editBoardDialog
 
   export let profilesStore: ProfilesStore|undefined
 
@@ -19,13 +24,20 @@
 </script>
 
 <div class='toolbar'>
+  <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
   {#if $activeHash}
+    <div style="display: flex;">
     {#if $uiProps.showMenu}
       <div class="close tool-item menu" on:click={()=>{store.setUIprops({showMenu:false})}}><div title="Hide Board Menu"><Fa icon={faClose} size=2x /></div></div>
 
     {:else}
       <div class="open tool-item menu" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><Fa icon={faBars} size=2x /></div>
     {/if}
+      <div class="tool-item settings"  on:click={()=> editBoardDialog.open(cloneDeep($activeHash))} title="Settings">
+        <Fa icon={faCog} size="1.5x" style="margin-right: 10px;"/>
+        {$state.name}
+      </div>
+    </div>
   {/if}
 
   <div class="tool-item search"><Search></Search></div>
@@ -58,6 +70,9 @@
     padding-right: 10px;
     padding-top: 16px;
     padding-bottom: 16px;
+    position: fixed;
+    top: 0;
+    width: 100vw;
   }
   .logo {
     height: 40px;
@@ -79,6 +94,7 @@
 
   .menu {
     width: 50px;
+    margin-right: 15px;
   }
 
   .search {
@@ -87,6 +103,12 @@
 
   .bugs {
     width: 50px;
+  }
+
+  .settings {
+    padding: 0 15px;
+    font-weight: bold;
+    font-size: 16px;
   }
 
   .logo-text {

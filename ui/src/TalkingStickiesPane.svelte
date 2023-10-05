@@ -9,35 +9,14 @@
   import { cloneDeep, isEqual } from "lodash";
   import { Group, UngroupedId, type Sticky, type StickyProps, type BoardState, Board } from "./board";
   import EditBoardDialog from "./EditBoardDialog.svelte";
-  import { faClose, faCog, faFileExport, faPlus } from "@fortawesome/free-solid-svg-icons";
+  import { faClose, faFileExport, faPlus } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
   import { v1 as uuidv1 } from "uuid";
-  import sanitize from "sanitize-filename";
   import type { AgentPubKeyB64 } from "@holochain/client";
   import ClickEdit from "./ClickEdit.svelte";
 
   const dispatch = createEventDispatcher()
-
-  const download = (filename: string, text: string) => {
-    var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', filename);
-
-    element.style.display = 'none';
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
-  }
-
-  const exportBoard = (state: BoardState) => {
-        const prefix = "talking-stickies"
-        const fileName = sanitize(`${prefix}_export_${state.name}.json`)
-        download(fileName, JSON.stringify(state))
-        alert(`Your board was exported to your Downloads folder as: '${fileName}'`)
-    }
-
+  
   Marked.setOptions
   ({
     renderer: new Renderer,
@@ -59,8 +38,8 @@
   const { getStore } :any = getContext("tsStore");
   let tsStore: TalkingStickiesStore = getStore();
 
-  $: activeHash = tsStore.boardList.activeBoardHash;
-  $: state = tsStore.boardList.getReadableBoardState($activeHash);
+$: activeHash = tsStore.boardList.activeBoardHash;
+$: state = tsStore.boardList.getReadableBoardState($activeHash);
   $: stickies = $state ? $state.stickies : undefined;
   $: sortStickies = sortOption
     ? sortBy((sticky) => countVotes(sticky.props.votes, sortOption) * -1)
@@ -221,25 +200,25 @@
     if (len > 1 && $state.grouping[UngroupedId].length == 0) len -= 1
     // TODO: maybe set width dynamically by number of cards in group...
     if (len <= 4) {
-      return 100/len+"%"
+      return "calc(" + 100/len + "% - 15px"
     }
     if (len == 5) {
-      return "33%"
+      return "calc(33% - 30px)"
     }
     if (len == 6) {
-      return "33%"
+      return "calc(33% - 30px)"
     }
     if (len == 7) {
-      return "25%"
+      return "calc(25% - 45px)"
     }
     if (len == 8) {
-      return "25%"
+      return "calc(25% - 45px)"
     }
     if (len == 9) {
-      return "33%"
+      return "calc(33% - 30px)"
     }
     if (len == 10) {
-      return "25%"
+      return "calc(25% - 45px)"
     }
     return 'fit-content'
   }
@@ -329,30 +308,15 @@
 <div class="board">
   <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
   <div class="top-bar">
-    <div class="left-items">
-      <h5>{$state.name}</h5>
-    </div>
-    <div class="right-items">
-
-      <sl-button style="padding: 0 5px;" size="small" text on:click={newGroup()}>
-        <div style="display: flex;">
-          Add Group
-          <div style="margin-left:5px"><Fa icon={faPlus}/></div>
-        </div>
-      </sl-button>
-
-      <div class="sortby">
-        Sort: <SortSelector {setSortOption} {sortOption} />
+    <sl-button style="padding: 0 5px;" size="small" text on:click={newGroup()}>
+      <div style="display: flex;">
+        Add Group
+        <div style="margin-left:5px"><Fa icon={faPlus}/></div>
       </div>
-      <sl-button circle on:click={()=> editBoardDialog.open(cloneDeep($activeHash))} title="Settings">
-        <Fa icon={faCog} size="1x"/>
-      </sl-button>
-      <sl-button circle on:click={() => exportBoard($state)} title="Export">
-        <Fa icon={faFileExport} />
-      </sl-button>
-      <sl-button circle on:click={closeBoard} title="Close">
-        <Fa icon={faClose} />
-      </sl-button>
+    </sl-button>
+
+    <div class="sortby">
+      Sort: <SortSelector {setSortOption} {sortOption} />
     </div>
   </div>
   {#if $state}
@@ -473,7 +437,7 @@
     margin-left: 15px;
     margin-right: 15px;
     margin-top: 15px;
-    box-shadow: 0 0 2px gray;
+    width: 100vw;
   }
   .top-bar {
     display: flex;
@@ -494,7 +458,6 @@
     align-items: center;
   }
   .sortby {
-    border-right: 1px solid lightgray;
     display: flex;
     align-items: center;
     margin-right: 8px;
@@ -505,10 +468,15 @@
     display: flex;
     flex-wrap: wrap;
     overflow-y: auto;
+    gap: 15px;
+    flex-direction: row;
+    padding-bottom: 30px;
   }
   .group {
     display: block;
     min-width: 290px;
+    border: 1px dashed rgba(215, 203, 191, 1.0);
+    border-radius: 15px;
   }
   .group-title {
     padding-left: 10px;
@@ -534,22 +502,24 @@
   }
   .sticky {
     background-color: #d4f3ee;
-    flex-basis: 200px;
-    height: 200px;
+    max-width: 499px;
     min-width: 250px;
+    width: 100%;
     margin: 10px;
     padding: 10px;
-    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
     font-size: 12px;
     line-height: 16px;
     color: #000000;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8F3E4 100%);
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(232, 225, 217, 1.0);
   }
   .sticky-content {
     overflow-y: auto;
-    max-width: 300px;
   }
   .votes {
     display: flex;

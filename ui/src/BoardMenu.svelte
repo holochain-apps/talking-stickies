@@ -6,6 +6,7 @@
     import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
     import Fa from 'svelte-fa';
     import AboutDialog from "./AboutDialog.svelte";
+    import AddCard from "./icons/AddCard.svelte";
     import TSLogoIcon from "./icons/TSLogoIcon.svelte";
     import { faCog } from "@fortawesome/free-solid-svg-icons";
   import TalkingStickiesPane from "./TalkingStickiesPane.svelte";
@@ -51,7 +52,7 @@
 <div class="board-menu"
     class:wide={wide} >
     <div style="display:flex;flex-direction: row;">
-    <div class="new-board" on:click={()=>newBoardDialog.open()} title="New Board"><Fa icon={faSquarePlus} size=2x style="margin-left: 15px;"/><span>New Board</span></div>
+    <div class="new-board" on:click={()=>newBoardDialog.open()} title="New Board"><AddCard /><span>New Board</span></div>
     </div>
     {#if $uiProps.recent.length > 0 || activeBoards}
         <h3 class="type-header">Active Boards</h3>
@@ -100,7 +101,7 @@
         class:slideOut={$uiProps.showMenu == false}
         on:click={()=>aboutDialog.open()}>   
         <div class="logo" title="About TalkingStickies!"><TSLogoIcon /></div>
-        <Fa icon={faCog} class="cog" size="1.5x" color="#fff"/>
+        <Fa icon={faCog} class="cog" size="1.5x" color="rgba(95, 90, 83, 1.0)"/>
     </div>
 </div>
 
@@ -114,7 +115,6 @@
     }
 
     .board-menu {
-        height: calc(100vh - 50px);
         overflow-y: auto;
         overflow-x: hidden;
         min-width: 330px;
@@ -124,15 +124,16 @@
         flex-direction: column;
         flex: 0 0 auto;
         align-items: flex-start;
-        position: relative;
+        position: sticky;
         padding: 15px;
         padding-bottom: 50px;
         background: #FFFFFF;
         border: 1px solid #EBEBEB;
         box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
         border-radius: 5px;
-        height: calc(100vh - 95px);
+        height: calc(100vh - 100px);
         margin-left: 15px;
+        top: 80px;
     }
 
     .wide.board-menu {
@@ -141,7 +142,6 @@
         position: relative;
         left: 10px;
     }
-
 
     .board-menu::-webkit-scrollbar {
         width: 10px;
@@ -180,9 +180,6 @@
         position: relative;
         width: 290px;
         height: 50px;
-        background: rgba(24, 55, 122, 1.0);
-        border: 1px solid #4A559D;
-        color: #fff;
         display: flex;
         align-items: center;
         border-radius: 5px;
@@ -190,7 +187,9 @@
         font-weight: bold;
         transition: all .25s ease;
         padding: 15px 0;
-        box-shadow: 0px 4px 8px rgba(35, 32, 74, 0);
+        border: 2px dashed #AF9886;
+        border-radius: 5px;
+
     }
 
     .new-board:hover {
@@ -204,7 +203,7 @@
     }
 
     .new-board span {
-        color: #fff;
+        color: #5F5A54;
         display: block;
         padding: 0 15px;
     }
@@ -241,13 +240,12 @@
         position: fixed;
         padding: 10px;
         border-radius: 0;
-        bottom: 15px;
+        bottom: 30px;
         height: 40px;
         display: block;
         align-items: center;
         width: 330px;
-        left: 15px;
-        background-color: rgba(23, 55, 123, .9);
+        left: 30px;
         animation-duration: .3s;
         animation-name: slideIn;
         animation-iteration-count: 1;
@@ -293,7 +291,8 @@
     }
 
     .logo {
-        height: 16px;
+        height: 24px;
+        width: 150px;
         margin-right: 5px;
     }
 
