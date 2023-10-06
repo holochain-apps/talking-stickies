@@ -310,7 +310,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
   <div class="top-bar">
     <div class="add-group" on:click={newGroup()}>
-        <div style="margin-right:5px"><AddGroupIcon /></div>
+        <div style="margin-right: 5px; display: flex;"><AddGroupIcon /></div>
         Add Group
     </div>
 
@@ -399,12 +399,14 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
                       on:click|stopPropagation={() => voteOnSticky(tsStore.myAgentPubKey(), stickies, id, type, maxVotes)}
                     >
                       <EmojiIcon emoji={emoji} class="vote-icon" />
-                      {countVotes(props.votes, type)}
+                      {#if myVotes(props.votes, type) > 0}
+                      <span class="num-votes">{countVotes(props.votes, type)}</span>
                       <div class="vote-counts">
                         {#each new Array(myVotes(props.votes, type)).map((_, i) => i) as index}
                           <div class="vote-count" />
                         {/each}
                       </div>
+                      {/if}
                     </div>
                   {/each}
                 </div>
@@ -445,10 +447,6 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    background-color: #ffffffaa;;
-    padding-left: 10px;
-    padding-right: 10px;
-    border-radius: 5px 5px 0 0;
   }
 
   .left-items {
@@ -459,14 +457,6 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   .right-items {
     display: flex;
     align-items: center;
-  }
-
-  .sortby {
-    display: flex;
-    align-items: center;
-    margin-right: 8px;
-    height: 47px;
-    padding-right: 10px;
   }
 
   .groups {
@@ -588,18 +578,24 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     margin: 5px;
     align-items: center;
     background: rgba(0,0,0,.06);
-    border: 1px solid rgba(0,0,0,.05);
+    border: 2px solid rgba(0,0,0,.07);
     border-radius: 5px;
     flex-basis: 26px;
-    height: 25px;
+    height: 30px;
     padding: 0 5px;
-    box-shadow: 0 4px 5px rgba(0,0,0,.2);
+    box-shadow: 0 4px 5px rgba(0,0,0,.1);
     position: relative;
+    font-size: 11px;
+    transition: all .25s ease;
     cursor: pointer;
   }
+
   .voted {
-    border-color: black;
+    border-color: rgba(110, 174, 47, 1.0);
+    background-color: rgba(110, 174, 47, .70);
+    box-shadow: 0 4px 5px rgba(0,0,0,.2);
   }
+  
   .vote-counts {
     padding-top: 2px;
     display: flex;
@@ -608,12 +604,22 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     left: -3px;
     justify-content: flex-start;
   }
+
   .vote-count {
     border-radius: 50px;
     width: 5px;
     height: 5px;
-    background-color: black;
+    background-color: transparent;
     margin-bottom: 2px;
+  }
+
+  .num-votes {
+    display: inline-block;
+    padding-left: 5px;
+  }
+
+  .voted.vote .num-votes {
+    color: white;
   }
 
   .add-sticky {
@@ -641,10 +647,14 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
   }
 
-  .add-group {
-    display: flex; align-items: center; align-content: center;
+  .add-group, .sortby {
+    display: flex;
+    align-items: center;
+    align-content: center;
     border: 2px solid rgba(233, 227, 220, 1.0);
     border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
     padding: 3px 8px;
   }
 </style>

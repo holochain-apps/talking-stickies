@@ -83,7 +83,7 @@
 
   .tool-item {
     background: #FFFFFF;
-    border: 1px solid #EBEBEB;
+    border: 2px solid rgba(233, 227, 220, .70);
     box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
     border-radius: 5px;
     height: 50px;

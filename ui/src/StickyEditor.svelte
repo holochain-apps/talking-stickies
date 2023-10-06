@@ -2,6 +2,9 @@
   import { onMount } from "svelte";
   import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
   import '@shoelace-style/shoelace/dist/components/button/button.js';
+  import CancelIcon from "./icons/CancelIcon.svelte";
+  import TrashIcon from "./icons/TrashIcon.svelte";
+  import AcceptIcon from "./icons/AcceptIcon.svelte";
   import type { v1 as uuidv1 } from "uuid";
   import type { StickyProps } from "./board";
   import { onVisible } from "./util";
@@ -50,16 +53,12 @@
   </div>
   <div class='controls'>
     {#if handleDelete}
-    <sl-button size="small" variant="danger" on:click={()=>handleDelete(stickyId)}>
-      Delete
-    </sl-button>
+      <button class="control" on:click={()=>handleDelete(stickyId)} ><TrashIcon /></button>
     {/if}
-    <sl-button size="small" style="margin-left:5px" on:click={()=>{cancelEdit()}}>
-      Cancel
-    </sl-button>
-    <sl-button size="small" style="margin-left:5px" variant="primary" on:click={() => handleSave(groupId, props) }>
-      Save
-    </sl-button>
+    <div>
+      <button class="control" on:click={()=>cancelEdit(stickyId)} ><CancelIcon /></button>
+      <button class="control" on:click={() => handleSave(groupId, props)} ><AcceptIcon /></button>
+    </div>
   </div>
 </div>
 
@@ -85,6 +84,8 @@
 
   .input-wrapper {
     display: grid;
+    margin-top: -2px;
+    margin-bottom: -2px;
   }
 
   .input-wrapper::after {
@@ -101,10 +102,34 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     padding-left: 7px;
     padding-top: 5px;
   }
+
+  .controls > div {
+    display: flex;
+  }
+
+  .control {
+    display: flex;
+    margin: 5px;
+    align-items: center;
+    background: rgba(0,0,0,.05);
+    border: 2px solid rgba(0,0,0,.1);
+    border-radius: 5px;
+    height: 30px;
+    min-width: 30px;
+    padding: 0px;
+    justify-content: center;
+    box-shadow: 0 4px 5px rgba(0,0,0,.2);
+    position: relative;
+    font-size: 11px;
+    transition: all .25s ease;
+    cursor: pointer;
+  }
+
+
 
   .color-buttons {
     display: flex;
@@ -135,17 +160,21 @@
   }
 
   .sticky-input::part(form-control), .sticky-input::part(form-control-input), .sticky-input::part(base) {
-    height: 100%;
+    height: calc(100% - 2px);
   }
 
   .sticky-input::part(textarea) {
     letter-spacing: -.015rem;
     line-height: 16px;
     font-size: 14px;
+    margin-top: -16px;
+    margin-left: -15px;
+    margin-right: -14px;
     resize: none;
     height: 100%;
     overflow: hidden;
-    font-family: Roboto,'Open Sans','Helvetica Neue',sans-serif; 
+    font-family: Roboto,'Open Sans','Helvetica Neue',sans-serif;
+    padding: 15px;
   }
 
   sl-textarea.sticky-input, .input-wrapper::after  {

@@ -39,7 +39,7 @@ html, body {
   letter-spacing: -.008rem;
   font-size: 14px;
   line-height: 1.5;
-  color: rgba(86, 94, 109, 1.0);
+  color: rgba(95, 90, 83, 1.0);
   padding: 0px;
   height: 100%;
   overflow: hidden; /* In general, it's a good idea to have the body take up the full viewport height and have a fixed layout with no scrollbar. Then, you can have a scrollable inner container like .pane-content to handle the overflow of the content. This approach helps keep the page structure clean and allows you to control the scrolling behavior more effectively. */
@@ -50,7 +50,7 @@ body {
 }
 
 p, div, span, h1, h2, h3 {
-  color: rgba(86, 94, 109, 1.0);
+  color: rgba(95, 90, 83, 1.0);
 }
 
 #content {
