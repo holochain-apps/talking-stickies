@@ -2,6 +2,7 @@
   import { createEventDispatcher, getContext } from "svelte";
   import StickyEditor from "./StickyEditor.svelte";
   import EmojiIcon from "./icons/EmojiIcon.svelte";
+  import AddGroupIcon from "./icons/AddGroupIcon.svelte";
   import { sortBy } from "lodash/fp";
   import type { TalkingStickiesStore } from "./tsStore";
   import SortSelector from "./SortSelector.svelte";
@@ -308,12 +309,10 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
 <div class="board">
   <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
   <div class="top-bar">
-    <sl-button style="padding: 0 5px;" size="small" text on:click={newGroup()}>
-      <div style="display: flex;">
+    <div class="add-group" on:click={newGroup()}>
+        <div style="margin-right:5px"><AddGroupIcon /></div>
         Add Group
-        <div style="margin-left:5px"><Fa icon={faPlus}/></div>
-      </div>
-    </sl-button>
+    </div>
 
     <div class="sortby">
       Sort: <SortSelector {setSortOption} {sortOption} />
@@ -640,5 +639,12 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     cursor: pointer;
     opacity: 1;
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .add-group {
+    display: flex; align-items: center; align-content: center;
+    border: 2px solid rgba(233, 227, 220, 1.0);
+    border-radius: 5px;
+    padding: 3px 8px;
   }
 </style>
