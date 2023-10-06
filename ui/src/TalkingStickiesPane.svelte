@@ -357,12 +357,6 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
                 {/if}
               </b>
             {/if}
-            <sl-button style="padding: 0 5px;" size="small" text on:click={newSticky(groupId)}>
-              <div style="display: flex;">
-                Add Card
-                <div style="margin-left:5px"><Fa icon={faPlus}/></div>
-              </div>
-            </sl-button>
           </div>
           <div class="stickies"
             >
@@ -422,6 +416,13 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
             <StickyEditor handleSave={createSticky} {cancelEdit} />
           {/if}
           </div>
+
+          <div class="add-sticky" size="small" text on:click={newSticky(groupId)}>
+            <div style="display: flex;">
+              Add Card
+              <div style="margin-left:5px"><Fa icon={faPlus}/></div>
+            </div>
+          </div>
         </div>
         {/if}
       {/each}
@@ -439,7 +440,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     margin-top: 15px;
     width: 100vw;
   }
-  
+
   .top-bar {
     display: flex;
     flex-direction: row;
@@ -475,22 +476,33 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     overflow-y: auto;
     gap: 15px;
     flex-direction: row;
+    margin-right: -15px;
     padding-bottom: 30px;
   }
 
   .group {
+    position: relative;
     display: block;
     min-width: 290px;
     border: 2px dashed rgba(215, 203, 191, 1.0);
     border-radius: 15px;
+    margin-top: 10px;
+    padding-top: 5px;
   }
 
   .group-title {
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 16px;
     padding-left: 10px;
     padding-right: 10px;
+    position: absolute;
+    top: -22px;
+    background-color: rgba(255, 255, 254, 1.0);
+    left: 50%;
+    transform: translateX(-50%);
     padding-top: 10px;
     max-width: 270px;
-    color: white;
     display: flex;
     align-items: center;
   }
@@ -524,14 +536,15 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: linear-gradient(180deg, #FFFFFF 0%, #F8F3E4 100%);
+    background: linear-gradient(180deg,  rgba(252, 250, 243, 1.0) 0%, #FFFFFF 100%);
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     border: 2px solid rgba(0,0,0,.1);
+    border-bottom: 2px solid rgba(0,0,0,.13);
   }
 
   .white {
-    background: linear-gradient(180deg, #FFFFFF 0%, #F3F2E8 100%);
+    background: linear-gradient(180deg,  rgba(252, 250, 243, 1.0) 0%, #FFFFFF 100%);
   }
 
   .yellow {
@@ -602,5 +615,30 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     height: 5px;
     background-color: black;
     margin-bottom: 2px;
+  }
+
+  .add-sticky {
+    background: #F8F3E5;
+    opacity: 0.3;
+    border: 2px dashed #AF9886;
+    border-radius: 10px;
+    transition: all .25s ease;
+    max-width: 499px;
+    min-width: 250px;
+    margin: 10px;
+    padding: 10px;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: -.015rem;
+    color: #000000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.0);
+  }
+
+  .add-sticky:hover {
+    cursor: pointer;
+    opacity: 1;
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
   }
 </style>

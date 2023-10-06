@@ -45,7 +45,7 @@
     }
 
 </script>
-<div class="nav-button tool-item" on:click={()=>{participantsDialog.open()}}  title="Show Participants">
+<div class="nav-button tool-item participants" on:click={()=>{participantsDialog.open()}}  title="Show Participants">
     <Fa icon={faUserGroup} size=2x/>{$participants.active.length }</div>
 {#if !profilesStore}
 <div class="nav-button tool-item" on:click={editAvatar} title={myName ? myName:"Edit Avatar"}>
@@ -58,7 +58,6 @@
 
 <style>
     .tool-item {
-        margin-right: 10px;
         background: #FFFFFF;
         border: 1px solid #EBEBEB;
         box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
@@ -68,6 +67,11 @@
         align-items: center;
         justify-content: center;
     }
+
+    .participants {
+        margin-right: 15px;
+    }
+
     .tool-item:hover {
         cursor: pointer;
     }

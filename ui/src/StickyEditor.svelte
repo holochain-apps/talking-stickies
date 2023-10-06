@@ -76,7 +76,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: linear-gradient(180deg, #FFFFFF 0%, #F8F3E4 100%);
+    background: linear-gradient(180deg,  rgba(252, 250, 243, 1.0) 0%, #FFFFFF 100%);
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     border: 2px solid rgba(0,0,0,.1);
@@ -157,7 +157,7 @@
   }
 
   .white {
-    background: linear-gradient(180deg, #FFFFFF 0%, #F3F2E8 100%);
+    background: linear-gradient(180deg,  rgba(252, 250, 243, 1.0) 0%, #FFFFFF 100%);
   }
 
   .yellow {

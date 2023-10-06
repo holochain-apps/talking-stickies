@@ -43,13 +43,12 @@
   <div class="tool-item search"><Search></Search></div>
 
   <div class="items">
-      <Folk profilesStore={profilesStore}></Folk>
-      
     <div class="tool-item bugs">
       <a href="https://github.com/holochain-apps/talking-stickies/issues" title="Report a problem in our GitHub repo" target="_blank">
         <div class="nav-button"><Fa icon={faBug} size=2x style={bugColor} /></div>
       </a>
     </div>
+    <Folk profilesStore={profilesStore}></Folk>
   </div>
 </div>
 
@@ -67,11 +66,12 @@
     align-items: center;
     justify-content: space-between;
     padding-left: 15px;
-    padding-right: 10px;
+    padding-right: 25px;
     padding-top: 16px;
     padding-bottom: 16px;
     position: fixed;
     top: 0;
+    z-index: 10;
     width: 100vw;
   }
   .logo {
@@ -103,6 +103,7 @@
 
   .bugs {
     width: 50px;
+    margin-right: 15px;
   }
 
   .settings {
