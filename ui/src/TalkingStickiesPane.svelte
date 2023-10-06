@@ -443,10 +443,16 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   }
 
   .top-bar {
+    width: calc(100% - 9px);
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    position: fixed;
+    z-index: 100;
+    top: 75px;
+    left: 0;
+    padding: 5px 15px;
   }
 
   .left-items {
@@ -570,7 +576,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   .votes {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     margin-top: auto;
   }
   .vote {
@@ -588,12 +594,14 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     font-size: 11px;
     transition: all .25s ease;
     cursor: pointer;
+    border-bottom: 2px solid rgba(0,0,0,.2);
   }
 
   .voted {
     border-color: rgba(110, 174, 47, 1.0);
     background-color: rgba(110, 174, 47, .70);
     box-shadow: 0 4px 5px rgba(0,0,0,.2);
+    border-bottom: 2px solid rgba(70, 134, 7, 1.0);
   }
   
   .vote-counts {
@@ -648,13 +656,16 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   }
 
   .add-group, .sortby {
-    display: flex;
-    align-items: center;
-    align-content: center;
-    border: 2px solid rgba(233, 227, 220, 1.0);
-    border-radius: 5px;
     font-size: 14px;
     font-weight: bold;
-    padding: 3px 8px;
-  }
+    background: #FFFFFF;
+    border: 2px solid rgba(233, 227, 220, .70);
+    box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
+    border-radius: 5px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+}
 </style>

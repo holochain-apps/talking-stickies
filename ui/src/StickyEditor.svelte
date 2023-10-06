@@ -52,9 +52,11 @@
     {/each}
   </div>
   <div class='controls'>
+    <div>
     {#if handleDelete}
       <button class="control" on:click={()=>handleDelete(stickyId)} ><TrashIcon /></button>
     {/if}
+    </div>
     <div>
       <button class="control" on:click={()=>cancelEdit(stickyId)} ><CancelIcon /></button>
       <button class="control" on:click={() => handleSave(groupId, props)} ><AcceptIcon /></button>
@@ -103,8 +105,6 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding-left: 7px;
-    padding-top: 5px;
   }
 
   .controls > div {
@@ -127,17 +127,19 @@
     font-size: 11px;
     transition: all .25s ease;
     cursor: pointer;
+    border-bottom: 2px solid rgba(0,0,0,.25);
   }
 
 
 
   .color-buttons {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     flex-direction: row;
     align-items: center;
     cursor: pointer;
     margin-left: 5px;
+    margin-right: 5px;
   }
 
   .color-button {
