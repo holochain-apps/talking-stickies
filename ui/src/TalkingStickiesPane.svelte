@@ -379,7 +379,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
               />
             {:else}
               <div 
-                class="sticky"
+                class="sticky {props.color}"
                 class:tilted={draggedItemId == id}
                 class:glowing={dragTarget == id}
                 id={id}
@@ -389,7 +389,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
                 on:drop={handleDragDropCard}
                 draggable={dragOn}
                 on:dragstart={handleDragStart}
-                on:dragend={handleDragEnd}              
+                on:dragend={handleDragEnd}
 
                 on:click={()=>editSticky(id)} 
                 style:background-color={props && props.color ? props.color : "#D7EEFF"}
@@ -439,6 +439,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     margin-top: 15px;
     width: 100vw;
   }
+  
   .top-bar {
     display: flex;
     flex-direction: row;
@@ -449,14 +450,17 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     padding-right: 10px;
     border-radius: 5px 5px 0 0;
   }
+
   .left-items {
     display: flex;
     align-items: center;
   }
+
   .right-items {
     display: flex;
     align-items: center;
   }
+
   .sortby {
     display: flex;
     align-items: center;
@@ -464,6 +468,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     height: 47px;
     padding-right: 10px;
   }
+
   .groups {
     display: flex;
     flex-wrap: wrap;
@@ -472,12 +477,14 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     flex-direction: row;
     padding-bottom: 30px;
   }
+
   .group {
     display: block;
     min-width: 290px;
-    border: 1px dashed rgba(215, 203, 191, 1.0);
+    border: 2px dashed rgba(215, 203, 191, 1.0);
     border-radius: 15px;
   }
+
   .group-title {
     padding-left: 10px;
     padding-right: 10px;
@@ -487,28 +494,32 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     display: flex;
     align-items: center;
   }
+
   .stickies {
     display: flex;
     flex-wrap: wrap;
   }
+
   .glowing {
     outline: none;
     border-color: #9ecaed;
     box-shadow: 0 0 10px #9ecaed !important;
   }
+
   .tilted {
     transform: rotate(3deg);
     box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.5) !important;
   }
+
   .sticky {
-    background-color: #d4f3ee;
     max-width: 499px;
     min-width: 250px;
     width: 100%;
     margin: 10px;
     padding: 10px;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: -.015rem;
     color: #000000;
     display: flex;
     flex-direction: column;
@@ -516,26 +527,61 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     background: linear-gradient(180deg, #FFFFFF 0%, #F8F3E4 100%);
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    border: 1px solid rgba(232, 225, 217, 1.0);
+    border: 2px solid rgba(0,0,0,.1);
   }
+
+  .white {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F3F2E8 100%);
+  }
+
+  .yellow {
+    background: linear-gradient(180deg, #F9FFC4 0%, #F7F7EC 100%);
+  }
+
+  .green {
+    background: linear-gradient(180deg, #D9FEFA 0%, #F1F7EC 100%);
+  }
+
+  .skyblue {
+    background: linear-gradient(180deg, #D0EBFE 0%, #ECF4F7 100%);
+  }
+
+  .deepblue {
+    background: linear-gradient(180deg, #78C8F7 0%, #ECF2F7 100%);
+  }
+
+  .purple {
+    background: linear-gradient(180deg, #DCD1FD 0%, #F5ECF7 100%);
+  }
+
+  .red {
+    background: linear-gradient(180deg, #FFD5E6 0%, #F7ECEC 100%);
+  }
+
+  .grey {
+    background: linear-gradient(180deg, #E4E4E4 0%, #FFFFFF 100%);
+  }
+
   .sticky-content {
     overflow-y: auto;
   }
   .votes {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
     margin-top: auto;
   }
   .vote {
     display: flex;
+    margin: 5px;
     align-items: center;
-    background: white;
+    background: rgba(0,0,0,.06);
+    border: 1px solid rgba(0,0,0,.05);
     border-radius: 5px;
     flex-basis: 26px;
     height: 25px;
     padding: 0 5px;
-    border: 1px solid white;
+    box-shadow: 0 4px 5px rgba(0,0,0,.2);
     position: relative;
     cursor: pointer;
   }

@@ -19,7 +19,7 @@
   let inputElement
 
 
-  const colors=["white","#D4F3EE","#E0D7FF","#FFCCE1","#D7EEFF", "#FAFFC7",  "LightSkyBlue", "grey"]
+  const colors=["white", "yellow", "green", "skyblue", "deepblue", "purple",  "red", "grey"]
   const setColor = (color) => {
     props.color = color
     props = props
@@ -32,21 +32,21 @@
 	});
 
 </script>
-<div class='sticky-editor' style:background-color={props.color}>
-  <div class="sticky-elements">
-    <sl-textarea size="small" rows=8 style="width:205px" value={props.text} bind:this={inputElement}
-      on:sl-input={e=>props.text = e.target.value}
+<div class='sticky-editor {props.color}'>
+  <div class="input-wrapper" data-replicated-value={props.text}>
+    <sl-textarea class="sticky-input" rows="1" size="small" value={props.text} bind:this={inputElement}
+      on:sl-input={e=>props.text = e.target.value, this.parentNode.dataset.replicatedValue = this.value}
       on:keydown={(e)=> {
         if (e.keyCode == 27) {
           cancelEdit()
         }
     }}>
     </sl-textarea>
-    <div class="color-buttons">
-      {#each colors as color}
-        <div class="color-button{props.color == color?" selected":""}" on:click={()=>setColor(color)} style:background-color={color}></div>
-      {/each}
-    </div>
+  </div>
+  <div class="color-buttons">
+    {#each colors as color}
+      <div class="color-button {props.color == color ? " selected":""} {color}" on:click={()=>setColor(color)}></div>
+    {/each}
   </div>
   <div class='controls'>
     {#if handleDelete}
@@ -65,59 +65,126 @@
 
 <style>
   .sticky-editor {
-    display: flex;
-    background-color: #D7EEFF;
-    flex-basis: 200px;
-    height: 200px;
+    max-width: 499px;
+    min-width: 250px;
+    width: 100%;
     margin: 10px;
     padding: 10px;
-    box-shadow: 4px 5px 13px 0px rgba(0,0,0,0.38);
-    font-style: normal;
-    font-weight: 600;
     font-size: 12px;
     line-height: 16px;
     color: #000000;
-    justify-content: space-between;
-    flex-direction: column;
-  }
-  .sticky-elements {
     display: flex;
-    flex-direction: row;
-    flex-basis: 100%;
+    flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8F3E4 100%);
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 2px solid rgba(0,0,0,.1);
+    transition: all .25s ease;
   }
-  .textarea {
-    background-color: rgba(255, 255, 255, 0.72);
-    border: 1px solid #C9C9C9;
-    box-sizing: border-box;
-    border-radius: 3px;
-    width: 100%;
-    height: 10px;
-    font-weight: normal;
-    padding: 2px;
+
+  .input-wrapper {
+    display: grid;
   }
+
+  .input-wrapper::after {
+    content: attr(data-replicated-value) " ";
+    white-space: pre-wrap;
+    padding: 7px 10px;
+    letter-spacing: -.015rem;
+    line-height: 16px;
+    font-size: 14px;
+    visibility: hidden;
+  }
+  
   .controls {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     padding-left: 7px;
     padding-top: 5px;
   }
+
   .color-buttons {
     display: flex;
-    justify-content: space-between;
-    flex-direction: column;
+    justify-content: center;
+    flex-direction: row;
     align-items: center;
     cursor: pointer;
     margin-left: 5px;
   }
+
   .color-button {
+    box-shadow: 0 4px 5px rgba(0,0,0,.2);
     width: 15px;
     height: 15px;
     margin: 2px;
-    outline: 1px lightgray solid;
+    border: 2px solid white;
+    border-radius: 3px;
   }
+
+  .sticky-input {
+    width: 100%;
+  }
+
+  .sticky-input::part(base) {
+    background-color: transparent;
+    outline: transparent;
+    border: transparent;
+  }
+
+  .sticky-input::part(form-control), .sticky-input::part(form-control-input), .sticky-input::part(base) {
+    height: 100%;
+  }
+
+  .sticky-input::part(textarea) {
+    letter-spacing: -.015rem;
+    line-height: 16px;
+    font-size: 14px;
+    resize: none;
+    height: 100%;
+    overflow: hidden;
+    font-family: Roboto,'Open Sans','Helvetica Neue',sans-serif; 
+  }
+
+  sl-textarea.sticky-input, .input-wrapper::after  {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
   .selected {
-    outline: 1px #000 solid;
+    outline: 2px solid rgba(23, 132, 199, 1.0);
+  }
+
+  .white {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F3F2E8 100%);
+  }
+
+  .yellow {
+    background: linear-gradient(180deg, #F9FFC4 0%, #F7F7EC 100%);
+  }
+
+  .green {
+    background: linear-gradient(180deg, #D9FEFA 0%, #F1F7EC 100%);
+  }
+
+  .skyblue {
+    background: linear-gradient(180deg, #D0EBFE 0%, #ECF4F7 100%);
+  }
+
+  .deepblue {
+    background: linear-gradient(180deg, #78C8F7 0%, #ECF2F7 100%);
+  }
+
+  .purple {
+    background: linear-gradient(180deg, #DCD1FD 0%, #F5ECF7 100%);
+  }
+
+  .red {
+    background: linear-gradient(180deg, #FFD5E6 0%, #F7ECEC 100%);
+  }
+
+  .grey {
+    background: linear-gradient(180deg, #E4E4E4 0%, #FFFFFF 100%);
   }
 </style>
