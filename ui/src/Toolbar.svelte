@@ -34,7 +34,7 @@
       <div class="open tool-item menu" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><Fa icon={faBars} size=2x /></div>
     {/if}
       <div class="tool-item settings"  on:click={()=> editBoardDialog.open(cloneDeep($activeHash))} title="Settings">
-        <Fa icon={faCog} size="1.5x" style="margin-right: 10px;"/>
+        <Fa icon={faCog} size="1x" style="margin-right: 10px;"/>
         {$state.name}
       </div>
     </div>
@@ -85,7 +85,7 @@
     background: #FFFFFF;
     border: 2px solid rgba(233, 227, 220, .70);
     box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
-    border-radius: 5px;
+    border-radius: 10px;
     height: 50px;
     display: flex;
     align-items: center;

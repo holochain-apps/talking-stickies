@@ -128,12 +128,13 @@
         padding: 15px;
         padding-bottom: 50px;
         background: #FFFFFF;
-        border: 1px solid #EBEBEB;
+        border: 2px solid rgba(239, 235, 230, 1.0);
         box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
-        border-radius: 5px;
+        border-radius: 10px;
         height: calc(100vh - 100px);
         margin-left: 15px;
         top: 80px;
+        margin-top: -30px;
     }
 
     .wide.board-menu {

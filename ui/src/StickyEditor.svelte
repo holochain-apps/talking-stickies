@@ -117,10 +117,10 @@
     align-items: center;
     background: rgba(0,0,0,.05);
     border: 2px solid rgba(0,0,0,.1);
-    border-radius: 5px;
+    border-radius: 10px;
     height: 30px;
     min-width: 30px;
-    padding: 0px;
+    padding: 0px 6px;
     justify-content: center;
     box-shadow: 0 4px 5px rgba(0,0,0,.2);
     position: relative;

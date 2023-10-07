@@ -477,7 +477,10 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
 
   .group {
     position: relative;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     min-width: 290px;
     border: 2px dashed rgba(215, 203, 191, 1.0);
     border-radius: 15px;
@@ -504,6 +507,8 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
 
   .stickies {
     display: flex;
+    justify-content: center;
+    width: 100%;
     flex-wrap: wrap;
   }
 
@@ -518,7 +523,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.5) !important;
   }
 
-  .sticky {
+  .sticky, .add-sticky {
     max-width: 499px;
     min-width: 250px;
     width: 100%;
@@ -585,7 +590,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     align-items: center;
     background: rgba(0,0,0,.06);
     border: 2px solid rgba(0,0,0,.07);
-    border-radius: 5px;
+    border-radius: 10px;
     flex-basis: 26px;
     height: 30px;
     padding: 0 5px;
@@ -631,22 +636,9 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   }
 
   .add-sticky {
-    background: #F8F3E5;
     opacity: 0.3;
-    border: 2px dashed #AF9886;
-    border-radius: 10px;
+    font-weight: bold;
     transition: all .25s ease;
-    max-width: 499px;
-    min-width: 250px;
-    margin: 10px;
-    padding: 10px;
-    font-size: 14px;
-    line-height: 18px;
-    letter-spacing: -.015rem;
-    color: #000000;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.0);
   }
 
   .add-sticky:hover {
@@ -661,7 +653,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     background: #FFFFFF;
     border: 2px solid rgba(233, 227, 220, .70);
     box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
-    border-radius: 5px;
+    border-radius: 10px;
     height: 40px;
     display: flex;
     align-items: center;
