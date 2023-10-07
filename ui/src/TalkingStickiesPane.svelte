@@ -639,6 +639,11 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     opacity: 0.3;
     font-weight: bold;
     transition: all .25s ease;
+    width: -webkit-fill-available;
+  }
+
+  .add-sticky div {
+    justify-content: center;
   }
 
   .add-sticky:hover {
