@@ -482,7 +482,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     align-items: center;
     justify-content: center;
     min-width: 290px;
-    border: 2px dashed rgba(215, 203, 191, 1.0);
+    border: 2px dashed rgba(239, 235, 230, 1.0);
     border-radius: 15px;
     margin-top: 10px;
     padding-top: 5px;
