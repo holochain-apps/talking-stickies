@@ -420,7 +420,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
 
           <div class="add-sticky" size="small" text on:click={newSticky(groupId)}>
             <div style="display: flex;">
-              Add Card
+              Add Sticky
               <div style="margin-left:5px"><Fa icon={faPlus}/></div>
             </div>
           </div>
