@@ -124,7 +124,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
           changes.push({ type: "update-sticky-props", id: sticky.id, props: cloneDeep(props)})
         }
         if (changes.length > 0) {
-        dispatch("requestChange", changes);
+          dispatch("requestChange", changes);
         }
       }
       clearEdit()
@@ -309,7 +309,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
 <div class="board">
   <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
   <div class="top-bar">
-    <div class="add-group" on:click={newGroup()}>
+    <div class="add-group" on:click={newGroup(uuidv1())}>
         <div style="margin-right: 5px; display: flex;"><AddGroupIcon /></div>
         Add Group
     </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Group, type BoardProps, UngroupedId, Board, VoteType } from './board';
+    import { Group, type BoardProps, UngroupedId, Board, VoteType, type BoardState } from './board';
     import { getContext, onMount } from 'svelte';
   	import DragDropList, { VerticalDropZone, reorder, type DropEvent } from 'svelte-dnd-list';
     import 'emoji-picker-element';

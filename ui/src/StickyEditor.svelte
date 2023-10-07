@@ -38,7 +38,9 @@
 <div class='sticky-editor {props.color}'>
   <div class="input-wrapper" data-replicated-value={props.text}>
     <sl-textarea class="sticky-input" rows="1" size="small" value={props.text} bind:this={inputElement}
-      on:sl-input={e=>props.text = e.target.value, this.parentNode.dataset.replicatedValue = this.value}
+      on:sl-input={e=>{
+        props.text = e.target.value;
+      }}
       on:keydown={(e)=> {
         if (e.keyCode == 27) {
           cancelEdit()
