@@ -415,7 +415,9 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
                 class:voted={myVotes(props.votes, type) > 0}
                 on:click|stopPropagation={() => voteOnSticky(tsStore.myAgentPubKey(), stickies, id, type, maxVotes)}
               >
-                <EmojiIcon emoji={emoji} class="vote-icon" />
+                <div class="vote-icon-wrapper">
+                  <EmojiIcon emoji={emoji} class="vote-icon" />
+                </div>
                 {#if myVotes(props.votes, type) > 0}
                 <span class="num-votes">{countVotes(props.votes, type)}</span>
                 <div class="vote-counts">
@@ -751,9 +753,54 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     margin-bottom: 2px;
   }
 
+  @keyframes smoothExpansion {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 0;
+    }
+    90% {
+        width: 110%;
+        height: 110%;
+        opacity: 1;
+    }
+    100% {
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+    }
+  }
+
+  @keyframes compression {
+    0% { top: 0px; }
+    90% { top: 3px; }
+    100% { top: 0px; }
+  }
+
+  .voted {
+    animation-duration: 0.25s;
+    animation-name: compression;
+    animation-fill-mode: backwards;
+    animation-timing-function: ease;
+    animation-delay: .15s;
+  }
+
+
+  .vote-icon-wrapper {
+    border: 1px solid red;
+    animation-duration: 0.25s;
+    animation-name: smoothExpansion;
+    animation-fill-mode: backwards;
+    animation-timing-function: ease;
+    animation-delay: .25s;
+  }
+
   .num-votes {
-    display: inline-block;
+    display: block;
     padding-left: 5px;
+    animation-duration: 0.25s;
+    animation-timing-function: ease-in-out;
+    animation-name: smoothExpansion;
   }
 
   .voted.vote .num-votes {
