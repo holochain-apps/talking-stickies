@@ -310,7 +310,10 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   $: items = $state.groups.map((group)=> {
     return {
       id:group.id, stickyIds:$state.grouping[group.id]}}).filter(item=> {
-         (item.id === UngroupedId && item.stickyIds.length === 0 || $state.groups.length > 1)}
+        return (item.id === UngroupedId && (item.stickyIds.length > 0 || $state.groups.length === 1)) || (
+          item.id !== UngroupedId
+        )
+      }
       )
 
   let [minColWidth, maxColWidth, gap] = [200, 800, 20]
@@ -446,115 +449,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     </div>
 
   </Masonry>
-  <div class="groups">
-      {#each $state.groups.map((group)=> [group.id, $state.grouping[group.id]]) as [groupId, stickyIds]}
-        {#if (groupId !== UngroupedId || stickyIds.length > 0 || $state.groups.length == 1)}
-        <div class="group" style:width={groupWidth(groupId)}
-        class:glowing={dragTarget == groupId}
-        id={groupId}
-        on:dragenter={handleDragEnter} 
-        on:dragleave={handleDragLeave}  
-        on:drop={handleDragDropGroup}
-        on:dragover={handleDragOver}
-      >
-          <div class="group-title">
-            {#if $state.groups.length > 1}  
-              <b>
-                {#if groupId === UngroupedId}
-                  Ungrouped
-                {:else}
-
-                <ClickEdit
-                  text={groups[groupId].name}
-                  handleSave={(text)=>{
-                    const newGroups = cloneDeep($state.groups)
-                    const idx = newGroups.findIndex(g=>g.id==groupId)
-                    if (idx >= 0) {
-                      newGroups[idx].name = text
-                      tsStore.boardList.requestBoardChanges($activeHash, [
-                        {
-                          type: "set-groups",
-                          groups: newGroups
-                        }
-                      ])
-                    }
-                  }}></ClickEdit>
-                  
-                {/if}
-              </b>
-            {/if}
-          </div>
-          <div class="stickies"
-            >
-          {#each sorted(stickyIds, sortStickies) as { id, props } (id)}
-            {#if editingStickyId === id}
-              <StickyEditor
-                handleSave={updateSticky}
-                handleDelete={
-                  ()=>deleteSticky(id)
-                }
-                {cancelEdit}
-                groupId={groupId}
-                props={cloneDeep(props)}
-              />
-            {:else}
-              <div 
-                class="sticky {props.color}"
-                class:tilted={draggedItemId == id}
-                class:glowing={dragTarget == id}
-                id={id}
-                on:dragenter={handleDragEnter} 
-                on:dragover={handleDragOver}
-                on:dragleave={handleDragLeave}  
-                on:drop={handleDragDropCard}
-                draggable={dragOn}
-                on:dragstart={handleDragStart}
-                on:dragend={handleDragEnd}
-
-                on:click={()=>editSticky(id)} 
-                style:background-color={props && props.color ? props.color : "#D7EEFF"}
-                >
-                <div class="sticky-content">
-                  {@html Marked.parse(props.text)}
-                </div>
-                <div class="votes">
-                  {#each $state.voteTypes as {type, emoji, toolTip, maxVotes}}
-                    <div
-                      class="vote"
-                      title={toolTip}
-                      class:voted={myVotes(props.votes, type) > 0}
-                      on:click|stopPropagation={() => voteOnSticky(tsStore.myAgentPubKey(), stickies, id, type, maxVotes)}
-                    >
-                      <EmojiIcon emoji={emoji} class="vote-icon" />
-                      {#if myVotes(props.votes, type) > 0}
-                      <span class="num-votes">{countVotes(props.votes, type)}</span>
-                      <div class="vote-counts">
-                        {#each new Array(myVotes(props.votes, type)).map((_, i) => i) as index}
-                          <div class="vote-count" />
-                        {/each}
-                      </div>
-                      {/if}
-                    </div>
-                  {/each}
-                </div>
-              </div>
-            {/if}
-          {/each}
-          {#if creatingInGroup !== undefined  && creatingInGroup == groupId}
-            <StickyEditor handleSave={createSticky} {cancelEdit} />
-          {/if}
-          </div>
-
-          <div class="add-sticky" on:click={newSticky(groupId)}>
-            <div style="display: flex;">
-              Add Sticky
-              <div style="margin-left:5px"><Fa icon={faPlus}/></div>
-            </div>
-          </div>
-        </div>
-        {/if}
-      {/each}
-    </div>
+ 
   {/if}
 </div>
 <style>
