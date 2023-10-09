@@ -55,7 +55,7 @@
     <div class="new-board" on:click={()=>newBoardDialog.open()} title="New Board"><AddCard /><span>New Board</span></div>
     </div>
     {#if $uiProps.recent.length > 0 || activeBoards}
-        <h3 class="type-header">Active Boards</h3>
+        <h3 class="type-header">All Boards</h3>
         <div class="boards-section">
             {#if $uiProps.recent.length > 0}
                 {#each $uiProps.recent as boardHash }
@@ -128,20 +128,20 @@
         padding: 15px;
         padding-bottom: 50px;
         background: #FFFFFF;
-        border: 2px solid rgba(239, 235, 230, 1.0);
-        box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
+        border: 2px solid rgb(166 115 55 / 26%);
+        border-bottom: 2px solid rgb(84 54 19 / 40%);
+        border-top: 2px solid rgba(255,255,255,.8);
+        box-shadow: 0px 15px 20px rgb(130 107 58 / 25%);
         border-radius: 10px;
         height: calc(100vh - 100px);
         margin-left: 15px;
-        top: 80px;
-        margin-top: -30px;
+        margin-top: -55px;
     }
 
     .wide.board-menu {
-        width: calc(100vw - 20px);
+        width: calc(100vw - 30px);
         height: calc(100vh - 95px);
         position: relative;
-        left: 10px;
     }
 
     .board-menu::-webkit-scrollbar {
@@ -164,7 +164,8 @@
     .type-header {
         font-size: 12px;
         font-weight: normal;
-        color: #fff;
+        color: rgba(95, 90, 83, 1.0);
+        text-transform: uppercase;
         opacity: .6;
         margin-top: 20px;
         margin-bottom: 10px;
@@ -177,49 +178,50 @@
     }
 
     .new-board {
-        box-sizing: border-box;
-        position: relative;
-        width: 290px;
+        background: linear-gradient(180deg, rgb(244 200 42) 0%, rgb(243 220 135) 100%);
+        border: 2px solid rgb(166 115 55 / 26%);
+        border-bottom: 2px solid rgb(84 54 19 / 50%);
+        border-top: 2px solid rgb(166 115 55 / 15%);
+        box-shadow: 0px 15px 20px rgb(130 107 58 / 25%);
+        border-radius: 10px;
         height: 50px;
         display: flex;
         align-items: center;
-        border-radius: 5px;
+        justify-content: flex-start;
         font-size: 16px;
         font-weight: bold;
+        padding: 15px;
         transition: all .25s ease;
-        padding: 15px 0;
-        border: 2px dashed #AF9886;
-        border-radius: 5px;
-
+        transform: scale(1);
+        width: 296px;
     }
 
     .new-board:hover {
-        cursor: pointer;
-        padding: 15px 5px;
-        width: 300px;
-        border: 1px solid #252d5d;
-        background: rgb(10, 25, 57);
-        margin: 0 -5px 0 -5px;
-        box-shadow: 0px 4px 15px rgba(35, 32, 74, 0.8);
+        transform: scale(1.08);
+        box-shadow: 0px 20px 35px rgb(130 107 58 / 25%);
     }
 
     .new-board span {
         color: #5F5A54;
         display: block;
-        padding: 0 15px;
+        padding: 0 10px;
     }
 
     .board {
         width: 290px;
-        border-radius: 5px;
-        padding: 10px;
-        margin: 5px;
+        background: #FFFFFF;
+        border: 2px solid rgb(166 115 55 / 26%);
+        border-bottom: 2px solid rgb(84 54 19 / 50%);
+        border-top: 2px solid rgb(166 115 55 / 15%);
+        box-shadow: 0px 6px 8px rgb(130 107 58 / 25%);
+        border-radius: 10px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
         transition: all .25s ease;
-        border: 1px solid;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgb(200 221 237) 100%);
-        position: relative;
-        display: block;
-        box-shadow: 0px 4px 8px rgba(35, 32, 74, 0.8);
+        transform: scale(1);
+        padding: 15px;
     }
 
     .board:hover {
@@ -227,60 +229,65 @@
         z-index: 100;
         padding: 15px;
         width: 300px;
+        transform: scale(1.07);
         background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 100%);
-        margin: 0 -5px 0 -5px;
-        box-shadow: 0px 4px 14px rgba(35, 32, 74, 0.8);
+        box-shadow: 0px 15px 25px rgb(130 107 58 / 25%);
         z-index: 100;
+    
     }
-
     .wide .board:hover {
         margin: 0 0 0 0;
     }
 
     .footer {
         position: fixed;
-        padding: 10px;
+        padding: 20px;
         border-radius: 0;
         bottom: 30px;
         height: 40px;
-        display: block;
         align-items: center;
         width: 330px;
-        left: 30px;
+        left: 15px;
         animation-duration: .3s;
         animation-name: slideIn;
         animation-iteration-count: 1;
         animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1.1);
-        z-index: 1000;
+        z-index: 2000;
         --margin-end-position: 0px;
         --margin-start-position: -330px;
         margin-left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .footer.slideOut {
-      animation-duration: .3s;
-      animation-name: slideIn;
-      --margin-end-position: -330px;
-      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1.1);
-      --margin-start-position: 0px;
-      margin-left: -330px;
+      transition: all .3s ease;
+      left: -330px;
     }
 
     @keyframes slideIn {
         from {
             margin-left: var(--margin-start-position);
-            backdrop-filter: blur(10px);
         }
 
         to {
             margin-left: var(--margin-end-position);
-            backdrop-filter: blur(0px);
+        }
+    }
+    @keyframes slideOut {
+        from {
+            margin-left: var(--margin-end-position);
+        }
+
+        to {
+            margin-left: var(--margin-start-position);
         }
     }
     
     .wide .footer {
-        width: 100%;
-        bottom: 0;
+        width: calc(100vw - 30px);
+        bottom: 20px;
     }
 
     .footer div {
@@ -289,12 +296,6 @@
 
     .footer:hover {
         cursor: pointer;
-    }
-
-    .logo {
-        height: 24px;
-        width: 150px;
-        margin-right: 5px;
     }
 
     .board-bg {

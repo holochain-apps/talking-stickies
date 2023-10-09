@@ -617,7 +617,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   }
 
   .grey {
-    background: linear-gradient(180deg, #E4E4E4 0%, #FFFFFF 100%);
+    background: linear-gradient(180deg, #d2d2d2 0%, #FFFFFF 100%);
   }
 
   .sticky-content {
@@ -767,7 +767,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     border: 2px solid rgb(166 115 55 / 26%);
     border-bottom: 2px solid rgb(84 54 19 / 50%);
     border-top: 2px solid rgb(166 115 55 / 15%);
-    box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
+    box-shadow: 0px 15px 25px rgb(130 107 58 / 25%);
     border-radius: 10px;
     height: 40px;
     display: flex;

@@ -64,7 +64,7 @@
   }
 
   .sort-button:hover {
-    transform: scale(1.15);
+    transform: scale(1.3);
   }
 
   .sort-button.selected {

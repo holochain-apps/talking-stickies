@@ -75,7 +75,7 @@
     max-width: 499px;
     min-width: 250px;
     width: 100%;
-    margin: 10px;
+    margin: 0px 15px 15px 15px;
     padding: 10px;
     font-size: 12px;
     line-height: 16px;
@@ -83,10 +83,12 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: linear-gradient(180deg,  rgba(252, 250, 243, 1.0) 0%, #FFFFFF 100%);
+    background: linear-gradient(180deg, rgb(246, 245, 244) 0%, #ffffff 100%);
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    border: 2px solid rgba(0,0,0,.1);
+    border: 2px solid rgb(166 115 55 / 26%);
+    border-bottom: 2px solid rgb(84 54 19 / 40%);
+    border-top: 2px solid rgba(255,255,255,.8);
     transition: all .25s ease;
   }
 
@@ -99,11 +101,14 @@
   .input-wrapper::after {
     content: attr(data-replicated-value) " ";
     white-space: pre-wrap;
-    padding: 7px 10px;
+    padding: 0px 0px;
     letter-spacing: -.015rem;
     line-height: 16px;
     font-size: 14px;
     visibility: hidden;
+    color: red;
+    margin-top: 3px;
+    padding-bottom: 5px;
   }
   
   .controls {
@@ -128,35 +133,50 @@
     min-width: 30px;
     padding: 0px 6px;
     justify-content: center;
-    box-shadow: 0 4px 5px rgba(0,0,0,.2);
+    box-shadow: 0px 3px 5px rgb(130 107 58 / 25%);
     position: relative;
     font-size: 11px;
     transition: all .25s ease;
     cursor: pointer;
-    border-bottom: 2px solid rgba(0,0,0,.25);
+    border: 2px solid rgb(166 115 55 / 16%);
+    border-bottom: 2px solid rgb(84 54 19 / 25%);
+    border-top: 2px solid rgba(255,255,255,.7);
+    transition: all .25s ease;
+    transform: scale(1);
   }
 
-  .control * {
-    fill: red;
+  .control:hover {
+    transform: scale(1.3);
   }
 
   .color-buttons {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     flex-direction: row;
     align-items: center;
     cursor: pointer;
     margin-left: 5px;
     margin-right: 5px;
+    margin-top: 8px;
+    margin-bottom: 3px;
   }
 
   .color-button {
-    box-shadow: 0 4px 5px rgba(0,0,0,.2);
+    border: 2px solid rgb(166 115 55 / 16%);
+    border-bottom: 2px solid rgb(84 54 19 / 25%);
+    border-top: none;
+    box-shadow: 0px 3px 5px rgb(130 107 58 / 25%);
     width: 15px;
     height: 15px;
     margin: 2px;
-    border: 2px solid white;
-    border-radius: 3px;
+    border-radius: 5px;
+    transition: all .25s ease;
+    transform: scale(1);
+  }
+
+  .color-button:hover {
+    transform: scale(1.35);
+    cursor: pointer;
   }
 
   .sticky-input {
@@ -177,14 +197,15 @@
     letter-spacing: -.015rem;
     line-height: 16px;
     font-size: 14px;
-    margin-top: -16px;
-    margin-left: -15px;
-    margin-right: -14px;
-    resize: none;
+    margin-top: 5px;
+    margin-left: 0;
+    margin-right: 0;
+    resize: vertical;
     height: 100%;
     overflow: hidden;
     font-family: Roboto,'Open Sans','Helvetica Neue',sans-serif;
-    padding: 15px;
+    padding: 0;
+    padding-bottom: 8px;
   }
 
   sl-textarea.sticky-input, .input-wrapper::after  {
@@ -224,6 +245,6 @@
   }
 
   .grey {
-    background: linear-gradient(180deg, #E4E4E4 0%, #FFFFFF 100%);
+    background: linear-gradient(180deg, #d2d2d2 0%, #FFFFFF 100%);
   }
 </style>
