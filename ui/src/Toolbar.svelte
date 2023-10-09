@@ -81,7 +81,7 @@
 
   .tool-item {
     background: #FFFFFF;
-    border: 2px solid rgb(166 115 55 / 36%);
+    border: 2px solid rgb(166 115 55 / 26%);
     border-bottom: 2px solid rgb(84 54 19 / 50%);
     border-top: 2px solid rgb(166 115 55 / 15%);
     box-shadow: 0px 15px 20px rgb(130 107 58 / 15%);

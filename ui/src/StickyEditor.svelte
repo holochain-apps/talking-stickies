@@ -136,7 +136,9 @@
     border-bottom: 2px solid rgba(0,0,0,.25);
   }
 
-
+  .control * {
+    fill: red;
+  }
 
   .color-buttons {
     display: flex;
