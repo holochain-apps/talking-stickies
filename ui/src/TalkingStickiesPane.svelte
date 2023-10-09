@@ -327,10 +327,11 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
         <div style="margin-right: 5px; display: flex;"><AddGroupIcon /></div>
         Add Group
     </div>
-
-    <div class="sortby">
-      Sort: <SortSelector {setSortOption} {sortOption} />
-    </div>
+    {#if $state.voteTypes.length>0}
+      <div class="sortby">
+        Sort: <SortSelector {setSortOption} {sortOption} />
+      </div>
+    {/if}
   </div>
   {#if $state}
   <Masonry

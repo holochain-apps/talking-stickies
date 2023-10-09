@@ -45,7 +45,11 @@
         if (e.keyCode == 27) {
           cancelEdit()
         }
-    }}>
+        if(e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+          handleSave(groupId, props)
+        }
+      }
+    }>
     </sl-textarea>
   </div>
   <div class="color-buttons">
