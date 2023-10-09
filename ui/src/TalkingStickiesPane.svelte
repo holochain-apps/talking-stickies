@@ -507,7 +507,6 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     min-width: 290px;
     border: 2px dashed rgba(84, 54, 19, .20);
     border-radius: 15px;
-    margin-top: 10px;
     padding-top: 30px;
     padding-bottom: 15px;
   }

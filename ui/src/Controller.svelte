@@ -261,7 +261,7 @@
   }
 
   .workspace {
-    padding-top: 115px;
+    padding-top: 135px;
   }
 
   /* .my-boards {
