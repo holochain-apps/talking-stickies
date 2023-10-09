@@ -65,10 +65,11 @@
     justify-content: space-between;
     padding-left: 15px;
     padding-right: 25px;
-    padding-top: 16px;
-    padding-bottom: 16px;
+    padding-top: 0;
+    padding-bottom: 0;
     position: fixed;
-    top: 0;
+    top: 40px;
+    height:0;
     z-index: 10;
     width: 100vw;
   }

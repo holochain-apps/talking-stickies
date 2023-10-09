@@ -68,6 +68,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: all .25s ease;
+        transform: scale(1);
+    }
+
+    .tool-item:hover {
+    cursor: pointer;
+    transform: scale(1.1);
     }
 
     .participants {

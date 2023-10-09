@@ -329,7 +329,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     </div>
     {#if $state.voteTypes.length>0}
       <div class="sortby">
-        Sort: <SortSelector {setSortOption} {sortOption} />
+        Sort by <SortSelector {setSortOption} {sortOption} />
       </div>
     {/if}
   </div>
@@ -428,6 +428,11 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
                   {#each new Array(myVotes(props.votes, type)).map((_, i) => i) as index}
                     <div class="vote-count" />
                   {/each}
+                  <div class="vote-count-background">
+                    {#each new Array(myVotes(props.votes, type)).map((_, i) => i) as index}
+                    <div class="vote-count background" />
+                    {/each}
+                  </div>
                 </div>
                 {/if}
               </div>
@@ -473,10 +478,11 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     align-items: center;
     justify-content: space-between;
     position: fixed;
-    z-index: 100;
-    top: 75px;
+    z-index: 5;
+    top: 100px;
     left: 0;
-    padding: 5px 15px;
+    height: 0;
+    padding: 0 15px;
   }
 
   .left-items {
@@ -654,21 +660,40 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     border-bottom: 2px solid rgba(70, 134, 7, 1.0);
   }
   
-  .vote-counts {
+  .vote-counts, .vote-count-background {
     padding-top: 2px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     position: absolute;
-    left: -3px;
     justify-content: flex-start;
+    bottom: -3px;
+    justify-content: space-around;
+    width: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    position: absolute;
+  }
+
+  .vote-count-background {
+    bottom: 0;
+    width: 100%;
+    z-index: 0;
   }
 
   .vote-count {
-    border-radius: 50px;
-    width: 5px;
-    height: 5px;
-    background-color: transparent;
-    margin-bottom: 2px;
+    position: relative;
+    z-index: 1;
+    border-radius: 10px;
+    background-color: rgba(244, 200, 42, 1.0);
+    width: 4px;
+    height: 4px;
+  }
+
+  .vote-count.background {
+    bottom: -2px;
+    background-color: rgba(70, 134, 8, 1.0);
+    width: 8px;
+    height: 8px;
   }
 
   @keyframes smoothExpansion {
@@ -753,7 +778,12 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     transform: scale(1);
 }
 
-.add-group:hover, .sortby:hover {
+.sortby {
+  font-weight: normal;
+  color: rgba(95, 90, 83, .5);
+}
+
+.add-group:hover {
   cursor: pointer;
   transform: scale(1.1);
 }
