@@ -316,7 +316,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
       }
       )
 
-  let [minColWidth, maxColWidth, gap] = [400, 800, 30]
+  let [minColWidth, maxColWidth, gap] = [300, 800, 30]
   let width, height
 
 </script>
@@ -508,7 +508,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     border: 2px dashed rgba(84, 54, 19, .20);
     border-radius: 15px;
     margin-top: 10px;
-    padding-top: 15px;
+    padding-top: 30px;
     padding-bottom: 15px;
   }
 
@@ -556,10 +556,9 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   }
 
   .sticky, .add-sticky {
-    max-width: 499px;
     min-width: 250px;
     width: 100%;
-    margin: 10px;
+    margin: 0px 15px 15px 15px;
     padding: 10px;
     font-size: 14px;
     line-height: 18px;
