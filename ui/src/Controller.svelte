@@ -166,7 +166,8 @@
   }
 
   .background-overlay {
-    background: linear-gradient(180deg, #FFFFFF 0%, rgba(251, 245, 223, 0.39) 100%, rgba(182, 176, 157, 0.39) 100%);    position: absolute;
+    background: linear-gradient(144deg, #fcfbf5 0%, rgb(230 225 206) 100%);
+    position: absolute;
     z-index: 2;
     width: 100%;
     height: 100%;
@@ -260,7 +261,7 @@
   }
 
   .workspace {
-    padding-top: 110px;
+    padding-top: 115px;
   }
 
   /* .my-boards {

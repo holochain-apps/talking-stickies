@@ -462,6 +462,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     margin-right: 15px;
     margin-top: 15px;
     width: 100vw;
+    padding-bottom: 30px;
   }
 
   .top-bar {
@@ -504,27 +505,36 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     align-items: center;
     justify-content: center;
     min-width: 290px;
-    border: 2px dashed rgba(239, 235, 230, 1.0);
+    border: 2px dashed rgba(84, 54, 19, .20);
     border-radius: 15px;
     margin-top: 10px;
-    padding-top: 5px;
+    padding-top: 15px;
+    padding-bottom: 15px;
   }
 
   .group-title {
     white-space: nowrap;
     overflow: hidden;
     font-size: 16px;
-    padding-left: 10px;
-    padding-right: 10px;
     position: absolute;
-    top: -22px;
-    background-color: rgba(255, 255, 254, 1.0);
+    top: -20px;
+    border: 2px dashed rgb(166 115 55 / 30%);
+    border-bottom: 2px dashed rgb(84 54 19 / 40%);
+    border-top: 2px dashed rgb(166 115 55 / 15%);
+    border-radius: 15px;
     left: 50%;
-    transform: translateX(-50%);
-    padding-top: 10px;
+    transform: translateX(-50%) scale(1);
     max-width: 270px;
     display: flex;
+    background-color: white;
+    padding: 3px 8px;
     align-items: center;
+    box-shadow: 0px 5px 8px rgb(130 107 58 / 25%);
+    transition: all .25s ease;
+  }
+
+  .group-title:hover {
+    transform: translateX(-50%) scale(1.15);
   }
 
   .stickies {
@@ -542,7 +552,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
 
   .tilted {
     transform: rotate(3deg);
-    box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0px 15px 25px rgb(130 107 58 / 45%) !important;
   }
 
   .sticky, .add-sticky {
@@ -558,11 +568,19 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: linear-gradient(180deg,  rgba(252, 250, 243, 1.0) 0%, #FFFFFF 100%);
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(180deg, rgb(247 243 237) 0%, #ffffff 100%);
+    box-shadow: 0px 5px 8px rgb(130 107 58 / 25%);
     border-radius: 10px;
-    border: 2px solid rgba(0,0,0,.1);
-    border-bottom: 2px solid rgba(0,0,0,.13);
+    border: 2px solid rgb(166 115 55 / 26%);
+    border-bottom: 2px solid rgb(84 54 19 / 40%);
+    border-top: 2px solid rgba(255,255,255,.8);
+    transition: all .25s ease;
+    transform: scale(1);
+  }
+
+  .sticky:hover, .add-sticky:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 10px 15px rgb(130 107 58 / 25%);
   }
 
   .white {
@@ -622,6 +640,12 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     transition: all .25s ease;
     cursor: pointer;
     border-bottom: 2px solid rgba(0,0,0,.2);
+    transition: all .25s ease;
+    transform: scale(1);
+  }
+
+  .vote:hover {
+    transform: scale(1.25);
   }
 
   .voted {
@@ -649,26 +673,16 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   }
 
   @keyframes smoothExpansion {
-    0% {
-        width: 0;
-        height: 0;
-        opacity: 0;
-    }
-    90% {
-        width: 110%;
-        height: 110%;
-        opacity: 1;
-    }
-    100% {
-        width: 100%;
-        height: 100%;
-        opacity: 1;
-    }
+    0% { top: 0; }
+    80% {  top: -3px; }
+    90% { top: 1px; }
+    100% { top: 0; }
   }
 
   @keyframes compression {
     0% { top: 0px; }
-    90% { top: 3px; }
+    80% { top: 3px; }
+    90% { top: -1px; }
     100% { top: 0px; }
   }
 
@@ -677,12 +691,13 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     animation-name: compression;
     animation-fill-mode: backwards;
     animation-timing-function: ease;
-    animation-delay: .15s;
+    animation-delay: .0;
+    transition: all .25s ease;
   }
 
 
-  .vote-icon-wrapper {
-    border: 1px solid red;
+  .voted .vote-icon-wrapper {
+    position: relative;
     animation-duration: 0.25s;
     animation-name: smoothExpansion;
     animation-fill-mode: backwards;
@@ -694,8 +709,10 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     display: block;
     padding-left: 5px;
     animation-duration: 0.25s;
-    animation-timing-function: ease-in-out;
+    animation-timing-function: ease;
     animation-name: smoothExpansion;
+    animation-delay: .15s;
+    position: relative;
   }
 
   .voted.vote .num-votes {
@@ -723,7 +740,9 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     font-size: 14px;
     font-weight: bold;
     background: #FFFFFF;
-    border: 2px solid rgba(233, 227, 220, .70);
+    border: 2px solid rgb(166 115 55 / 36%);
+    border-bottom: 2px solid rgb(84 54 19 / 50%);
+    border-top: 2px solid rgb(166 115 55 / 15%);
     box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
     border-radius: 10px;
     height: 40px;
@@ -731,5 +750,12 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     align-items: center;
     justify-content: center;
     padding: 0 8px;
+    transition: all .25s ease;
+    transform: scale(1);
+}
+
+.add-group:hover, .sortby:hover {
+  cursor: pointer;
+  transform: scale(1.1);
 }
 </style>

@@ -59,8 +59,9 @@
 <style>
     .tool-item {
         background: #FFFFFF;
-        border: 2px solid rgba(239, 235, 230, 1.0);
-        box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
+        border: 2px solid rgb(166 115 55 / 26%);
+        border-bottom: 2px solid rgb(84 54 19 / 40%);
+        box-shadow: 0px 15px 20px rgb(130 107 58 / 15%);
         border-radius: 10px;
         height: 50px;
         display: flex;

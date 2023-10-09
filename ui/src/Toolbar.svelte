@@ -19,8 +19,6 @@
 
   export let profilesStore: ProfilesStore|undefined
 
-  let aboutDialog
-  $:bugColor = "color: #5536f9"
 </script>
 
 <div class='toolbar'>
@@ -45,7 +43,7 @@
   <div class="items">
     <div class="tool-item bugs">
       <a href="https://github.com/holochain-apps/talking-stickies/issues" title="Report a problem in our GitHub repo" target="_blank">
-        <div class="nav-button"><Fa icon={faBug} size=2x style={bugColor} /></div>
+        <div class="nav-button"><Fa icon={faBug} size=2x /></div>
       </a>
     </div>
     <Folk profilesStore={profilesStore}></Folk>
@@ -83,13 +81,22 @@
 
   .tool-item {
     background: #FFFFFF;
-    border: 2px solid rgba(233, 227, 220, .70);
-    box-shadow: 0px 8px 10px rgba(30, 30, 30, 0.1);
+    border: 2px solid rgb(166 115 55 / 36%);
+    border-bottom: 2px solid rgb(84 54 19 / 50%);
+    border-top: 2px solid rgb(166 115 55 / 15%);
+    box-shadow: 0px 15px 20px rgb(130 107 58 / 15%);
     border-radius: 10px;
     height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all .25s ease;
+    transform: scale(1);
+  }
+
+  .tool-item:hover {
+    cursor: pointer;
+    transform: scale(1.1);
   }
 
   .menu {
