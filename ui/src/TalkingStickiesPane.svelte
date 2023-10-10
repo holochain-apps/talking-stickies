@@ -423,6 +423,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
                   <EmojiIcon emoji={emoji} class="vote-icon" />
                 </div>
                 <span class="num-votes">{countVotes(props.votes, type)}</span>
+                {#if maxVotes > 1}
                 <div class="vote-counts">
                   {#each [...Array(maxVotes).keys()] as index}
                     <div class="vote-count" class:vote-count-potential={myVotes(props.votes, type) <= index} />
@@ -433,6 +434,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
                     {/each}
                   </div>
                 </div>
+                {/if}
               </div>
             {/each}
           </div>
@@ -616,6 +618,9 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     background: linear-gradient(180deg, #d2d2d2 0%, #FFFFFF 100%);
   }
 
+  .sticky-content {
+    overflow-y: auto;
+  }
   .votes {
     display: flex;
     align-items: center;
@@ -664,9 +669,8 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     display: flex;
     flex-direction: row;
     position: absolute;
-    justify-content: flex-start;
+    justify-content: center;
     bottom: -3px;
-    justify-content: space-around;
     width: 80%;
     left: 50%;
     transform: translateX(-50%);
@@ -684,24 +688,31 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     z-index: 1;
     border-radius: 10px;
     background-color: rgba(244, 200, 42, 1.0);
-    width: 4px;
-    height: 4px;
+    min-width: 4px;
+    min-height: 4px;
+    margin: 3px;
+    margin-bottom: 0px
   }
 
   .vote-count-potential {
-    background-color: rgba(100, 100, 100, 1.0);
+    background-color: rgba(205, 199, 194, 1.0);
   }
 
 
   .vote-count.background {
-    bottom: -2px;
-    background-color: rgba(205, 199, 194, 1.0);
-    width: 8px;
-    height: 8px;
+    bottom: -3px;
+    background-color: rgba(182, 172, 162, 1.0);
+    min-width: 8px;
+    min-height: 8px;
+    margin: 1px;
   }
 
   .voted .vote-count.background {
     background-color: rgba(70, 134, 8, 1.0);
+  }
+
+  .voted .vote-count-potential {
+    background-color: rgb(106, 135, 76);
   }
 
   @keyframes smoothExpansion {
