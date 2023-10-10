@@ -28,6 +28,7 @@
     let boardEditor
 
 </script>
+<div class="dialog-container">
 <sl-dialog bind:this={dialog} label="New Board"
     on:sl-initial-focus={(e)=>{
         boardEditor.initialFocus()
@@ -39,3 +40,11 @@
   }}}>
     <BoardEditor bind:this={boardEditor}  handleSave={addBoard} cancelEdit={()=>dialog.hide()} />
 </sl-dialog>
+</div>
+
+<style>
+    .dialog-container {
+        position: relative;
+        z-index: 10000;
+    }
+</style>

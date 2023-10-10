@@ -100,6 +100,10 @@
     transform: scale(1.15);
   }
 
+  .tool-item.search:hover {
+    transform: scale(1.1);
+  }
+
   .menu {
     width: 50px;
     margin-right: 15px;

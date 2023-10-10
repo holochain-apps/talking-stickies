@@ -68,9 +68,10 @@
   }
 
   .sort-button.selected {
-    border-color: rgb(76, 106, 167);
+    
+    border: 2px solid rgb(76, 106, 167);
+    border-top: 2px solid rgb(123, 166, 252);
     background-color: rgb(77, 123, 214);
     box-shadow: 0 4px 5px rgba(0,0,0,.2);
-    border-bottom: 2px solid rgb(60, 83, 127);
   }
 </style>

@@ -316,7 +316,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
       }
       )
 
-  let [minColWidth, maxColWidth, gap] = [300, 800, 30]
+  let [minColWidth, maxColWidth, gap] = [300, 1200, 30]
   let width, height
 
 </script>

@@ -144,6 +144,10 @@
       top: 80px;
     }
 
+    .board-menu:hover {
+      z-index: 200;
+    }
+
     .board-menu.slideOut, .board-menu-pad.slideOut {
       animation-duration: .3s;
       animation-name: slideOut;
