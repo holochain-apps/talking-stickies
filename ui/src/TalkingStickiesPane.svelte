@@ -513,6 +513,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     justify-content: center;
     min-width: 290px;
     border: 2px dashed rgba(84, 54, 19, .20);
+    background-color: rgb(77 65 50 / 4%);
     border-radius: 15px;
     padding-top: 30px;
     padding-bottom: 15px;
@@ -744,7 +745,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   }
 
   .add-sticky {
-    opacity: 0.3;
+    opacity: 0.5;
     font-weight: bold;
     transition: all .25s ease;
     width: -webkit-fill-available;
