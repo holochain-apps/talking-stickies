@@ -72,9 +72,9 @@
 
 <style>
   .sticky-editor {
-    max-width: 499px;
     min-width: 250px;
     width: 100%;
+    max-width: 360px;
     margin: 0px 15px 15px 15px;
     padding: 10px;
     font-size: 12px;

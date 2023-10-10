@@ -351,8 +351,8 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
       on:drop={handleDragDropGroup}
       on:dragover={handleDragOver}
    >
+   {#if $state.groups.length > 1}  
       <div class="group-title">
-        {#if $state.groups.length > 1}  
           <b>
             {#if item.id === UngroupedId}
               Ungrouped
@@ -376,8 +376,8 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
               
             {/if}
           </b>
-        {/if}
       </div>
+      {/if}
       <div class="stickies"
       >
     {#each sorted(item.stickyIds, sortStickies) as { id, props } (id)}
@@ -563,6 +563,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   .sticky, .add-sticky {
     min-width: 250px;
     width: 100%;
+    max-width: 360px;
     margin: 0px 15px 15px 15px;
     padding: 10px;
     font-size: 14px;

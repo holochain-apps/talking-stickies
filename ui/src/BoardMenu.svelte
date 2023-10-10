@@ -135,7 +135,6 @@
         border-radius: 10px;
         height: calc(100vh - 100px);
         margin-left: 15px;
-        margin-top: -55px;
     }
 
     .wide.board-menu {
@@ -152,7 +151,8 @@
     .board-menu::-webkit-scrollbar-thumb {
         height: 5px;
         border-radius: 0;
-        background: rgba(20,60,119,.9);
+        background: rgba(215, 203, 191, 1.0);
+        border-radius: 10px;
         opacity: 1;
     }
 
@@ -196,11 +196,6 @@
         width: 296px;
     }
 
-    .new-board:hover {
-        transform: scale(1.08);
-        box-shadow: 0px 20px 35px rgb(130 107 58 / 25%);
-    }
-
     .new-board span {
         color: #5F5A54;
         display: block;
@@ -209,7 +204,7 @@
 
     .board {
         width: 290px;
-        background: #FFFFFF;
+        background: linear-gradient(180deg, rgba(246, 245, 235, 1.0)0%, rgba(255, 255, 255, 1) 100%);
         border: 2px solid rgb(166 115 55 / 26%);
         border-bottom: 2px solid rgb(84 54 19 / 50%);
         border-top: 2px solid rgb(166 115 55 / 15%);
@@ -222,32 +217,42 @@
         transition: all .25s ease;
         transform: scale(1);
         padding: 15px;
+        margin-bottom: 15px;
     }
 
-    .board:hover {
+    .wide .board {
+        margin-right: 15px;
+    }
+
+    .board:hover, .new-board:hover {
         cursor: pointer;
         z-index: 100;
         padding: 15px;
         width: 300px;
-        transform: scale(1.07);
-        background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        transform: scale(1.03);
         box-shadow: 0px 15px 25px rgb(130 107 58 / 25%);
         z-index: 100;
-    
+        margin-left: -7px;
     }
+
+    .new-board:hover {
+        box-shadow: 0px 20px 35px rgb(130 107 58 / 25%);
+    }
+
     .wide .board:hover {
-        margin: 0 0 0 0;
+        margin-left: -5px;
+        margin-right: 10px;
     }
 
     .footer {
         position: fixed;
         padding: 20px;
         border-radius: 0;
-        bottom: 30px;
-        height: 40px;
+        bottom: 22px;
+        height: 50px;
         align-items: center;
-        width: 330px;
-        left: 15px;
+        width: 315px;
+        left: 18px;
         animation-duration: .3s;
         animation-name: slideIn;
         animation-iteration-count: 1;
@@ -259,6 +264,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 46%);
+        border-radius: 10px;
     }
 
     .footer.slideOut {

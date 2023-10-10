@@ -85,9 +85,15 @@
           <div class="board-menu">
             <BoardMenu wide={false}></BoardMenu>
           </div>
+          <div class="board-menu-pad">
+            <BoardMenu wide={false}></BoardMenu>
+          </div>
         {/if}
       {:else}
         <div class="board-menu slideOut">
+          <BoardMenu wide={false}></BoardMenu>
+        </div>
+        <div class="board-menu-pad slideOut">
           <BoardMenu wide={false}></BoardMenu>
         </div>
       {/if}
@@ -121,9 +127,7 @@
     position: relative;
   }
 
-  .board-menu {
-      position: sticky;
-      top: 1000px;
+  .board-menu, .board-menu-pad {
       animation-duration: .3s;
       animation-name: slideIn;
       animation-iteration-count: 1;
@@ -135,24 +139,40 @@
 
     }
 
-    .board-menu.slideOut {
+    .board-menu {
+      position: fixed;
+      top: 80px;
+    }
+
+    .board-menu.slideOut, .board-menu-pad.slideOut {
       animation-duration: .3s;
-      animation-name: slideIn;
+      animation-name: slideOut;
       --margin-end-position: -343px;
       animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1.1);
       --margin-start-position: 0px;
       margin-left: -343px;
     }
 
+    .board-menu-pad {
+      visibility: hidden;
+    }
+
     @keyframes slideIn {
         from {
             margin-left: var(--margin-start-position);
-            backdrop-filter: blur(10px);
         }
 
         to {
             margin-left: var(--margin-end-position);
-            backdrop-filter: blur(0px);
+        }
+    }
+    @keyframes slideOut {
+        from {
+            margin-left: var(--margin-start-position);
+        }
+
+        to {
+            margin-left: var(--margin-end-position);
         }
     }
 
