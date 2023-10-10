@@ -208,7 +208,7 @@
     resize: vertical;
     height: 100%;
     overflow: hidden;
-    font-family: Roboto,'Open Sans','Helvetica Neue',sans-serif;
+    font-family: 'Figtree', sans-serif;
     padding: 0;
     padding-bottom: 8px;
   }

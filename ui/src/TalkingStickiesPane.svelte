@@ -616,9 +616,6 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     background: linear-gradient(180deg, #d2d2d2 0%, #FFFFFF 100%);
   }
 
-  .sticky-content {
-    overflow-y: auto;
-  }
   .votes {
     display: flex;
     align-items: center;
