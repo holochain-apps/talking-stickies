@@ -579,7 +579,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     border-radius: 10px;
     border: 2px solid rgb(166 115 55 / 26%);
     border-bottom: 2px solid rgb(84 54 19 / 40%);
-    border-top: 2px solid rgba(255,255,255,.8);
+    border-top: 2px solid rgba(255,255,255,.5);
     transition: all .25s ease;
     transform: scale(1);
   }
@@ -587,10 +587,6 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   .sticky:hover, .add-sticky:hover {
     transform: scale(1.05);
     box-shadow: 0px 10px 15px rgb(130 107 58 / 25%);
-  }
-
-  .white {
-    background: linear-gradient(180deg,  rgba(252, 250, 243, 1.0) 0%, #FFFFFF 100%);
   }
 
   .yellow {
@@ -635,7 +631,6 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     margin: 5px;
     align-items: center;
     background: rgba(0,0,0,.06);
-    border: 2px solid rgba(0,0,0,.07);
     border-radius: 10px;
     flex-basis: 26px;
     height: 30px;
@@ -645,9 +640,15 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     font-size: 11px;
     transition: all .25s ease;
     cursor: pointer;
-    border-bottom: 2px solid rgba(0,0,0,.2);
+    border: 2px solid rgb(166 115 55 / 26%);
+    border-bottom: 2px solid rgb(84 54 19 / 40%);
+    border-top: 2px solid rgba(255,255,255,.4);
     transition: all .25s ease;
     transform: scale(1);
+  }
+
+  .white .vote {
+    border-top: 2px solid rgb(166 115 55 / 26%);
   }
 
   .vote:hover {
@@ -659,6 +660,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     background-color: rgba(110, 174, 47, .70);
     box-shadow: 0 4px 5px rgba(0,0,0,.2);
     border-bottom: 2px solid rgba(70, 134, 7, 1.0);
+    border-top: 2px solid rgb(148, 220, 77);
   }
   
   .vote-counts, .vote-count-background {
