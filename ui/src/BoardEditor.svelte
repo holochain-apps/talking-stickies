@@ -131,16 +131,12 @@
 </script>
 
   <div class='board-editor'>
-    <div class="edit-title">
-      <div class="title-text">Title:</div> 
+    <div class="edit-title control-group">
+      <div class="control-group-title">Title</div> 
       <sl-input required={true} class='textarea' maxlength="60" bind:this={nameInput}  on:input={e=>text= e.target.value}></sl-input>
     </div>
-    <div class="edit-groups unselectable">
-      <div class="title-text">Groups:
-        <sl-button circle size="small" on:click={() => addGroup()}>
-          <Fa icon={faPlus}/>
-        </sl-button>
-      </div>
+    <div class="edit-groups unselectable control-group">
+      <div class="control-group-title">Groups</div>
       <DragDropList
         id="groups"
         type={VerticalDropZone}
@@ -158,14 +154,14 @@
           </sl-button>
         </div>
       </DragDropList>
+      <div class="control" on:click={() => addGroup()}>
+        <Fa icon={faPlus}/>
+        <span>Add sticky group</span>
+      </div>
     </div>
-    <div class="edit-vote-types unselectable">
-      <div class="title-text">
-        Voting Types:
-
-        <sl-button circle size="small"  on:click={() => addVoteType()}>
-          <Fa icon={faPlus}/>
-        </sl-button>
+    <div class="edit-vote-types unselectable control-group">
+      <div class="control-group-title">
+        Voting Types
       </div>
       <sl-dialog label="Choose Emoji" bind:this={emojiDialog}>
           <emoji-picker on:emoji-click={(e)=>  {
@@ -194,40 +190,47 @@
           <sl-input type="number" min="1" max="5" class='textarea' style="width:70px" value={voteTypes[index].maxVotes} title="max votes on type per card"
           on:input={e=>voteTypes[index].maxVotes = parseInt(e.target.value) }> </sl-input>
           <sl-input 
-            class='textarea' value={voteTypes[index].toolTip} 
+            class='textarea vote-type' value={voteTypes[index].toolTip} 
             title="description"
             placeholder="description"
             on:input={e=>voteTypes[index].toolTip = e.target.value}> </sl-input>
 
-          <sl-button size="small"  on:click={deleteVoteType(index)} >
-            <Fa icon={faTrash}/>
+          <sl-button size="small"   on:click={deleteVoteType(index)} >
+            <Fa icon={faTrash}/> 
           </sl-button>
         </div>
       </DragDropList> 
+      <div class="control" on:click={() => addVoteType()}>
+        <Fa icon={faPlus}/>
+        <span>Add vote</span>
+      </div>
     </div>
   
-    <div class="edit-title">
-      <div class="title-text">Background Image:</div> <sl-input class='textarea' maxlength="255" value={props.bgUrl} on:input={e=>props.bgUrl = e.target.value} />
+    <div class="edit-title control-group">
+      <div class="control-group-title">Background Image</div>
+      <sl-input class='textarea' maxlength="255" value={props.bgUrl} on:input={e=>props.bgUrl = e.target.value} />
     </div>
 
     <div class='controls'>
-      <sl-button circle on:click={() => exportBoard($state)} title="Export">
+      <div class="control" circle on:click={() => exportBoard($state)} title="Export">
         <Fa icon={faFileExport} />
-      </sl-button>
+        <span>Export</span>
+      </div>
       {#if handleDelete}
-        <sl-button on:click={handleDelete}>
+        <div class="control" on:click={handleDelete}>
           Archive
-        </sl-button>
+        </div>
       {/if}
-      <sl-button on:click={cancelEdit} style="margin-left:10px">
+      <div class="control" on:click={cancelEdit} style="margin-left:10px">
         Cancel
-      </sl-button>
+      </div>
     
-      <sl-button
+      <div class="control"
         disabled={!valuesValid} 
         style="margin-left:10px" on:click={() => handleSave(text, groups, voteTypes, props)} variant="primary">
-        Save
-      </sl-button>
+        <span>Save</span>
+        
+      </div>
     </div>
  </div>
 
@@ -250,6 +253,35 @@
     font-weight: normal;
   }
 
+  .control-group {
+    position: relative;
+    margin-bottom: 25px;
+    min-width: 290px;
+    border: 2px dashed rgba(84, 54, 19, .20);
+    border-radius: 15px;
+    padding: 10px;
+  }
+
+  .control-group-title {
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 14px;
+    position: absolute;
+    top: -15px;
+    border-radius: 10px;
+    left: -3px;
+    max-width: 270px;
+    display: flex;
+    padding: 5px 8px;
+    align-items: center;
+    background-color: white;
+    padding-left: 0;
+  }
+
+  .textarea.vote-type::part(base) {
+    max-width: 170px;
+  }
+
   .controls {
     display: flex;
     flex-direction: row;
@@ -258,6 +290,45 @@
     padding-left: 7px;
     padding-top: 10px;
   }
+
+  .control {
+    display: flex;
+    margin: 5px;
+    align-items: center;
+    background: rgba(0,0,0,.05);
+    border: 2px solid rgba(0,0,0,.1);
+    border-radius: 10px;
+    height: 30px;
+    min-width: 30px;
+    padding: 0px 6px;
+    justify-content: center;
+    box-shadow: 0px 3px 5px rgb(130 107 58 / 25%);
+    position: relative;
+    font-size: 11px;
+    transition: all .25s ease;
+    cursor: pointer;
+    border: 2px solid rgb(166 115 55 / 16%);
+    border-bottom: 2px solid rgb(84 54 19 / 25%);
+    border-top: 2px solid rgba(255,255,255,.7);
+    transition: all .25s ease;
+    transform: scale(1);
+  }
+
+  .controls .control {
+    font-size: 16px;
+    height: 40px;
+    padding: 0px 10px;
+  }
+
+  .control:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+
+  .controls .control:hover {
+    transform: scale(1.3);
+  }
+
   .group {
     display: flex;
     flex-direction: row;
@@ -278,7 +349,9 @@
     flex-direction: row;
     align-items: center;
     font-weight: normal;
-    font-size: 120%;
+    font-size: 14px;
+    position: absolute;
+    top: -10px;
   }
   .unselectable {
     -webkit-touch-callout: none;

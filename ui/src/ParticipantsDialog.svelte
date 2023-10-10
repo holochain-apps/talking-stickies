@@ -79,4 +79,13 @@
         display: flex;
         align-items: center;
     }
+
+    sl-dialog::part(panel) {
+        background: #FFFFFF;
+        border: 2px solid rgb(166 115 55 / 26%);
+        border-bottom: 2px solid rgb(84 54 19 / 50%);
+        border-top: 2px solid rgb(166 115 55 / 5%);
+        box-shadow: 0px 15px 40px rgb(130 107 58 / 35%);
+        border-radius: 10px;
+    }
 </style>
