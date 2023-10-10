@@ -698,9 +698,13 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
 
   .vote-count.background {
     bottom: -2px;
-    background-color: rgba(70, 134, 8, 1.0);
+    background-color: rgba(205, 199, 194, 1.0);
     width: 8px;
     height: 8px;
+  }
+
+  .voted .vote-count.background {
+    background-color: rgba(70, 134, 8, 1.0);
   }
 
   @keyframes smoothExpansion {

@@ -70,7 +70,7 @@
     position: fixed;
     top: 40px;
     height:0;
-    z-index: 10;
+    z-index: 200;
     width: 100vw;
   }
   .logo {
