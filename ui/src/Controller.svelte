@@ -190,14 +190,14 @@
   }
 
   .background-overlay {
-    background: linear-gradient(144deg, #fcfbf5 0%, rgb(230 225 206) 100%);
+    background: linear-gradient(144deg, #fcfbf5 0%, rgb(230 225 215) 100%);
     position: absolute;
     z-index: 2;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-    opacity: .8;
+    opacity: .7;
   }
 
   .background-image {
