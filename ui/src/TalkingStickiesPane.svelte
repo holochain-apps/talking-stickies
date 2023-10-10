@@ -424,11 +424,11 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
                 </div>
                 <span class="num-votes">{countVotes(props.votes, type)}</span>
                 <div class="vote-counts">
-                  {#each [...Array(parseInt(maxVotes)).keys()] as index}
+                  {#each [...Array(maxVotes).keys()] as index}
                     <div class="vote-count" class:vote-count-potential={myVotes(props.votes, type) <= index} />
                   {/each}
                   <div class="vote-count-background">
-                    {#each [...Array(parseInt(maxVotes)).keys()] as index}
+                    {#each [...Array(maxVotes).keys()] as index}
                     <div class="vote-count background" />
                     {/each}
                   </div>

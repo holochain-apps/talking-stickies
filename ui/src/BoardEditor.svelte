@@ -53,6 +53,7 @@
     let groups: Array<Group> = []
     let voteTypes: Array<VoteType> = []
     let nameInput
+
     export const reset = () => {
       text = ''
       props = {bgUrl: ""}
@@ -89,7 +90,7 @@
     }
 
     const addVoteType = () => {
-      voteTypes.push(new VoteType(`🙂`, `description: edit-me`, 1))
+      voteTypes.push(new VoteType(`🙂`, ``, 1))
       voteTypes = voteTypes
     }
     const deleteVoteType = (index) => () => {
@@ -126,11 +127,13 @@
    let emojiDialog,colorDialog
    let showColorPicker :number|undefined = undefined
    let hex
+   $: valuesValid = text != ""
 </script>
 
   <div class='board-editor'>
     <div class="edit-title">
-      <div class="title-text">Title:</div> <sl-input class='textarea' maxlength="60" bind:this={nameInput}  on:input={e=>text= e.target.value}></sl-input>
+      <div class="title-text">Title:</div> 
+      <sl-input required={true} class='textarea' maxlength="60" bind:this={nameInput}  on:input={e=>text= e.target.value}></sl-input>
     </div>
     <div class="edit-groups unselectable">
       <div class="title-text">Groups:
@@ -188,10 +191,13 @@
           <sl-button on:click={()=>{showEmojiPicker = index;emojiDialog.show()}} >
             <span style="font-size:180%">{voteTypes[index].emoji}</span>
           </sl-button>
-          <sl-input class='textarea' style="width:60px" maxlength="2" minlength="1" value={voteTypes[index].maxVotes} title="max votes on type per card"
-          on:input={e=>voteTypes[index].maxVotes = e.target.value}> </sl-input>
-          <sl-input class='textarea' value={voteTypes[index].toolTip} title="description"
-          on:input={e=>voteTypes[index].toolTip = e.target.value}> </sl-input>
+          <sl-input type="number" min="1" max="5" class='textarea' style="width:70px" value={voteTypes[index].maxVotes} title="max votes on type per card"
+          on:input={e=>voteTypes[index].maxVotes = parseInt(e.target.value) }> </sl-input>
+          <sl-input 
+            class='textarea' value={voteTypes[index].toolTip} 
+            title="description"
+            placeholder="description"
+            on:input={e=>voteTypes[index].toolTip = e.target.value}> </sl-input>
 
           <sl-button size="small"  on:click={deleteVoteType(index)} >
             <Fa icon={faTrash}/>
@@ -216,7 +222,10 @@
       <sl-button on:click={cancelEdit} style="margin-left:10px">
         Cancel
       </sl-button>
-      <sl-button style="margin-left:10px" on:click={() => handleSave(text, groups, voteTypes, props)} variant="primary">
+    
+      <sl-button
+        disabled={!valuesValid} 
+        style="margin-left:10px" on:click={() => handleSave(text, groups, voteTypes, props)} variant="primary">
         Save
       </sl-button>
     </div>
