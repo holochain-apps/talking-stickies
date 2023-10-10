@@ -422,19 +422,17 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
                 <div class="vote-icon-wrapper">
                   <EmojiIcon emoji={emoji} class="vote-icon" />
                 </div>
-                {#if myVotes(props.votes, type) > 0}
                 <span class="num-votes">{countVotes(props.votes, type)}</span>
                 <div class="vote-counts">
-                  {#each new Array(myVotes(props.votes, type)).map((_, i) => i) as index}
-                    <div class="vote-count" />
+                  {#each [...Array(parseInt(maxVotes)).keys()] as index}
+                    <div class="vote-count" class:vote-count-potential={myVotes(props.votes, type) <= index} />
                   {/each}
                   <div class="vote-count-background">
-                    {#each new Array(myVotes(props.votes, type)).map((_, i) => i) as index}
+                    {#each [...Array(parseInt(maxVotes)).keys()] as index}
                     <div class="vote-count background" />
                     {/each}
                   </div>
                 </div>
-                {/if}
               </div>
             {/each}
           </div>
@@ -691,6 +689,11 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     width: 4px;
     height: 4px;
   }
+
+  .vote-count-potential {
+    background-color: rgba(100, 100, 100, 1.0);
+  }
+
 
   .vote-count.background {
     bottom: -2px;
