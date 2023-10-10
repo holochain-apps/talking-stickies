@@ -155,5 +155,6 @@ sl-input::part(base) {
 
 sl-input::part(input) {
     color: rgba(95, 90, 83, 1.0);
+    font-family: "Figtree", sans-serif;
 }
 </style>
