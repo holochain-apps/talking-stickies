@@ -212,10 +212,12 @@
     </div>
 
     <div class='controls'>
-      <div class="control" circle on:click={() => exportBoard($state)} title="Export">
-        <Fa icon={faFileExport} />
-        <span>Export</span>
-      </div>
+      {#if boardHash}
+        <div class="control" circle on:click={() => exportBoard($state)} title="Export">
+          <Fa icon={faFileExport} />
+          <span>Export</span>
+        </div>
+      {/if}
       {#if handleDelete}
         <div class="control" on:click={handleDelete}>
           Archive

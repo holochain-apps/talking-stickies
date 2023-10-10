@@ -3,13 +3,11 @@
     import type { TalkingStickiesStore } from "./tsStore";
     import type { EntryHashB64 } from '@holochain/client';
     import NewBoardDialog from './NewBoardDialog.svelte';
-    import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
     import Fa from 'svelte-fa';
     import AboutDialog from "./AboutDialog.svelte";
     import AddCard from "./icons/AddCard.svelte";
     import TSLogoIcon from "./icons/TSLogoIcon.svelte";
     import { faCog } from "@fortawesome/free-solid-svg-icons";
-  import TalkingStickiesPane from "./TalkingStickiesPane.svelte";
     export let wide = false
 
     let newBoardDialog

@@ -17,7 +17,7 @@
     })
 
     export const  open = async (hash: EntryHashB64)=> {
-        boardHash = hash
+        boardHash = `${hash}`
         boardEditor.edit(hash)
         dialog.show()
     }
@@ -69,6 +69,7 @@
     }
     const archiveBoard = () => {
         store.boardList.archiveBoard(boardHash)
+        store.setUIprops({showMenu: true})
         close()
     }
     const close = ()=>{
