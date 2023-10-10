@@ -90,6 +90,11 @@
     border-bottom: 2px solid rgb(84 54 19 / 40%);
     border-top: 2px solid rgba(255,255,255,.8);
     transition: all .25s ease;
+    transform: scale(1);
+  }
+
+  .sticky-editor:hover {
+    transform: scale(1.05);
   }
 
   .input-wrapper {
@@ -229,11 +234,11 @@
   }
 
   .skyblue {
-    background: linear-gradient(180deg, #D0EBFE 0%, #ECF4F7 100%);
+    background: linear-gradient(180deg, #d0f2fe 0%, #ECF4F7 100%);
   }
 
   .deepblue {
-    background: linear-gradient(180deg, #78C8F7 0%, #ECF2F7 100%);
+    background: linear-gradient(180deg, #8dc9eb 0%, #ECF2F7 100%);
   }
 
   .purple {

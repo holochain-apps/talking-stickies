@@ -601,11 +601,11 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   }
 
   .skyblue {
-    background: linear-gradient(180deg, #D0EBFE 0%, #ECF4F7 100%);
+    background: linear-gradient(180deg, #d0f2fe 0%, #ECF4F7 100%);
   }
 
   .deepblue {
-    background: linear-gradient(180deg, #78C8F7 0%, #ECF2F7 100%);
+    background: linear-gradient(180deg, #8dc9eb 0%, #ECF2F7 100%);
   }
 
   .purple {
@@ -783,8 +783,19 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   color: rgba(95, 90, 83, .5);
 }
 
+.add-group:active {
+  border-color: rgb(76, 106, 167);
+  background-color: rgb(77, 123, 214);
+  box-shadow: 0 4px 5px rgba(0,0,0,.2);
+  border-bottom: 2px solid rgb(60, 83, 127);
+}
+
 .add-group:hover {
   cursor: pointer;
   transform: scale(1.1);
+}
+
+:global(hr) {
+    opacity: .4;
 }
 </style>
