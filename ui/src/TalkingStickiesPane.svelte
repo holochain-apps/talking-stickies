@@ -309,9 +309,9 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
 
   $: items = $state.groups.map((group)=> {
     return {
-      id:group.id, stickyIds:$state.grouping[group.id]}}).filter(item=> {
-        return (item.id === UngroupedId && (item.stickyIds.length > 0 || $state.groups.length === 1)) || (
-          item.id !== UngroupedId
+      id:group.id, stickyIds:$state.grouping[group.id]}}).filter(g=> {
+        return (g.id === UngroupedId && (g.stickyIds.length > 0 || $state.groups.length === 1)) || (
+          g.id !== UngroupedId
         )
       }
       )
@@ -339,13 +339,13 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     {minColWidth}
     {maxColWidth}
     {gap}
-    let:item
+    let:item={group}
     bind:masonryWidth={width}
     bind:masonryHeight={height}
   >
     <div class="group"
-      class:glowing={dragTarget == item.id}
-      id={item.id}
+      class:glowing={dragTarget == group.id}
+      id={group.id}
       on:dragenter={handleDragEnter} 
       on:dragleave={handleDragLeave}  
       on:drop={handleDragDropGroup}
@@ -354,15 +354,15 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
    {#if $state.groups.length > 1}  
       <div class="group-title">
           <b>
-            {#if item.id === UngroupedId}
+            {#if group.id === UngroupedId}
               Ungrouped
             {:else}
 
             <ClickEdit
-              text={groups[item.id].name}
+              text={groups[group.id].name}
               handleSave={(text)=>{
                 const newGroups = cloneDeep($state.groups)
-                const idx = newGroups.findIndex(g=>g.id==item.id)
+                const idx = newGroups.findIndex(g=>g.id==group.id)
                 if (idx >= 0) {
                   newGroups[idx].name = text
                   tsStore.boardList.requestBoardChanges($activeHash, [
@@ -380,7 +380,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
       {/if}
       <div class="stickies"
       >
-    {#each sorted(item.stickyIds, sortStickies) as { id, props } (id)}
+    {#each sorted(group.stickyIds, sortStickies) as { id, props } (id)}
       {#if editingStickyId === id}
         <StickyEditor
           handleSave={updateSticky}
@@ -388,7 +388,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
             ()=>deleteSticky(id)
           }
           {cancelEdit}
-          groupId={item.id}
+          groupId={group.id}
           props={cloneDeep(props)}
         />
       {:else}
@@ -439,12 +439,12 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
         </div>
       {/if}
     {/each}
-    {#if creatingInGroup !== undefined  && creatingInGroup == item.id}
+    {#if creatingInGroup !== undefined  && creatingInGroup == group.id}
       <StickyEditor handleSave={createSticky} {cancelEdit} />
     {/if}
     </div>
 
-    <div class="add-sticky" on:click={newSticky(item.id)}>
+    <div class="add-sticky" on:click={newSticky(group.id)}>
       <div style="display: flex;">
         Add Sticky
         <div style="margin-left:5px"><Fa icon={faPlus}/></div>
