@@ -422,7 +422,9 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
                 <div class="vote-icon-wrapper">
                   <EmojiIcon emoji={emoji} class="vote-icon" />
                 </div>
+                {#if countVotes(props.votes, type) > 0}
                 <span class="num-votes">{countVotes(props.votes, type)}</span>
+                {/if}
                 {#if maxVotes > 1}
                 <div class="vote-counts">
                   {#each [...Array(maxVotes).keys()] as index}
