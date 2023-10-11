@@ -63,12 +63,16 @@
 
     const getStickyGroup = (stickyId: uuidv1) : string => {
         console.log("GROUPING", $state.grouping)
-        const [gId, cId] = Object.entries($state.grouping).find(([gId, cId])=>cId==stickyId)
-        const g = ($state.groups.find((g)=>g.id == gId))
-        if (g) {
-            return g.name
+        for (const [gId,stickies] of Object.entries($state.grouping)) {
+            if (stickies.includes(stickyId)) {
+                const g = ($state.groups.find((g)=>g.id == gId))
+                if (g) {
+                    return g.name
+                }
+                return "Archived"
+            }
         }
-        return "Archived"
+        return ""
     }
 
     let searchInput
