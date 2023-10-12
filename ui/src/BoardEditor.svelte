@@ -141,7 +141,7 @@
     <div class="edit-title control-group">
       <div class="control-group-title">Description</div> 
 
-      <sl-textarea class='textarea' maxlength="60" value={props.description}  on:input={e=>props.description= e.target.value}></sl-textarea>
+      <sl-textarea class='textarea' value={props.description}  on:input={e=>props.description= e.target.value}></sl-textarea>
     </div>
     <div class="edit-groups unselectable control-group">
       <div class="control-group-title">Groups</div>
