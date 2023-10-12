@@ -6,6 +6,7 @@
     import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
     import '@shoelace-style/shoelace/dist/components/button/button.js';
     import '@shoelace-style/shoelace/dist/components/input/input.js';
+    import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
     import Fa from 'svelte-fa'
     import { faPlus, faGripVertical, faTrash, faFileExport } from '@fortawesome/free-solid-svg-icons';
     import { cloneDeep } from "lodash";
@@ -49,14 +50,16 @@
 
     let boardHash:EntryHashB64|undefined = undefined
     let text = ''
-    let props:BoardProps = {bgUrl: ""}
+    let description = ''
+    let props:BoardProps = {bgUrl: "", description:""}
     let groups: Array<Group> = []
     let voteTypes: Array<VoteType> = []
     let nameInput
+    let descriptionInput
 
     export const reset = () => {
       text = ''
-      props = {bgUrl: ""}
+      props = {bgUrl: "", description:""}
       groups = []
       voteTypes = []
       nameInput.value = ""
@@ -77,7 +80,7 @@
           nameInput.value = text
           groups = cloneDeep(state.groups)
           voteTypes = cloneDeep(state.voteTypes)
-          props = state.props ? cloneDeep(state.props) : {bgUrl:""}
+          props = state.props ? cloneDeep(state.props) : {bgUrl:"", description:""}
           // remove the ungrouped ID TODO find a better way.
           const index = groups.findIndex((g)=>g.id == UngroupedId)
           if (index != -1) {
@@ -134,6 +137,11 @@
     <div class="edit-title control-group">
       <div class="control-group-title">Title</div> 
       <sl-input required={true} class='textarea' maxlength="60" bind:this={nameInput}  on:input={e=>text= e.target.value}></sl-input>
+    </div>
+    <div class="edit-title control-group">
+      <div class="control-group-title">Description</div> 
+
+      <sl-textarea class='textarea' maxlength="60" value={props.description}  on:input={e=>props.description= e.target.value}></sl-textarea>
     </div>
     <div class="edit-groups unselectable control-group">
       <div class="control-group-title">Groups</div>

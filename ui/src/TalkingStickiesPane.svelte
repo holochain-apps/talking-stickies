@@ -332,6 +332,9 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
         Sort by <SortSelector {setSortOption} {sortOption} />
       </div>
     {/if}
+    <div class="descriptoin">
+      {$state.props.description}
+    </div>
   </div>
   {#if $state}
   <Masonry
