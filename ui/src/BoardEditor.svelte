@@ -1,21 +1,48 @@
 <script lang="ts">
-    import { Group, type BoardProps, UngroupedId, Board, VoteType } from './board';
+    import { Group, type BoardProps, UngroupedId, Board, VoteType, type BoardState } from './board';
     import { getContext, onMount } from 'svelte';
   	import DragDropList, { VerticalDropZone, reorder, type DropEvent } from 'svelte-dnd-list';
     import 'emoji-picker-element';
     import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
     import '@shoelace-style/shoelace/dist/components/button/button.js';
     import '@shoelace-style/shoelace/dist/components/input/input.js';
+    import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
     import Fa from 'svelte-fa'
-    import { faPlus, faGripVertical, faTrash} from '@fortawesome/free-solid-svg-icons';
+    import { faPlus, faGripVertical, faTrash, faFileExport } from '@fortawesome/free-solid-svg-icons';
     import { cloneDeep } from "lodash";
+    import sanitize from "sanitize-filename";
 
     import type { TalkingStickiesStore } from './tsStore';
     import type { EntryHashB64 } from '@holochain/client';
 
+
+    const download = (filename: string, text: string) => {
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+    }
+
     const { getStore } :any = getContext('tsStore');
 
     const store:TalkingStickiesStore = getStore();
+
+
+    $: activeHash = store.boardList.activeBoardHash;
+    $: state = store.boardList.getReadableBoardState($activeHash);
+    
+    const exportBoard = (state: BoardState) => {
+      const prefix = "talking-stickies"
+      const fileName = sanitize(`${prefix}_export_${state.name}.json`)
+      download(fileName, JSON.stringify(state))
+      alert(`Your board was exported to your Downloads folder as: '${fileName}'`)
+    }
 
     export let handleSave
     export let handleDelete = undefined
@@ -23,13 +50,16 @@
 
     let boardHash:EntryHashB64|undefined = undefined
     let text = ''
-    let props:BoardProps = {bgUrl: ""}
+    let description = ''
+    let props:BoardProps = {bgUrl: "", description:""}
     let groups: Array<Group> = []
     let voteTypes: Array<VoteType> = []
     let nameInput
+    let descriptionInput
+
     export const reset = () => {
       text = ''
-      props = {bgUrl: ""}
+      props = {bgUrl: "", description:""}
       groups = []
       voteTypes = []
       nameInput.value = ""
@@ -50,7 +80,7 @@
           nameInput.value = text
           groups = cloneDeep(state.groups)
           voteTypes = cloneDeep(state.voteTypes)
-          props = state.props ? cloneDeep(state.props) : {bgUrl:""}
+          props = state.props ? cloneDeep(state.props) : {bgUrl:"", description:""}
           // remove the ungrouped ID TODO find a better way.
           const index = groups.findIndex((g)=>g.id == UngroupedId)
           if (index != -1) {
@@ -63,7 +93,7 @@
     }
 
     const addVoteType = () => {
-      voteTypes.push(new VoteType(`🙂`, `description: edit-me`, 1))
+      voteTypes.push(new VoteType(`🙂`, ``, 1))
       voteTypes = voteTypes
     }
     const deleteVoteType = (index) => () => {
@@ -100,18 +130,21 @@
    let emojiDialog,colorDialog
    let showColorPicker :number|undefined = undefined
    let hex
+   $: valuesValid = text != ""
 </script>
 
   <div class='board-editor'>
-    <div class="edit-title">
-      <div class="title-text">Title:</div> <sl-input class='textarea' maxlength="60" bind:this={nameInput}  on:input={e=>text= e.target.value}></sl-input>
+    <div class="edit-title control-group">
+      <div class="control-group-title">Title</div> 
+      <sl-input required={true} class='textarea' maxlength="60" bind:this={nameInput}  on:input={e=>text= e.target.value}></sl-input>
     </div>
-    <div class="edit-groups unselectable">
-      <div class="title-text">Groups:
-        <sl-button circle size="small" on:click={() => addGroup()}>
-          <Fa icon={faPlus}/>
-        </sl-button>
-      </div>
+    <div class="edit-title control-group">
+      <div class="control-group-title">Description</div> 
+
+      <sl-textarea class='textarea' value={props.description}  on:input={e=>props.description= e.target.value}></sl-textarea>
+    </div>
+    <div class="edit-groups unselectable control-group">
+      <div class="control-group-title">Groups</div>
       <DragDropList
         id="groups"
         type={VerticalDropZone}
@@ -129,14 +162,14 @@
           </sl-button>
         </div>
       </DragDropList>
+      <div class="control" on:click={() => addGroup()}>
+        <Fa icon={faPlus}/>
+        <span>Add sticky group</span>
+      </div>
     </div>
-    <div class="edit-vote-types unselectable">
-      <div class="title-text">
-        Voting Types:
-
-        <sl-button circle size="small"  on:click={() => addVoteType()}>
-          <Fa icon={faPlus}/>
-        </sl-button>
+    <div class="edit-vote-types unselectable control-group">
+      <div class="control-group-title">
+        Voting Types
       </div>
       <sl-dialog label="Choose Emoji" bind:this={emojiDialog}>
           <emoji-picker on:emoji-click={(e)=>  {
@@ -162,34 +195,52 @@
           <sl-button on:click={()=>{showEmojiPicker = index;emojiDialog.show()}} >
             <span style="font-size:180%">{voteTypes[index].emoji}</span>
           </sl-button>
-          <sl-input class='textarea' style="width:60px" maxlength="2" minlength="1" value={voteTypes[index].maxVotes} title="max votes on type per card"
-          on:input={e=>voteTypes[index].maxVotes = e.target.value}> </sl-input>
-          <sl-input class='textarea' value={voteTypes[index].toolTip} title="description"
-          on:input={e=>voteTypes[index].toolTip = e.target.value}> </sl-input>
+          <sl-input type="number" min="1" max="5" class='textarea' style="width:70px" value={voteTypes[index].maxVotes} title="max votes on type per card"
+          on:input={e=>voteTypes[index].maxVotes = parseInt(e.target.value) }> </sl-input>
+          <sl-input 
+            class='textarea vote-type' value={voteTypes[index].toolTip} 
+            title="description"
+            placeholder="description"
+            on:input={e=>voteTypes[index].toolTip = e.target.value}> </sl-input>
 
-          <sl-button size="small"  on:click={deleteVoteType(index)} >
-            <Fa icon={faTrash}/>
+          <sl-button size="small"   on:click={deleteVoteType(index)} >
+            <Fa icon={faTrash}/> 
           </sl-button>
         </div>
       </DragDropList> 
+      <div class="control" on:click={() => addVoteType()}>
+        <Fa icon={faPlus}/>
+        <span>Add vote</span>
+      </div>
     </div>
   
-    <div class="edit-title">
-      <div class="title-text">Background Image:</div> <sl-input class='textarea' maxlength="255" value={props.bgUrl} on:input={e=>props.bgUrl = e.target.value} />
+    <div class="edit-title control-group">
+      <div class="control-group-title">Background Image</div>
+      <sl-input class='textarea' maxlength="255" value={props.bgUrl} on:input={e=>props.bgUrl = e.target.value} />
     </div>
 
     <div class='controls'>
-      {#if handleDelete}
-        <sl-button on:click={handleDelete}>
-          Archive
-        </sl-button>
+      {#if boardHash}
+        <div class="control" circle on:click={() => exportBoard($state)} title="Export">
+          <Fa icon={faFileExport} />
+          <span>Export</span>
+        </div>
       {/if}
-      <sl-button on:click={cancelEdit} style="margin-left:10px">
+      {#if handleDelete}
+        <div class="control" on:click={handleDelete}>
+          Archive
+        </div>
+      {/if}
+      <div class="control" on:click={cancelEdit} style="margin-left:10px">
         Cancel
-      </sl-button>
-      <sl-button style="margin-left:10px" on:click={() => handleSave(text, groups, voteTypes, props)} variant="primary">
-        Save
-      </sl-button>
+      </div>
+    
+      <div class="control"
+        disabled={!valuesValid} 
+        style="margin-left:10px" on:click={() => handleSave(text, groups, voteTypes, props)} variant="primary">
+        <span>Save</span>
+        
+      </div>
     </div>
  </div>
 
@@ -212,6 +263,35 @@
     font-weight: normal;
   }
 
+  .control-group {
+    position: relative;
+    margin-bottom: 25px;
+    min-width: 290px;
+    border: 2px dashed rgba(84, 54, 19, .20);
+    border-radius: 15px;
+    padding: 10px;
+  }
+
+  .control-group-title {
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 14px;
+    position: absolute;
+    top: -15px;
+    border-radius: 10px;
+    left: -3px;
+    max-width: 270px;
+    display: flex;
+    padding: 5px 8px;
+    align-items: center;
+    background-color: white;
+    padding-left: 0;
+  }
+
+  .textarea.vote-type::part(base) {
+    max-width: 170px;
+  }
+
   .controls {
     display: flex;
     flex-direction: row;
@@ -220,6 +300,45 @@
     padding-left: 7px;
     padding-top: 10px;
   }
+
+  .control {
+    display: flex;
+    margin: 5px;
+    align-items: center;
+    background: rgba(0,0,0,.05);
+    border: 2px solid rgba(0,0,0,.1);
+    border-radius: 10px;
+    height: 30px;
+    min-width: 30px;
+    padding: 0px 6px;
+    justify-content: center;
+    box-shadow: 0px 3px 5px rgb(130 107 58 / 25%);
+    position: relative;
+    font-size: 11px;
+    transition: all .25s ease;
+    cursor: pointer;
+    border: 2px solid rgb(166 115 55 / 16%);
+    border-bottom: 2px solid rgb(84 54 19 / 25%);
+    border-top: 2px solid rgba(255,255,255,.7);
+    transition: all .25s ease;
+    transform: scale(1);
+  }
+
+  .controls .control {
+    font-size: 16px;
+    height: 40px;
+    padding: 0px 10px;
+  }
+
+  .control:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+
+  .controls .control:hover {
+    transform: scale(1.3);
+  }
+
   .group {
     display: flex;
     flex-direction: row;
@@ -240,7 +359,9 @@
     flex-direction: row;
     align-items: center;
     font-weight: normal;
-    font-size: 120%;
+    font-size: 14px;
+    position: absolute;
+    top: -10px;
   }
   .unselectable {
     -webkit-touch-callout: none;

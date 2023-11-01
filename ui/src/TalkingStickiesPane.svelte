@@ -2,41 +2,23 @@
   import { createEventDispatcher, getContext } from "svelte";
   import StickyEditor from "./StickyEditor.svelte";
   import EmojiIcon from "./icons/EmojiIcon.svelte";
+  import AddGroupIcon from "./icons/AddGroupIcon.svelte";
   import { sortBy } from "lodash/fp";
   import type { TalkingStickiesStore } from "./tsStore";
   import SortSelector from "./SortSelector.svelte";
   import { Marked, Renderer } from "@ts-stack/markdown";
   import { cloneDeep, isEqual } from "lodash";
-  import { Group, UngroupedId, type Sticky, type StickyProps, type BoardState } from "./board";
+  import { Group, UngroupedId, type Sticky, type StickyProps, type BoardState, Board } from "./board";
   import EditBoardDialog from "./EditBoardDialog.svelte";
-  import { faClose, faCog, faFileExport, faPlus } from "@fortawesome/free-solid-svg-icons";
+  import { faClose, faFileExport, faPlus } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
   import { v1 as uuidv1 } from "uuid";
-  import sanitize from "sanitize-filename";
   import type { AgentPubKeyB64 } from "@holochain/client";
+  import ClickEdit from "./ClickEdit.svelte";
+  import Masonry from 'svelte-bricks'
 
   const dispatch = createEventDispatcher()
-
-  const download = (filename: string, text: string) => {
-    var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', filename);
-
-    element.style.display = 'none';
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
-  }
-
-  const exportBoard = (state: BoardState) => {
-        const prefix = "talking-stickies"
-        const fileName = sanitize(`${prefix}_export_${state.name}.json`)
-        download(fileName, JSON.stringify(state))
-        alert(`Your board was exported to your Downloads folder as: '${fileName}'`)
-    }
-
+  
   Marked.setOptions
   ({
     renderer: new Renderer,
@@ -58,8 +40,8 @@
   const { getStore } :any = getContext("tsStore");
   let tsStore: TalkingStickiesStore = getStore();
 
-  $: activeHash = tsStore.boardList.activeBoardHash;
-  $: state = tsStore.boardList.getReadableBoardState($activeHash);
+$: activeHash = tsStore.boardList.activeBoardHash;
+$: state = tsStore.boardList.getReadableBoardState($activeHash);
   $: stickies = $state ? $state.stickies : undefined;
   $: sortStickies = sortOption
     ? sortBy((sticky) => countVotes(sticky.props.votes, sortOption) * -1)
@@ -90,6 +72,16 @@
       stickiesMap = {} 
       stickies.forEach(s => stickiesMap[s.id] = cloneDeep(s))
     }
+  };
+
+  const newGroup = (group: uuidv1) => () => {
+    let changes = []
+    const groups = cloneDeep($state.groups)
+    groups.push(new Group(`group ${groups.length}`))
+    changes.push({type: 'set-groups',
+        groups
+        })
+    tsStore.boardList.requestBoardChanges($activeHash, changes)
   };
 
   const newSticky = (group: uuidv1) => () => {
@@ -133,7 +125,7 @@
           changes.push({ type: "update-sticky-props", id: sticky.id, props: cloneDeep(props)})
         }
         if (changes.length > 0) {
-        dispatch("requestChange", changes);
+          dispatch("requestChange", changes);
         }
       }
       clearEdit()
@@ -203,31 +195,32 @@
 
   const closeBoard = () => {
     tsStore.boardList.closeActiveBoard();
+    tsStore.setUIprops({showMenu:true})
   };
   const groupWidth = (groupId) : string => {
     let len = Object.keys($state.grouping).length
     if (len > 1 && $state.grouping[UngroupedId].length == 0) len -= 1
     // TODO: maybe set width dynamically by number of cards in group...
     if (len <= 4) {
-      return 100/len+"%"
+      return "calc(" + 100/len + "% - 15px"
     }
     if (len == 5) {
-      return "33%"
+      return "calc(33% - 30px)"
     }
     if (len == 6) {
-      return "33%"
+      return "calc(33% - 30px)"
     }
     if (len == 7) {
-      return "25%"
+      return "calc(25% - 45px)"
     }
     if (len == 8) {
-      return "25%"
+      return "calc(25% - 45px)"
     }
     if (len == 9) {
-      return "33%"
+      return "calc(33% - 30px)"
     }
     if (len == 10) {
-      return "25%"
+      return "calc(25% - 45px)"
     }
     return 'fit-content'
   }
@@ -313,113 +306,161 @@
     dragTarget = ""
   }
   let dragDuration = 300
+
+  $: items = $state.groups.map((group)=> {
+    return {
+      id:group.id, stickyIds:$state.grouping[group.id]}}).filter(g=> {
+        return (g.id === UngroupedId && (g.stickyIds.length > 0 || $state.groups.length === 1)) || (
+          g.id !== UngroupedId
+        )
+      }
+      )
+
+  let [minColWidth, maxColWidth, gap] = [300, 1200, 30]
+  let width, height
+
 </script>
 <div class="board">
   <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
   <div class="top-bar">
-    <div class="left-items">
-      <h5>{$state.name}</h5>
+    <div class="add-group" on:click={newGroup(uuidv1())}>
+        <div style="margin-right: 5px; display: flex;"><AddGroupIcon /></div>
+        Add Group
     </div>
-    <div class="right-items">
+    {#if $state.voteTypes.length>0}
       <div class="sortby">
-        Sort: <SortSelector {setSortOption} {sortOption} />
+        Sort by <SortSelector {setSortOption} {sortOption} />
       </div>
-      <sl-button circle on:click={()=> editBoardDialog.open(cloneDeep($activeHash))} title="Settings">
-        <Fa icon={faCog} size="1x"/>
-      </sl-button>
-      <sl-button circle on:click={() => exportBoard($state)} title="Export">
-        <Fa icon={faFileExport} />
-      </sl-button>
-      <sl-button circle on:click={closeBoard} title="Close">
-        <Fa icon={faClose} />
-      </sl-button>
+    {/if}
+    <div class="descriptoin">
+      {$state.props.description}
     </div>
   </div>
   {#if $state}
-  <div class="groups">
-      {#each $state.groups.map((group)=> [group.id, $state.grouping[group.id]]) as [groupId, stickyIds]}
-        {#if (groupId !== UngroupedId || stickyIds.length > 0 || $state.groups.length == 1)}
-        <div class="group" style:width={groupWidth(groupId)}
-        class:glowing={dragTarget == groupId}
-        id={groupId}
-        on:dragenter={handleDragEnter} 
-        on:dragleave={handleDragLeave}  
-        on:drop={handleDragDropGroup}
-        on:dragover={handleDragOver}
-      >
-          <div class="group-title">
-            {#if $state.groups.length > 1}  
-              <b>{#if groupId === UngroupedId}Ungrouped{:else}{groups[groupId].name}{/if}</b>
-            {/if}
-            <sl-button style="padding: 0 5px;" size="small" text on:click={newSticky(groupId)}>
-              <div style="display: flex;">
-                Add Card
-                <div style="margin-left:5px"><Fa icon={faPlus}/></div>
-              </div>
-            </sl-button>
-          </div>
-          <div class="stickies"
-            >
-          {#each sorted(stickyIds, sortStickies) as { id, props } (id)}
-            {#if editingStickyId === id}
-              <StickyEditor
-                handleSave={updateSticky}
-                handleDelete={
-                  ()=>deleteSticky(id)
-                }
-                {cancelEdit}
-                groupId={groupId}
-                props={cloneDeep(props)}
-              />
+  <Masonry
+    {items}
+    {minColWidth}
+    {maxColWidth}
+    {gap}
+    let:item={group}
+    bind:masonryWidth={width}
+    bind:masonryHeight={height}
+  >
+    <div class="group"
+      class:glowing={dragTarget == group.id}
+      id={group.id}
+      on:dragenter={handleDragEnter} 
+      on:dragleave={handleDragLeave}  
+      on:drop={handleDragDropGroup}
+      on:dragover={handleDragOver}
+   >
+   {#if $state.groups.length > 1}  
+      <div class="group-title">
+          <b>
+            {#if group.id === UngroupedId}
+              Ungrouped
             {:else}
-              <div 
-                class="sticky"
-                class:tilted={draggedItemId == id}
-                class:glowing={dragTarget == id}
-                id={id}
-                on:dragenter={handleDragEnter} 
-                on:dragover={handleDragOver}
-                on:dragleave={handleDragLeave}  
-                on:drop={handleDragDropCard}
-                draggable={dragOn}
-                on:dragstart={handleDragStart}
-                on:dragend={handleDragEnd}              
 
-                on:click={()=>editSticky(id)} 
-                style:background-color={props && props.color ? props.color : "#D7EEFF"}
-                >
-                <div class="sticky-content">
-                  {@html Marked.parse(props.text)}
-                </div>
-                <div class="votes">
-                  {#each $state.voteTypes as {type, emoji, toolTip, maxVotes}}
-                    <div
-                      class="vote"
-                      title={toolTip}
-                      class:voted={myVotes(props.votes, type) > 0}
-                      on:click|stopPropagation={() => voteOnSticky(tsStore.myAgentPubKey(), stickies, id, type, maxVotes)}
-                    >
-                      <EmojiIcon emoji={emoji} class="vote-icon" />
-                      {countVotes(props.votes, type)}
-                      <div class="vote-counts">
-                        {#each new Array(myVotes(props.votes, type)).map((_, i) => i) as index}
-                          <div class="vote-count" />
-                        {/each}
-                      </div>
-                    </div>
-                  {/each}
-                </div>
-              </div>
+            <ClickEdit
+              text={groups[group.id].name}
+              handleSave={(text)=>{
+                const newGroups = cloneDeep($state.groups)
+                const idx = newGroups.findIndex(g=>g.id==group.id)
+                if (idx >= 0) {
+                  newGroups[idx].name = text
+                  tsStore.boardList.requestBoardChanges($activeHash, [
+                    {
+                      type: "set-groups",
+                      groups: newGroups
+                    }
+                  ])
+                }
+              }}></ClickEdit>
+              
             {/if}
-          {/each}
-          {#if creatingInGroup !== undefined  && creatingInGroup == groupId}
-            <StickyEditor handleSave={createSticky} {cancelEdit} />
-          {/if}
+          </b>
+      </div>
+      {/if}
+      <div class="stickies"
+      >
+    {#each sorted(group.stickyIds, sortStickies) as { id, props } (id)}
+      {#if editingStickyId === id}
+        <StickyEditor
+          handleSave={updateSticky}
+          handleDelete={
+            ()=>deleteSticky(id)
+          }
+          {cancelEdit}
+          groupId={group.id}
+          props={cloneDeep(props)}
+        />
+      {:else}
+        <div 
+          class="sticky {props.color}"
+          class:tilted={draggedItemId == id}
+          class:glowing={dragTarget == id}
+          id={id}
+          on:dragenter={handleDragEnter} 
+          on:dragover={handleDragOver}
+          on:dragleave={handleDragLeave}  
+          on:drop={handleDragDropCard}
+          draggable={dragOn}
+          on:dragstart={handleDragStart}
+          on:dragend={handleDragEnd}
+
+          on:click={()=>editSticky(id)} 
+          style:background-color={props && props.color ? props.color : "#D7EEFF"}
+          >
+          <div class="sticky-content">
+            {@html Marked.parse(props.text)}
+          </div>
+          <div class="votes">
+            {#each $state.voteTypes as {type, emoji, toolTip, maxVotes}}
+              <div
+                class="vote"
+                title={toolTip}
+                class:voted={myVotes(props.votes, type) > 0}
+                on:click|stopPropagation={() => voteOnSticky(tsStore.myAgentPubKey(), stickies, id, type, maxVotes)}
+              >
+                <div class="vote-icon-wrapper">
+                  <EmojiIcon emoji={emoji} class="vote-icon" />
+                </div>
+                {#if countVotes(props.votes, type) > 0}
+                <span class="num-votes">{countVotes(props.votes, type)}</span>
+                {/if}
+                {#if maxVotes > 1}
+                <div class="vote-counts">
+                  {#each [...Array(maxVotes).keys()] as index}
+                    <div class="vote-count" class:vote-count-potential={myVotes(props.votes, type) <= index} />
+                  {/each}
+                  <div class="vote-count-background">
+                    {#each [...Array(maxVotes).keys()] as index}
+                    <div class="vote-count background" />
+                    {/each}
+                  </div>
+                </div>
+                {/if}
+              </div>
+            {/each}
           </div>
         </div>
-        {/if}
-      {/each}
+      {/if}
+    {/each}
+    {#if creatingInGroup !== undefined  && creatingInGroup == group.id}
+      <StickyEditor handleSave={createSticky} {cancelEdit} />
+    {/if}
     </div>
+
+    <div class="add-sticky" on:click={newSticky(group.id)}>
+      <div style="display: flex;">
+        Add Sticky
+        <div style="margin-left:5px"><Fa icon={faPlus}/></div>
+      </div>
+    </div>
+    </div>
+
+  </Masonry>
+ 
   {/if}
 </div>
 <style>
@@ -431,118 +472,354 @@
     margin-left: 15px;
     margin-right: 15px;
     margin-top: 15px;
-    box-shadow: 0 0 2px gray;
+    width: 100vw;
+    padding-bottom: 30px;
   }
+
   .top-bar {
+    width: calc(100% - 9px);
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    background-color: #ffffffaa;;
-    padding-left: 10px;
-    padding-right: 10px;
-    border-radius: 5px 5px 0 0;
+    position: fixed;
+    z-index: 5;
+    top: 100px;
+    left: 0;
+    height: 0;
+    padding: 0 15px;
   }
+
   .left-items {
     display: flex;
     align-items: center;
   }
+
   .right-items {
     display: flex;
     align-items: center;
   }
-  .sortby {
-    border-right: 1px solid lightgray;
-    display: flex;
-    align-items: center;
-    margin-right: 8px;
-    height: 47px;
-    padding-right: 10px;
-  }
+
   .groups {
     display: flex;
     flex-wrap: wrap;
     overflow-y: auto;
+    gap: 15px;
+    flex-direction: row;
+    margin-right: -15px;
+    padding-bottom: 30px;
   }
+
   .group {
-    display: block;
-    min-width: 290px;
-  }
-  .group-title {
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 10px;
-    max-width: 270px;
-    color: white;
+    position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    min-width: 290px;
+    border: 2px dashed rgba(84, 54, 19, .20);
+    background-color: rgb(77 65 50 / 4%);
+    border-radius: 15px;
+    padding-top: 30px;
+    padding-bottom: 15px;
   }
+
+  .group-title {
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 16px;
+    position: absolute;
+    top: -21px;
+    border-radius: 10px;
+    left: 50%;
+    transform: translateX(-50%) scale(1);
+    max-width: 270px;
+    display: flex;
+    padding: 5px 12px;
+    align-items: center;
+    box-shadow: 0px 5px 8px rgb(130 107 58 / 25%);
+    transition: all .25s ease;
+    border: 2px solid rgb(166 115 55 / 26%);
+    border-bottom: 2px solid rgb(84 54 19 / 40%);
+    border-top: 2px solid rgba(255,255,255,.8);
+    background: linear-gradient(180deg, rgb(246, 245, 244) 0%, #ffffff 100%);
+  }
+
+  .group-title:hover {
+    transform: translateX(-50%) scale(1.15);
+  }
+
   .stickies {
     display: flex;
+    justify-content: center;
+    width: 100%;
     flex-wrap: wrap;
   }
+
   .glowing {
     outline: none;
     border-color: #9ecaed;
     box-shadow: 0 0 10px #9ecaed !important;
   }
+
   .tilted {
     transform: rotate(3deg);
-    box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0px 15px 25px rgb(130 107 58 / 45%) !important;
   }
-  .sticky {
-    background-color: #d4f3ee;
-    flex-basis: 200px;
-    height: 200px;
+
+  .sticky, .add-sticky {
     min-width: 250px;
-    margin: 10px;
+    width: 100%;
+    max-width: 360px;
+    margin: 0px 15px 15px 15px;
     padding: 10px;
-    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: -.015rem;
     color: #000000;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    background: linear-gradient(180deg, rgb(246, 245, 244) 0%, #ffffff 100%);
+    box-shadow: 0px 5px 8px rgb(130 107 58 / 25%);
+    border-radius: 10px;
+    border: 2px solid rgb(166 115 55 / 26%);
+    border-bottom: 2px solid rgb(84 54 19 / 40%);
+    border-top: 2px solid rgba(255,255,255,.5);
+    transition: all .25s ease;
+    transform: scale(1);
   }
+
+  .sticky:hover, .add-sticky:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 10px 15px rgb(130 107 58 / 25%);
+  }
+
+  .yellow {
+    background: linear-gradient(180deg, #F9FFC4 0%, #F7F7EC 100%);
+  }
+
+  .green {
+    background: linear-gradient(180deg, #D9FEFA 0%, #F1F7EC 100%);
+  }
+
+  .skyblue {
+    background: linear-gradient(180deg, #d0f2fe 0%, #ECF4F7 100%);
+  }
+
+  .deepblue {
+    background: linear-gradient(180deg, #8dc9eb 0%, #ECF2F7 100%);
+  }
+
+  .purple {
+    background: linear-gradient(180deg, #DCD1FD 0%, #F5ECF7 100%);
+  }
+
+  .red {
+    background: linear-gradient(180deg, #FFD5E6 0%, #F7ECEC 100%);
+  }
+
+  .grey {
+    background: linear-gradient(180deg, #d2d2d2 0%, #FFFFFF 100%);
+  }
+
   .sticky-content {
     overflow-y: auto;
-    max-width: 300px;
   }
   .votes {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: flex-end;
     margin-top: auto;
   }
   .vote {
     display: flex;
+    margin: 5px;
     align-items: center;
-    background: white;
-    border-radius: 5px;
+    background: rgba(0,0,0,.06);
+    border-radius: 10px;
     flex-basis: 26px;
-    height: 25px;
+    height: 30px;
     padding: 0 5px;
-    border: 1px solid white;
+    box-shadow: 0 4px 5px rgba(0,0,0,.1);
     position: relative;
+    font-size: 11px;
+    transition: all .25s ease;
     cursor: pointer;
+    border: 2px solid rgb(166 115 55 / 26%);
+    border-bottom: 2px solid rgb(84 54 19 / 40%);
+    border-top: 2px solid rgba(255,255,255,.4);
+    transition: all .25s ease;
+    transform: scale(1);
   }
+
+  .white .vote {
+    border-top: 2px solid rgb(166 115 55 / 26%);
+  }
+
+  .vote:hover {
+    transform: scale(1.25);
+  }
+
   .voted {
-    border-color: black;
+    border-color: rgba(110, 174, 47, 1.0);
+    background-color: rgba(110, 174, 47, .70);
+    box-shadow: 0 4px 5px rgba(0,0,0,.2);
+    border-bottom: 2px solid rgba(70, 134, 7, 1.0);
+    border-top: 2px solid rgb(148, 220, 77);
   }
-  .vote-counts {
+  
+  .vote-counts, .vote-count-background {
     padding-top: 2px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     position: absolute;
-    left: -3px;
-    justify-content: flex-start;
+    justify-content: center;
+    bottom: -3px;
+    width: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    position: absolute;
   }
+
+  .vote-count-background {
+    bottom: 0;
+    width: 100%;
+    z-index: 0;
+  }
+
   .vote-count {
-    border-radius: 50px;
-    width: 5px;
-    height: 5px;
-    background-color: black;
-    margin-bottom: 2px;
+    position: relative;
+    z-index: 1;
+    border-radius: 10px;
+    background-color: rgba(244, 200, 42, 1.0);
+    min-width: 4px;
+    min-height: 4px;
+    margin: 3px;
+    margin-bottom: 0px
   }
+
+  .vote-count-potential {
+    background-color: rgba(205, 199, 194, 1.0);
+  }
+
+
+  .vote-count.background {
+    bottom: -3px;
+    background-color: rgba(182, 172, 162, 1.0);
+    min-width: 8px;
+    min-height: 8px;
+    margin: 1px;
+  }
+
+  .voted .vote-count.background {
+    background-color: rgba(70, 134, 8, 1.0);
+  }
+
+  .voted .vote-count-potential {
+    background-color: rgb(106, 135, 76);
+  }
+
+  @keyframes smoothExpansion {
+    0% { top: 0; }
+    80% {  top: -3px; }
+    90% { top: 1px; }
+    100% { top: 0; }
+  }
+
+  @keyframes compression {
+    0% { top: 0px; }
+    80% { top: 3px; }
+    90% { top: -1px; }
+    100% { top: 0px; }
+  }
+
+  .voted {
+    animation-duration: 0.25s;
+    animation-name: compression;
+    animation-fill-mode: backwards;
+    animation-timing-function: ease;
+    animation-delay: .0;
+    transition: all .25s ease;
+  }
+
+
+  .voted .vote-icon-wrapper {
+    position: relative;
+    animation-duration: 0.25s;
+    animation-name: smoothExpansion;
+    animation-fill-mode: backwards;
+    animation-timing-function: ease;
+    animation-delay: .25s;
+  }
+
+  .num-votes {
+    display: block;
+    padding-left: 5px;
+    animation-duration: 0.25s;
+    animation-timing-function: ease;
+    animation-name: smoothExpansion;
+    animation-delay: .15s;
+    position: relative;
+  }
+
+  .voted.vote .num-votes {
+    color: white;
+  }
+
+  .add-sticky {
+    opacity: 0.5;
+    font-weight: bold;
+    transition: all .25s ease;
+    width: -webkit-fill-available;
+  }
+
+  .add-sticky div {
+    justify-content: center;
+  }
+
+  .add-sticky:hover {
+    cursor: pointer;
+    opacity: 1;
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .add-group, .sortby {
+    font-size: 14px;
+    font-weight: bold;
+    background: #FFFFFF;
+    border: 2px solid rgb(166 115 55 / 26%);
+    border-bottom: 2px solid rgb(84 54 19 / 50%);
+    border-top: 2px solid rgb(166 115 55 / 15%);
+    box-shadow: 0px 15px 25px rgb(130 107 58 / 25%);
+    border-radius: 10px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    transition: all .25s ease;
+    transform: scale(1);
+}
+
+.sortby {
+  font-weight: normal;
+  color: rgba(95, 90, 83, .5);
+}
+
+.add-group:active {
+  border-color: rgb(76, 106, 167);
+  background-color: rgb(77, 123, 214);
+  box-shadow: 0 4px 5px rgba(0,0,0,.2);
+  border-bottom: 2px solid rgb(60, 83, 127);
+}
+
+.add-group:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+:global(hr) {
+    opacity: .4;
+}
 </style>

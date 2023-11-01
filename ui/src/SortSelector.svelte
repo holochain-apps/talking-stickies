@@ -21,6 +21,14 @@
 
 </script>
 
+<div class='sort-options'>
+  {#each $state.voteTypes as {type, toolTip, emoji}}
+  <div class="wrapper sort-button" on:click={handleClick(type)} class:selected={sortOption === type} title="Sort by '{emoji}'">
+    <EmojiIcon emoji="{emoji}" on:click={handleClick(type)}/>
+  </div>
+  {/each}
+</div>
+
 <style>
   .sort-options {
     display: flex;
@@ -34,15 +42,36 @@
     border-radius: 50%;
     cursor: pointer;
   }
-  .selected {
-    background-color: #eee;
+
+  .sort-button {
+    display: flex;
+    margin: 5px;
+    align-items: center;
+    background: rgba(0,0,0,.06);
+    border: 2px solid rgba(0,0,0,.07);
+    border-radius: 10px;
+    flex-basis: 26px;
+    height: 30px;
+    padding: 0 5px;
+    box-shadow: 0 4px 5px rgba(0,0,0,.1);
+    position: relative;
+    font-size: 11px;
+    transition: all .25s ease;
+    cursor: pointer;
+    border-bottom: 2px solid rgba(0,0,0,.2);
+    transition: all .25s ease;
+    transform: scale(1);
+  }
+
+  .sort-button:hover {
+    transform: scale(1.3);
+  }
+
+  .sort-button.selected {
+    
+    border: 2px solid rgb(76, 106, 167);
+    border-top: 2px solid rgb(123, 166, 252);
+    background-color: rgb(77, 123, 214);
+    box-shadow: 0 4px 5px rgba(0,0,0,.2);
   }
 </style>
-
-<div class='sort-options'>
-  {#each $state.voteTypes as {type, toolTip, emoji}}
-  <div on:click={handleClick(type)} class='wrapper' class:selected={sortOption === type} title="Sort by '{emoji}'">
-    <EmojiIcon emoji="{emoji}" on:click={handleClick(type)}/>
-  </div>
-  {/each}
-</div>

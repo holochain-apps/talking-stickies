@@ -14,6 +14,7 @@ export class Group {
 }
 export type BoardProps = {
   bgUrl: string,
+  description: string,
 }
 
 export class VoteType {
@@ -180,7 +181,7 @@ export type BoardDelta =
       state.groups = [{id:UngroupedId, name:""}]
       state.stickies = []
       state.voteTypes = []
-      state.props = {bgUrl:""}
+      state.props = {bgUrl:"", description:""}
       _initGrouping(state)
     },
     applyDelta( 

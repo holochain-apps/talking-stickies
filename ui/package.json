@@ -33,7 +33,8 @@
     "emoji-picker-element": "1.18.3",
     "javascript-time-ago": "2.3.7",
     "@types/javascript-time-ago": "^2.0.3",
-    "@lightningrodlabs/we-applet": "^0.6.1"
+    "@lightningrodlabs/we-applet": "0.9.0",
+    "svelte-bricks": "0.2.1"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.2",

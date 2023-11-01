@@ -45,13 +45,43 @@
     }
 
 </script>
-<div class="nav-button" on:click={()=>{participantsDialog.open()}}  title="Show Participants">
+<div class="nav-button tool-item participants" on:click={()=>{participantsDialog.open()}}  title="Show Participants">
     <Fa icon={faUserGroup} size=2x/>{$participants.active.length }</div>
 {#if !profilesStore}
-<div class="nav-button" on:click={editAvatar} title={myName ? myName:"Edit Avatar"}>
+<div class="nav-button tool-item" on:click={editAvatar} title={myName ? myName:"Edit Avatar"}>
     <AvatarIcon size={30} avatar={myAvatar} border={false}></AvatarIcon></div>
 {/if}
 
 <ParticipantsDialog bind:this={participantsDialog} avatars={$avatars} profilesStore={profilesStore}/>
 
 <AvatarDialog handleSave={setAvatar} bind:this={editAvatarDialog} avatar={avatar} />
+
+<style>
+    .tool-item {
+        background: #FFFFFF;
+        border: 2px solid rgb(166 115 55 / 26%);
+        border-bottom: 2px solid rgb(84 54 19 / 50%);
+        border-top: 2px solid rgb(166 115 55 / 15%);
+        box-shadow: 0px 15px 20px rgb(130 107 58 / 15%);
+        border-radius: 10px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .25s ease;
+        transform: scale(1);
+    }
+
+    .tool-item:hover {
+    cursor: pointer;
+    transform: scale(1.15);
+    }
+
+    .participants {
+        margin-right: 15px;
+    }
+
+    .tool-item:hover {
+        cursor: pointer;
+    }
+</style>

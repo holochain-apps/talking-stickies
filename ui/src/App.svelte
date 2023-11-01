@@ -2,6 +2,7 @@
   import Controller from './Controller.svelte'
   import { AppAgentWebsocket, AdminWebsocket } from '@holochain/client';
   import '@shoelace-style/shoelace/dist/themes/light.css';
+  import { WeClient, isWeContext } from '@lightningrodlabs/we-applet';
 
   const appId = import.meta.env.VITE_APP_ID ? import.meta.env.VITE_APP_ID : 'talking-stickies'
   const roleName = 'talking-stickies'
@@ -15,18 +16,30 @@
   initialize()
 
   async function initialize() : Promise<void> {
-    console.log("adminPort is", adminPort)
-    if (adminPort) {
-      const adminWebsocket = await AdminWebsocket.connect(new URL(`ws://localhost:${adminPort}`))
-      const x = await adminWebsocket.listApps({})
-      console.log("apps", x)
-      const cellIds = await adminWebsocket.listCellIds()
-      console.log("CELL IDS",cellIds)
-      await adminWebsocket.authorizeSigningCredentials(cellIds[0])
-    }
-    console.log("appPort and Id is", appPort, appId)
-    client = await AppAgentWebsocket.connect(new URL(url), appId)
+    if (!isWeContext()) {
+      console.log("adminPort is", adminPort)
+      if (adminPort) {
+        const adminWebsocket = await AdminWebsocket.connect(new URL(`ws://localhost:${adminPort}`))
+        const x = await adminWebsocket.listApps({})
+        console.log("apps", x)
+        const cellIds = await adminWebsocket.listCellIds()
+        console.log("CELL IDS",cellIds)
+        await adminWebsocket.authorizeSigningCredentials(cellIds[0])
+      }
+      console.log("appPort and Id is", appPort, appId)
+      client = await AppAgentWebsocket.connect(new URL(url), appId)
+    } 
+    else {
+      const weClient = await WeClient.connect();
 
+      if (
+        !(weClient.renderInfo.type === "applet-view")
+        && !(weClient.renderInfo.view.type === "main")
+      ) throw new Error("This Applet only implements the applet main view.");
+
+      client = weClient.renderInfo.appletClient;
+      // const profilesClient = weClient.renderInfo.profilesClient;
+    }
     connected = true
   }
 </script>
@@ -41,7 +54,6 @@
 
 <style>
   :global(body) {
-    font-family: Roboto,'Open Sans','Helvetica Neue',sans-serif;
     min-height: 0;
     display: flex;
     flex-direction: column;
