@@ -103,6 +103,7 @@ export class TalkingStickiesStore {
     async findOrMakeRoots(): Promise<any> {
 
         const roots = await toPromise(this.synStore.allRoots)
+        // @ts-ignore
         const records: RecordBag<Commit> = new RecordBag(roots.map(er => er.record))
         const entries = records.entryMap.entries()
         console.log(`Found ${records.entryMap.size} root entries`)
@@ -111,7 +112,7 @@ export class TalkingStickiesStore {
             this.boardList = await BoardList.Create(this.synStore);
         } else {
             let boardListRoot
-            let boardsRoot
+            // let boardsRoot
                     
             Array.from(entries).forEach(async ([hash, commit], i) => {
                 const commitType = this.commitType(commit)
@@ -124,19 +125,19 @@ export class TalkingStickiesStore {
                         console.log("Found a board list root, but have allready joined:", encodeHashToBase64(boardListRoot.entryHash))
                     }
                 }
-                if (commitType === CommitTypeBoard) {
-                    if (!boardsRoot) {
-                        console.log("Found a board root:", encodeHashToBase64(rootCommit.entryHash))
-                        boardsRoot = rootCommit
-                    } else {
-                        console.log("Found a board root, but have allread stored: ", encodeHashToBase64(boardsRoot.entryHash))
-                    }
-                }
+                // if (commitType === CommitTypeBoard) {
+                //     if (!boardsRoot) {
+                //         console.log("Found a board root:", encodeHashToBase64(rootCommit.entryHash))
+                //         boardsRoot = rootCommit
+                //     } else {
+                //         console.log("Found a board root, but have allread stored: ", encodeHashToBase64(boardsRoot.entryHash))
+                //     }
+                // }
             });
-            if (boardListRoot && boardsRoot) {
-                this.boardList = await BoardList.Join(this.synStore, boardListRoot, boardsRoot)
+            if (boardListRoot) {
+                this.boardList = await BoardList.Join(this.synStore, boardListRoot)
             } else {
-                console.log("Missing root, found: ", boardListRoot, boardsRoot )
+                console.log("Missing root, found: ", boardListRoot )
             }
 
         }
