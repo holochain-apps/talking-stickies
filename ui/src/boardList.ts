@@ -145,29 +145,28 @@ export class BoardList {
     }
 
     public static async Create(synStore: SynStore) {
-        const rootHash = await synStore.createDeterministicDocument(boardListGrammar, {type: CommitTypeBoardList})
-        const documentStore = new DocumentStore(synStore, boardListGrammar, rootHash)
-        const boardsRootHash = await synStore.createDeterministicDocument(boardGrammar, {type: CommitTypeBoard})
-
-        const boardsDocumentStore =  new DocumentStore(synStore, boardGrammar, boardsRootHash)
+        const {documentHash} = await synStore.createDeterministicDocument(boardListGrammar, {type: CommitTypeBoardList})
+        await synStore.client.tagDocument(documentHash, "boardList")
+        const documentStore = new DocumentStore(synStore, boardListGrammar, documentHash)
         const me = new BoardList(synStore, documentStore);
         const workspaceHash = await documentStore.createWorkspace(
             'main',
-            documentStore.rootHash
+            documentStore.documentHash
            );
         // TODO remove the "auto-join"
         me.workspace = new WorkspaceStore(documentStore, workspaceHash)
         me.session = await me.workspace.joinSession()
         return me
     }
-    public static async Join(synStore: SynStore, rootCommit: EntryRecord<Commit>) {
+    public static async Join(synStore: SynStore, documentHash: EntryHash) {
         const documentStore = new DocumentStore(
             synStore,
             boardListGrammar,
-            rootCommit.entryHash
+            documentHash
           );
         const me = new BoardList(synStore, documentStore);
         console.log("BoardList", me)
+        
         const workspaces = await toPromise(documentStore.allWorkspaces);
         console.log("Workspaces", workspaces)
 
@@ -184,7 +183,7 @@ export class BoardList {
         throw("failed to join any workspace")
     }
     hash() : EntryHash {
-        return this.documentStore.rootHash
+        return this.documentStore.documentHash
     }
     async close() {
         await this.session.leaveSession()

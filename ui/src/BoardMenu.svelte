@@ -8,6 +8,8 @@
     import AddCard from "./icons/AddCard.svelte";
     import TSLogoIcon from "./icons/TSLogoIcon.svelte";
     import { faCog } from "@fortawesome/free-solid-svg-icons";
+    import { decode } from '@msgpack/msgpack';
+
     export let wide = false
 
     let newBoardDialog
@@ -16,7 +18,8 @@
 
     const store:TalkingStickiesStore = getStore();
 
-
+    $: boards = store.boards()
+    $: boardsx = store.synStore.allRoots
 
     $: uiProps = store.uiProps
     $: boardList = store.boardList.stateStore()
@@ -52,6 +55,16 @@
     <div style="display:flex;flex-direction: row;">
     <div class="new-board" on:click={()=>newBoardDialog.open()} title="New Board"><AddCard /><span>New Board</span></div>
     </div>
+    {#if $boardsx.status == "complete"}
+    {#each Array.from($boardsx.value) as entry}
+        {JSON.stringify(decode(entry.entry.meta))}
+    {/each}
+    {/if}
+    <!-- {#if $boards.status == "complete"}
+        {#each Array.from($boards.value) as entry}
+            {entry}
+        {/each}
+    {/if} -->
     {#if $uiProps.recent.length > 0 || activeBoards}
         <h3 class="type-header">All Boards</h3>
         <div class="boards-section">

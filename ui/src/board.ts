@@ -301,13 +301,14 @@ export class Board {
     }
 
     public static async Create(synStore: SynStore) {
-        const boardRootHash = await synStore.createDocument(boardGrammar, {type: CommitTypeBoard})
+        const {documentHash} = await synStore.createDocument(boardGrammar, {type: CommitTypeBoard})
 
-        const documentStore =  new DocumentStore(synStore, boardGrammar, boardRootHash)
+        const documentStore =  new DocumentStore(synStore, boardGrammar, documentHash)
+        await synStore.client.tagDocument(documentHash, "board")
 
         const workspaceHash = await documentStore.createWorkspace(
             `${new Date}`,
-            documentStore.rootHash
+            documentStore.documentHash
            );
         const workspaceStore = new WorkspaceStore(documentStore, workspaceHash)
 
@@ -317,10 +318,10 @@ export class Board {
     }
 
     hash() : EntryHash {
-        return this.document.rootHash
+        return this.document.documentHash
     }
     hashB64() : EntryHashB64 {
-        return encodeHashToBase64(this.document.rootHash)
+        return encodeHashToBase64(this.document.documentHash)
     }
     async join() {
       this.session = await this.workspace.joinSession()
