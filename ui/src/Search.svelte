@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getContext } from "svelte";
-    import type { EntryHashB64 } from '@holochain/client';
+    import { decodeHashFromBase64, type EntryHashB64 } from '@holochain/client';
     import {faSearch } from '@fortawesome/free-solid-svg-icons';
     import Fa from 'svelte-fa';
     import '@shoelace-style/shoelace/dist/components/select/select.js';
@@ -28,10 +28,11 @@
     const store:TalkingStickiesStore = getStore();
     $: boardList = store.boardList.stateStore()
     $: activeHash = store.boardList.activeBoardHash;
+    $: activeHashB64 = store.boardList.activeBoardHashB64;
     $: state = store.boardList.getReadableBoardState($activeHash);
 
-    const selectBoard = (hash: EntryHashB64) => {
-        store.boardList.setActiveBoard(hash)
+    const selectBoard = async (hash: EntryHashB64) => {
+        await store.boardList.setActiveBoard(decodeHashFromBase64(hash))
     }
 
     const doSearch = (text:string) => {
@@ -42,7 +43,7 @@
         const searchText = text.toLocaleLowerCase()
         $boardList.boards.forEach(b=> {
             if (b.name.toLocaleLowerCase().includes(searchText)) foundBoards.push(b)
-            const board = store.boardList.getReadableBoardState(b.hash)
+            const board = store.boardList.getReadableBoardState(decodeHashFromBase64(b.hash))
             const boardState = get(board)
             boardState.stickies.forEach((c)=>{
                 if (c.props.text.toLocaleLowerCase().includes(searchText)) {
@@ -101,7 +102,7 @@
             {#each foundStickies as found}
                 <sl-menu-item
                     on:mousedown={(e)=>{
-                        if (found.board.hash != $activeHash) {
+                        if (found.board.hash != $activeHashB64) {
                             selectBoard(found.board.hash)
                         }
                         //store.boardList.setActiveSticky(found.card)
@@ -121,7 +122,7 @@
             {#each foundBoards as found}
                 <sl-menu-item
                     on:mousedown={(e)=>{
-                        if (found.hash != $activeHash) {
+                        if (found.hash != $activeHashB64) {
                             selectBoard(found.hash)
                         }
                         clearSearch()

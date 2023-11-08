@@ -5,7 +5,6 @@
   import EditBoardDialog from "./EditBoardDialog.svelte";
   import { faBars, faBug, faClose, faCog } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
-  import cloneDeep from "lodash";
   import type { TalkingStickiesStore } from "./tsStore";
   import { getContext } from "svelte";
 
@@ -31,9 +30,9 @@
     {:else}
       <div class="open tool-item menu" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><Fa icon={faBars} size=2x /></div>
     {/if}
-      <div class="tool-item settings"  on:click={()=> editBoardDialog.open(cloneDeep($activeHash))} title="Settings">
+      <div class="tool-item settings"  on:click={()=> editBoardDialog.open($activeHash)} title="Settings">
         <Fa icon={faCog} size="1x" style="margin-right: 10px;"/>
-        {$state.name}
+        {$state ? $state.name: "?"}
       </div>
     </div>
   {/if}

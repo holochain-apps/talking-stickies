@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, getContext } from "svelte";
+  import { getContext } from "svelte";
   import StickyEditor from "./StickyEditor.svelte";
   import EmojiIcon from "./icons/EmojiIcon.svelte";
   import AddGroupIcon from "./icons/AddGroupIcon.svelte";
@@ -8,16 +8,15 @@
   import SortSelector from "./SortSelector.svelte";
   import { Marked, Renderer } from "@ts-stack/markdown";
   import { cloneDeep, isEqual } from "lodash";
-  import { Group, UngroupedId, type Sticky, type StickyProps, type BoardState, Board } from "./board";
+  import { Group, UngroupedId, type Sticky, type StickyProps, Board } from "./board";
   import EditBoardDialog from "./EditBoardDialog.svelte";
-  import { faClose, faFileExport, faPlus } from "@fortawesome/free-solid-svg-icons";
+  import { faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
   import { v1 as uuidv1 } from "uuid";
-  import type { AgentPubKeyB64 } from "@holochain/client";
   import ClickEdit from "./ClickEdit.svelte";
   import Masonry from 'svelte-bricks'
+  import { encodeHashToBase64, type AgentPubKeyB64 } from "@holochain/client";
 
-  const dispatch = createEventDispatcher()
   
   Marked.setOptions
   ({
@@ -40,8 +39,10 @@
   const { getStore } :any = getContext("tsStore");
   let tsStore: TalkingStickiesStore = getStore();
 
-$: activeHash = tsStore.boardList.activeBoardHash;
-$: state = tsStore.boardList.getReadableBoardState($activeHash);
+  $: activeHash = tsStore.boardList.activeBoardHash;
+  $: board = tsStore.boardList.getBoard($activeHash)
+  $: participants = board ? board.participants() : undefined
+  $: state = tsStore.boardList.getReadableBoardState($activeHash);
   $: stickies = $state ? $state.stickies : undefined;
   $: sortStickies = sortOption
     ? sortBy((sticky) => countVotes(sticky.props.votes, sortOption) * -1)
@@ -112,7 +113,8 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
         id: uuidv1(),
         props,
       };
-      dispatch("requestChange", [{ type: "add-sticky", value: sticky, group}]);
+      tsStore.boardList.requestBoardChanges($activeHash, [{ type: "add-sticky", value: sticky, group}])
+
   };
 
   const updateSticky = (_groupId: uuidv1, props:StickyProps) => {
@@ -125,14 +127,14 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
           changes.push({ type: "update-sticky-props", id: sticky.id, props: cloneDeep(props)})
         }
         if (changes.length > 0) {
-          dispatch("requestChange", changes);
+          tsStore.boardList.requestBoardChanges($activeHash, changes)
         }
       }
       clearEdit()
   };
     
   const deleteSticky = (id: uuidv1) => {
-        dispatch("requestChange", [{ type: "delete-sticky", id }]);
+        tsStore.boardList.requestBoardChanges($activeHash, [{ type: "delete-sticky", id }])
         clearEdit()
     };
   const voteOnSticky = (agent:AgentPubKeyB64, stickies, id: uuidv1, type, max) => {
@@ -164,7 +166,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
         console.log("votes before", sticky.props.votes);
         console.log("votes after", votes);
     
-        dispatch("requestChange", [
+        tsStore.boardList.requestBoardChanges($activeHash, [
           {
             type: "update-sticky-votes",
             id: sticky.id,
@@ -193,8 +195,8 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     return votes[type][tsStore.myAgentPubKey()] || 0;
   };
 
-  const closeBoard = () => {
-    tsStore.boardList.closeActiveBoard();
+  const closeBoard = async () => {
+    await tsStore.boardList.closeActiveBoard()
     tsStore.setUIprops({showMenu:true})
   };
   const groupWidth = (groupId) : string => {
@@ -285,7 +287,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     const target = findDropGroupParentElement(e.target as HTMLElement)
     var srcId = e.dataTransfer.getData("text");
     if (target.id) {
-      dispatch("requestChange",[{ type: "update-sticky-group", id:srcId, group:target.id  }])
+      tsStore.boardList.requestBoardChanges($activeHash, [{ type: "update-sticky-group", id:srcId, group:target.id  }])
     }
     clearDrag()
     //console.log("handleDragDropGroup",e, target )
@@ -296,7 +298,7 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
     //console.log("handleDragDropCard",e, target )
     var srcId = e.dataTransfer.getData("text");
     if (target.id && (srcId != target.id) && confirm("Merge stickies?")) {
-      dispatch("requestChange",[{ type: "merge-stickies", dstId: target.id, srcId }])
+      tsStore.boardList.requestBoardChanges($activeHash, [{ type: "merge-stickies", dstId: target.id, srcId }])
     }
     clearDrag()
   }
@@ -307,22 +309,25 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   }
   let dragDuration = 300
 
-  $: items = $state.groups.map((group)=> {
+  $: items = $state ? $state.groups.map((group)=> {
     return {
       id:group.id, stickyIds:$state.grouping[group.id]}}).filter(g=> {
         return (g.id === UngroupedId && (g.stickyIds.length > 0 || $state.groups.length === 1)) || (
           g.id !== UngroupedId
         )
       }
-      )
+      ) : undefined
 
   let [minColWidth, maxColWidth, gap] = [300, 1200, 30]
   let width, height
 
 </script>
+
 <div class="board">
   <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
+  {#if $state}
   <div class="top-bar">
+
     <div class="add-group" on:click={newGroup(uuidv1())}>
         <div style="margin-right: 5px; display: flex;"><AddGroupIcon /></div>
         Add Group
@@ -332,11 +337,31 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
         Sort by <SortSelector {setSortOption} {sortOption} />
       </div>
     {/if}
-    <div class="descriptoin">
-      {$state.props.description}
+    <div style="display:flex;flex-direction: right;">
+      <div class="description">
+        {$state.props.description}
+      </div>
+      {#if $participants}
+        <div class="participants">
+          <div style="display:flex; flex-direction: row">
+            <agent-avatar disable-tooltip={true} disable-copy={true} agent-pub-key={tsStore.myAgentPubKey()} size={30}/>
+
+            {#each Array.from($participants.entries()) as [agentPubKey, sessionData]}
+            <div class:idle={Date.now()-sessionData.lastSeen >30000}>
+              <agent-avatar disable-tooltip={true} disable-copy={true} agent-pub-key={encodeHashToBase64(agentPubKey)} size={30}/>
+            </div>
+            {/each}
+
+          </div>
+        </div>
+      {/if}
+      <div>
+        <sl-button  class="board-button" on:click={closeBoard} title="Close">
+          <Fa icon={faClose} />
+        </sl-button>
+      </div>
     </div>
   </div>
-  {#if $state}
   <Masonry
     {items}
     {minColWidth}
@@ -464,6 +489,9 @@ $: state = tsStore.boardList.getReadableBoardState($activeHash);
   {/if}
 </div>
 <style>
+  .idle {
+    opacity: 0.5;
+  }
   .board {
     display: flex;
     flex-direction: column;

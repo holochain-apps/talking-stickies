@@ -2,7 +2,6 @@
   import type { Avatar } from "./boardList";
   import { mdiAccount } from '@mdi/js';
   import { Icon } from "svelte-materialify";
-  import "@holochain-open-dev/elements/dist/elements/holo-identicon.js";
   import { encodeHashToBase64, type AgentPubKey } from "@holochain/client";
 
   export let border = false

@@ -1,14 +1,15 @@
 <script lang="ts">
     import { getContext } from "svelte";
     import type { TalkingStickiesStore } from "./tsStore";
-    import type { EntryHashB64 } from '@holochain/client';
     import NewBoardDialog from './NewBoardDialog.svelte';
     import Fa from 'svelte-fa';
     import AboutDialog from "./AboutDialog.svelte";
+    import Participants from "./Participants.svelte";
     import AddCard from "./icons/AddCard.svelte";
     import TSLogoIcon from "./icons/TSLogoIcon.svelte";
     import { faCog } from "@fortawesome/free-solid-svg-icons";
-    import { decode } from '@msgpack/msgpack';
+    import type { EntryHash } from "@holochain/client";
+    import type { Board } from "./board";
 
     export let wide = false
 
@@ -18,34 +19,29 @@
 
     const store:TalkingStickiesStore = getStore();
 
-    $: boards = store.boards()
-    $: boardsx = store.synStore.allRoots
+    $: boards = store.boardList.activeBoards
+    $: archived = store.boardList.archivedBoards
 
     $: uiProps = store.uiProps
-    $: boardList = store.boardList.stateStore()
-    $: activeHash = store.boardList.activeBoardHash;
-    $: state = store.boardList.getReadableBoardState($activeHash);
-    $: archivedBoards = $boardList.boards.findIndex((board)=>board.status === "archived") >= 0
-    $: activeBoards = $boardList.boards.findIndex((board)=>board.status !== "archived") >= 0
 
-    // const DEFAULT_KD_BG_IMG = "none"
-    // const NO_BOARD_IMG = "none"
-    // $: boardState = store ? store.boardList.getReadableBoardState($activeHash) :  undefined
-    // $: bgUrl = boardState ?  ($boardState.props && $boardState.props.bgUrl) ? $boardState.props.bgUrl : DEFAULT_KD_BG_IMG : NO_BOARD_IMG
     const bgUrl = "none"
 
 
-    const selectBoard = (hash: EntryHashB64) => {
+    const selectBoard = async (hash: EntryHash) => {
         store.setUIprops({showMenu:false})
-        store.boardList.setActiveBoard(hash)
+        await store.boardList.setActiveBoard(hash)
     }
 
-    const unarchiveBoard = (hash: EntryHashB64) => {
+    const unarchiveBoard = async (hash: EntryHash) => {
         store.boardList.unarchiveBoard(hash)
-        selectBoard(hash)
+        await selectBoard(hash)
     }
 
     let aboutDialog
+
+    let boardName = (board: Board) => {
+        return board.latestState ? board.latestState.name : "?"
+    }
 
 </script>
 
@@ -55,54 +51,30 @@
     <div style="display:flex;flex-direction: row;">
     <div class="new-board" on:click={()=>newBoardDialog.open()} title="New Board"><AddCard /><span>New Board</span></div>
     </div>
-    {#if $boardsx.status == "complete"}
-    {#each Array.from($boardsx.value) as entry}
-        {JSON.stringify(decode(entry.entry.meta))}
-    {/each}
-    {/if}
-    <!-- {#if $boards.status == "complete"}
-        {#each Array.from($boards.value) as entry}
-            {entry}
-        {/each}
-    {/if} -->
-    {#if $uiProps.recent.length > 0 || activeBoards}
-        <h3 class="type-header">All Boards</h3>
+    {#if $boards.status == "complete"}
+        <h3 class="type-header">Active Boards</h3>
         <div class="boards-section">
-            {#if $uiProps.recent.length > 0}
-                {#each $uiProps.recent as boardHash }
-                    <div class="board"
-                        on:click={()=>{
-                            selectBoard(boardHash)
-                        }}>
-                        <div class="board-name">{$boardList.boards.find(b=>b.hash==boardHash).name}</div>
-                        <div class="board-bg" style="background-image: url({bgUrl});"></div>
-                    </div>
-                {/each}
-            {/if}
-            {#if activeBoards}
-                {#each $boardList.boards as board }
-                    {#if board.status !== "archived" && !$uiProps.recent.includes(board.hash)}
-                        <div
-                            on:click={()=>selectBoard(board.hash)}
-                            class="board" id={board.hash}>
-                            <div class="board-name">{board.name}</div>
-                            <div class="board-bg" style="background-image: url({bgUrl});"></div>
-                        </div>
-                    {/if}
-                {/each}
-            {/if}
+            {#each Array.from($boards.value.entries()) as [hash, board]}
+                <div
+                    on:click={()=>selectBoard(hash)}
+                    class="board" >
+                    <div class="board-name">{board.name}</div>
+                    <Participants boardHash={hash}></Participants>
+                    <div class="board-bg" style="background-image: url({bgUrl});"></div>
+                </div>
+            {/each}
         </div>
     {/if}
-    {#if archivedBoards}
+    {#if $archived.status == "complete"}
         <h3 class="type-header">Archived Boards</h3>
         <div class="boards-section">
-            {#each $boardList.boards as board }
-                {#if board.status === "archived" }
-                <div class="board" id={board.hash} on:click={unarchiveBoard(board.hash)}>
+            {#each Array.from($archived.value.entries()) as [hash, board]}
+                <div
+                    on:click={()=>unarchiveBoard(hash)}
+                    class="board">
                     <div class="board-name">{board.name}</div>
                     <div class="board-bg" style="background-image: url({bgUrl});"></div>
                 </div>
-                {/if}
             {/each}
         </div>
     {/if}
@@ -186,6 +158,7 @@
     .board-name {
         font-size: 16px;
         font-weight: bold;
+        margin-right: 10px;
     }
 
     .new-board {
@@ -224,6 +197,7 @@
         height: 50px;
         display: flex;
         align-items: center;
+        flex-direction: row;
         justify-content: flex-start;
         transition: all .25s ease;
         transform: scale(1);

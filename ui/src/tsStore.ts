@@ -7,17 +7,18 @@ import {
     encodeHashToBase64,
     type EntryHashB64,
   } from '@holochain/client';
-import { EntryRecord, RecordBag } from '@holochain-open-dev/utils';
-import { SynStore,  SynClient, type Commit, DocumentStore, type Workspace } from '@holochain-syn/core';
-import { CommitTypeBoard, boardGrammar, type BoardGrammar } from './board';
+import { EntryRecord, HoloHashMap, LazyHoloHashMap, RecordBag } from '@holochain-open-dev/utils';
+import { SynStore,  SynClient, type Commit, DocumentStore, type Workspace, WorkspaceStore } from '@holochain-syn/core';
+import { CommitTypeBoard, boardGrammar, type BoardGrammar, type BoardState, Board } from './board';
 import { BoardList, CommitTypeBoardList } from './boardList';
 import { decode } from '@msgpack/msgpack';
-import {pipe, sliceAndJoin, toPromise} from '@holochain-open-dev/stores'
+import {deriveStore, derived, pipe, sliceAndJoin, toPromise, type Derived} from '@holochain-open-dev/stores'
 import TimeAgo from "javascript-time-ago"
 import en from 'javascript-time-ago/locale/en'
 import { type AsyncReadable, asyncDerived, joinAsync} from '@holochain-open-dev/stores'
 
 import { get, writable, type Readable, type Writable } from "svelte/store";
+import type { ProfilesStore } from '@holochain-open-dev/profiles';
 
 TimeAgo.addDefaultLocale(en)
 
@@ -41,6 +42,7 @@ export interface UIProps {
     showArchived: {[key: string]: boolean},
     showMenu: boolean,
     recent: Array<EntryHashB64>
+    bgUrl: string
   }
   
 export class TalkingStickiesStore {
@@ -54,7 +56,8 @@ export class TalkingStickiesStore {
     uiProps: Writable<UIProps> = writable({
         showArchived: {},
         showMenu: true,
-        recent: []
+        recent: [],
+        bgUrl: ""
     })
 
     setUIprops(props:{}) {
@@ -69,6 +72,7 @@ export class TalkingStickiesStore {
     }
 
     constructor(
+        public profilesStore: ProfilesStore,
         protected clientIn: AppAgentClient,
         protected roleName: RoleName,
         protected zomeName: string = ZOME_NAME
@@ -80,54 +84,7 @@ export class TalkingStickiesStore {
           this.zomeName
         );
         //@ts-ignore
-        this.synStore = new SynStore(new SynClient(this.client,this.roleName,this.zomeName))
-        // this.synStore.knownRoots.subscribe( async (roots) => {
-        //     if (this.updating) {
-        //         console.log(`${roots.entryActions.keys().length} ROOTS UPDATE CALLED but allready updating`, roots)
-        //         return
-        //     }
-        //     this.updating = true
-        //     try {
-        //         await this.findOrMakeRoots(roots)
-        //     } catch (e) {
-        //         console.log("Error while updating board list: ",e)
-        //     }
-        //     this.updating = false
-        // })
-    }
-
-    boards()  {
-        const x = this.synStore.documentHashesByTag
-        return pipe(x.get("boards"),
-            docHashes => sliceAndJoin(this.synStore.documents, docHashes)
-        )
-        // const docs: AsyncReadable<Array<DocumentStore<BoardGrammar>>> = asyncDerived(this.synStore.allRoots,
-        //     roots => roots.map(root=>[decode(root.entry.meta), root.entryHash])
-        //     .filter(([meta,])=>meta["type"] == CommitTypeBoard)
-        //     .map(([,hash])=>{
-        //         return hash
-        //     })
-        //     .map(rootHash=> (new DocumentStore(this.synStore, boardGrammar, rootHash as EntryHash)) )
-        //     )
-        // const x = pipe(docs,
-        //     (d) => d.map(doc=>doc.allWorkspacesHashes)
-        //     )
-        
-        // const ws : AsyncReadable<Array<AsyncReadable<Array<EntryHash>>>> = asyncDerived(docs,
-        //      docs => docs.map(doc=>doc.allWorkspacesHashes))
-        // const wsd : AsyncReadable<Array<Array<EntryHash>>> = asyncDerived(ws,
-        //     ws => joinAsync(ws)
-          
-        // const x = pipe(ws,
-        //     (hashes)=>join(hashes),
-        //     (hashes)=>hashes[0]
-        //     )
-
-
-        // const w:AsyncReadable<Array<EntryRecord<Workspace>[]>> = pipe(workspaces, asyncDerived(workspaces,
-        //     workspaces => workspaces.map(workspace=)
-        //     ))
-        //return w
+        this.synStore = new SynStore(new SynClient(this.client,this.roleName,this.zomeName))      
     }
 
     commitType(commit: Commit) : string {

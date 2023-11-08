@@ -3,21 +3,21 @@
     import type { TalkingStickiesStore } from './tsStore';
     import { getContext, onMount } from 'svelte';
     import { isEqual } from 'lodash'
-    import type { EntryHashB64 } from '@holochain/client';
     import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
     import '@shoelace-style/shoelace/dist/components/button/button.js';
     import type SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog';
     import type { Board, BoardProps, BoardState, Group, VoteType } from './board';
+    import type { EntryHash } from '@holochain/client';
 
-    let boardHash:EntryHashB64|undefined = undefined
+    let boardHash:EntryHash|undefined = undefined
 
     let dialog: SlDialog
     onMount(async () => {
 
     })
 
-    export const  open = async (hash: EntryHashB64)=> {
-        boardHash = `${hash}`
+    export const  open = async (hash: EntryHash)=> {
+        boardHash = hash
         boardEditor.edit(hash)
         dialog.show()
     }
@@ -28,18 +28,11 @@
 
     const updateBoard = async ( name: string, groups: Group[], voteTypes: VoteType[], props: BoardProps) => {
         // ignore board type we don't update that.
-        const board: Board | undefined = await store.boardList.getBoard(boardHash)
+        const board: Board | undefined = store.boardList.boards.get(boardHash)
         if (board) {
         let changes = []
         const state: BoardState = board.state()
         if (state.name != name) {
-            store.boardList.requestChanges([
-            {
-                type: 'set-name',
-                hash: board.hashB64(),
-                name: name
-            }
-            ])
             changes.push(
             {
                 type: 'set-name',
@@ -62,13 +55,13 @@
             })
         }
         if (changes.length > 0) {
-            await store.boardList.requestBoardChanges(boardHash, changes)
+            store.boardList.requestBoardChanges(boardHash, changes)
         }
         }
         close()
     }
-    const archiveBoard = () => {
-        store.boardList.archiveBoard(boardHash)
+    const archiveBoard = async () => {
+        await store.boardList.archiveBoard(boardHash)
         store.setUIprops({showMenu: true})
         close()
     }

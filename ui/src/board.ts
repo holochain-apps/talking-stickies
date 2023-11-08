@@ -4,7 +4,7 @@ import { v1 as uuidv1 } from "uuid";
 import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64, type AgentPubKeyB64, type Timestamp } from "@holochain/client";
 import { cloneDeep } from "lodash";
 import { HoloHashMap } from "@holochain-open-dev/utils";
-import type { AsyncReadable } from "@holochain-open-dev/stores";
+import { toPromise, type AsyncReadable, type Readable } from "@holochain-open-dev/stores";
 
   
 export const UngroupedId = "_"
@@ -296,19 +296,25 @@ export const CommitTypeBoard :string = "board"
 
 export class Board {
     public session: SessionStore<BoardGrammar> | undefined
+    public hashB64: EntryHashB64
+    public latestState: BoardState | undefined
 
     constructor(public document: DocumentStore<BoardGrammar>, public workspace: WorkspaceStore<BoardGrammar>) {
+      this.hashB64 = encodeHashToBase64(this.document.documentHash)
+      toPromise(this.workspace.latestSnapshot).then(state=> {
+        this.latestState = state}
+        )
     }
 
     public static async Create(synStore: SynStore) {
-        const {documentHash} = await synStore.createDocument(boardGrammar, {type: CommitTypeBoard})
+        const {documentHash, firstCommitHash} = await synStore.createDocument(boardGrammar, {type: CommitTypeBoard})
 
         const documentStore =  new DocumentStore(synStore, boardGrammar, documentHash)
         await synStore.client.tagDocument(documentHash, "board")
 
         const workspaceHash = await documentStore.createWorkspace(
             `${new Date}`,
-            documentStore.documentHash
+            firstCommitHash
            );
         const workspaceStore = new WorkspaceStore(documentStore, workspaceHash)
 
@@ -320,15 +326,21 @@ export class Board {
     hash() : EntryHash {
         return this.document.documentHash
     }
-    hashB64() : EntryHashB64 {
-        return encodeHashToBase64(this.document.documentHash)
-    }
+   
     async join() {
-      this.session = await this.workspace.joinSession()
+      if (! this.session) 
+        this.session = await this.workspace.joinSession()
+      console.log("JOINED", this.session)
     }
-    async close() {
-        return this.session.leaveSession()
+    
+    async leave() {
+      if (this.session) {
+        this.session.leaveSession()
+        this.session = undefined
+        console.log("LEFT SESSION")
+      }
     }
+
     state(): BoardState | undefined {
         if (!this.session) {
           return undefined
@@ -336,12 +348,30 @@ export class Board {
           return get(this.session.state)
         }
     }
+
+    readableState(): Readable<BoardState> | undefined {
+      if (!this.session) {
+        return undefined
+      } else {
+        return this.session.state
+      }
+  }
+
     requestChanges(deltas: Array<BoardDelta>) {
         console.log("REQUESTING BOARD CHANGES: ", deltas)
         this.session.requestChanges(deltas)
     }
+
+    sessionParticipants() {
+      return this.workspace.sessionParticipants
+    }
+
     participants()  {
-        return this.session.participants
+      if (!this.session) {
+        return undefined
+      } else {
+        return this.session._participants
+      }
     }
     async commitChanges() {
         this.session.commitChanges()

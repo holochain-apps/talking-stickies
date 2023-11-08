@@ -11,6 +11,7 @@
     import { get } from 'svelte/store';    
     import Fa from 'svelte-fa'
     import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
+    import { isWeContext } from '@lightningrodlabs/we-applet';
 
     const { getStore } :any = getContext('tsStore');
     const store:TalkingStickiesStore = getStore();
@@ -47,7 +48,7 @@
 </script>
 <div class="nav-button tool-item participants" on:click={()=>{participantsDialog.open()}}  title="Show Participants">
     <Fa icon={faUserGroup} size=2x/>{$participants.active.length }</div>
-{#if !profilesStore}
+{#if !isWeContext()}
 <div class="nav-button tool-item" on:click={editAvatar} title={myName ? myName:"Edit Avatar"}>
     <AvatarIcon size={30} avatar={myAvatar} border={false}></AvatarIcon></div>
 {/if}

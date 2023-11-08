@@ -6,8 +6,6 @@
     import type { AppAgentClient } from '@holochain/client';
     import type { SynStore } from '@holochain-syn/store';
     import type { ProfilesStore } from "@holochain-open-dev/profiles";
-    import Fa from 'svelte-fa';
-    import { faCog, faFileImport, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
     import BoardMenu from "./BoardMenu.svelte";
 
     export let roleName = ""
@@ -16,9 +14,10 @@
     let tsStore: TalkingStickiesStore;
     
     export let client : AppAgentClient
-    export let profilesStore : ProfilesStore|undefined = undefined
+    export let profilesStore : ProfilesStore
 
-    $: activeBoardHash = tsStore && tsStore.boardList ? tsStore.boardList.activeBoardHash : undefined
+    $: activeBoardHash = tsStore && tsStore.boardList && tsStore.boardList.activeBoardHash
+    $: activeBoardHashB64 = tsStore && tsStore.boardList && tsStore.boardList.activeBoardHashB64
 
     initialize()
 
@@ -32,14 +31,14 @@
     const DEFAULT_KD_BG_IMG = ""
     //const DEFAULT_KD_BG_IMG = "https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54461.jpg"
     const NO_BOARD_IMG = "https://holochain.org/img/big_logo.png"
-    $: boardList = tsStore? tsStore.boardList.stateStore() : undefined
-    $: archivedBoards = boardList ? $boardList.boards.filter((board)=>board.status === "archived") : []
-    $: activeBoards = boardList ? $boardList.boards.filter((board)=>board.status !== "archived") : []
-    $: boardState = tsStore ? tsStore.boardList.getReadableBoardState($activeBoardHash) :  undefined
-    $: bgUrl = boardState ?  ($boardState.props && $boardState.props.bgUrl) ? $boardState.props.bgUrl : DEFAULT_KD_BG_IMG : NO_BOARD_IMG
+    //$: boardList = tsStore? tsStore.boardList.stateStore() : undefined
+   // $: boardState = tsStore ? tsStore.getReadableBoardState($activeBoardHash) :  undefined
+    //$: bgUrl = boardState ?  ($boardState.props && $boardState.props.bgUrl) ? $boardState.props.bgUrl : DEFAULT_KD_BG_IMG : NO_BOARD_IMG
     $: bgImage = `background-image: url("`+ bgUrl+`");`
     $: myAgentPubKey = tsStore ? tsStore.myAgentPubKey() : undefined
     $: uiProps = tsStore ? tsStore.uiProps : undefined
+    $: bgUrl = uiProps ? $uiProps.bgUrl ? $uiProps.bgUrl : DEFAULT_KD_BG_IMG : NO_BOARD_IMG
+    $: boardCount = tsStore && tsStore.boardList ? tsStore.boardList.boardCount : undefined
 
     async function initialize() : Promise<void> {
       const store = createStore()
@@ -53,8 +52,9 @@
     }
     function createStore() : TalkingStickiesStore {
       const store = new TalkingStickiesStore(
+        profilesStore,
         client,
-        roleName
+        roleName,
       );
       return store
     }
@@ -76,8 +76,8 @@
           profilesStore={profilesStore}/>
       </div>
       <div class="workspace" style="display:flex">
-      {#if $uiProps.showMenu}
-        {#if boardList && $boardList.boards.length > 0 && $activeBoardHash === undefined}
+      {#if $uiProps.showMenu && $boardCount.status == "complete"}
+        {#if $boardCount.value > 0 && $activeBoardHash === undefined}
           <div class="board-menu" >
             <BoardMenu wide={true}></BoardMenu>
           </div>
@@ -100,7 +100,7 @@
 
         
         {#if $activeBoardHash !== undefined}
-          <TalkingStickiesPane on:requestChange={(event) => {tsStore.boardList.requestBoardChanges($activeBoardHash,event.detail)}}/>
+          <TalkingStickiesPane />
         {/if}
         </div>
         </div>

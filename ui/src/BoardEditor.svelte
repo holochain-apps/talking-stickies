@@ -13,7 +13,7 @@
     import sanitize from "sanitize-filename";
 
     import type { TalkingStickiesStore } from './tsStore';
-    import type { EntryHashB64 } from '@holochain/client';
+    import type { EntryHash } from '@holochain/client';
 
 
     const download = (filename: string, text: string) => {
@@ -35,8 +35,10 @@
 
 
     $: activeHash = store.boardList.activeBoardHash;
-    $: state = store.boardList.getReadableBoardState($activeHash);
-    
+    //$: state = store.getReadableBoardState($activeHash);
+    $: board = $activeHash ? store.boardList.boards.get($activeHash) : undefined
+    $: state = board ? board.readableState() : undefined
+
     const exportBoard = (state: BoardState) => {
       const prefix = "talking-stickies"
       const fileName = sanitize(`${prefix}_export_${state.name}.json`)
@@ -48,7 +50,7 @@
     export let handleDelete = undefined
     export let cancelEdit
 
-    let boardHash:EntryHashB64|undefined = undefined
+    let boardHash:EntryHash|undefined = undefined
     let text = ''
     let description = ''
     let props:BoardProps = {bgUrl: "", description:""}
@@ -71,9 +73,9 @@
       nameInput.focus()
     }
 
-    export const  edit = async (hash: EntryHashB64)=> {
+    export const  edit = async (hash: EntryHash)=> {
       boardHash = hash
-      const board: Board | undefined = await store.boardList.getBoard(boardHash)
+      const board: Board | undefined = await store.boardList.boards.get(boardHash)
       if (board) {
           const state = board.state()
           text = state.name
@@ -221,7 +223,7 @@
 
     <div class='controls'>
       {#if boardHash}
-        <div class="control" circle on:click={() => exportBoard($state)} title="Export">
+        <div class="control" on:click={() => exportBoard($state)} title="Export">
           <Fa icon={faFileExport} />
           <span>Export</span>
         </div>
@@ -236,8 +238,8 @@
       </div>
     
       <div class="control"
-        disabled={!valuesValid} 
-        style="margin-left:10px" on:click={() => handleSave(text, groups, voteTypes, props)} variant="primary">
+        class:disabled={!valuesValid} 
+        style="margin-left:10px" on:click={() => handleSave(text, groups, voteTypes, props)} >
         <span>Save</span>
         
       </div>

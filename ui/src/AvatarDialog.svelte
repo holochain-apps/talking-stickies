@@ -1,6 +1,8 @@
 <script lang="ts">
     import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
     import '@shoelace-style/shoelace/dist/components/button/button.js';
+    import "@holochain-open-dev/profiles/dist/elements/update-profile.js";
+
     import AvatarIcon from './AvatarIcon.svelte';
 
     export let avatar
@@ -12,7 +14,8 @@
 </script>
 
 <sl-dialog label="Edit Profile" bind:this={dialog}>
-    <div class="avatar-editor">
+  <update-profile on:cancel-edit-profile={()=>dialog.hide()} on:profile-updated={()=>dialog.hide()}></update-profile>
+    <!-- <div class="avatar-editor">
       <sl-input label="Name" class='textarea' value={avatar.name} on:input={e=>avatar.name=e.target.value} ></sl-input>
        
       <span class="row" style="margin-top:10px;align-items:flex-end">
@@ -33,7 +36,7 @@
             variant=primary>Save</sl-button>
         </div>
       </div>
-    </div>
+    </div> -->
 </sl-dialog>
 
 <style>
