@@ -67,8 +67,7 @@
       <div class="wrapper">
 
       <div class="header">
-        <Toolbar 
-          profilesStore={profilesStore}/>
+        <Toolbar />
       </div>
       <div class="workspace" style="display:flex">
       {#if $uiProps.showMenu && $boardCount.status == "complete"}

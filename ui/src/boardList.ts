@@ -1,10 +1,11 @@
 import { DocumentStore,  type SynGrammar, type SynStore,  WorkspaceStore, SessionStore } from "@holochain-syn/core";
-import { Board } from "./board";
+import { Board, type BoardStateData } from "./board";
 import { HoloHashMap, LazyHoloHashMap } from "@holochain-open-dev/utils";
 import { derived, get, writable, type Readable, type Writable } from "svelte/store";
 import { boardGrammar, type BoardDelta, type BoardGrammar, type BoardState } from "./board";
 import { type AgentPubKey, type EntryHash, type EntryHashB64, type AgentPubKeyB64, encodeHashToBase64 } from "@holochain/client";
 import {toPromise, type AsyncReadable, type Derived, asyncDerived, joinAsync, pipe, sliceAndJoin} from '@holochain-open-dev/stores'
+import type { ProfilesStore } from "@holochain-open-dev/profiles";
 
 export const CommitTypeBoardList :string = "board-list"
 
@@ -126,9 +127,56 @@ export class BoardList {
     activeBoardHashB64: Derived<string| undefined> = derived(this.activeBoardHash, s=> s ? encodeHashToBase64(s): undefined)
     boardCount: AsyncReadable<number>
     boards: HoloHashMap<EntryHash, Board> = new HoloHashMap()
-    //boardsLatests: AsyncReadable<ReadonlyMap<Uint8Array, BoardState>>
+    boardParticipants: HoloHashMap<EntryHash, AsyncReadable<AgentPubKey[]>> = new HoloHashMap()
+    boardParticipantsAsync: AsyncReadable<ReadonlyMap<EntryHash, AgentPubKey[]>> 
 
-    constructor(public synStore: SynStore, public documentStore: DocumentStore<BoardListGrammar>) {
+    documents: LazyHoloHashMap<EntryHash, DocumentStore<BoardGrammar>> = new LazyHoloHashMap( documentHash =>
+         new DocumentStore(this.synStore, boardGrammar, documentHash))
+
+    agentBoards: LazyHoloHashMap<AgentPubKey, AsyncReadable<Array<BoardStateData>>> = new LazyHoloHashMap(agent =>
+        pipe(this.synStore.documentHashesByTag.get("board"),
+            documentHashes => joinAsync(documentHashes.map(documentHash=>this.documents.get(documentHash).allAuthors)),
+            (documentsAuthors, documentHashes) => {
+                const agentDocuments = []
+                const b64 = encodeHashToBase64(agent)
+                for (let i = 0; i< documentsAuthors.length; i+=1) {
+                    if (documentsAuthors[i].find(a=>encodeHashToBase64(a) == b64)) {
+                        const hash = documentHashes[i]
+                        const state = this.boards.get(hash).workspace.latestSnapshot
+                        agentDocuments.push(asyncDerived(state, state=>{return {hash, state}}))
+                    }
+                }
+                return joinAsync(agentDocuments)
+            }
+        )
+    )
+
+    allAgentBoards: AsyncReadable<ReadonlyMap<AgentPubKey, Array<BoardStateData>>>
+   
+    boardData = new LazyHoloHashMap( documentHash => {
+        const docStore = this.documents.get(documentHash)
+
+        return pipe(docStore.allWorkspacesHashes,
+            workspaces => {
+                let board = this.boards.get(documentHash)
+                let workspace: WorkspaceStore<BoardGrammar>
+                if (!board) {
+                    workspace = new WorkspaceStore(docStore, workspaces[0])
+                    board = new Board(docStore, workspace)
+                    this.boards.set(documentHash, board)
+                    this.boardParticipants.set(documentHash, board.sessionParticipants())
+                } else {
+                    workspace = new WorkspaceStore(docStore, workspaces[0])
+                }
+                return workspace.latestSnapshot
+            },
+        )
+    })
+
+    constructor(public profilseStore: ProfilesStore, public synStore: SynStore, public documentStore: DocumentStore<BoardListGrammar>) {
+        this.allAgentBoards = pipe(this.profilseStore.agentsWithProfile,
+            agents=>sliceAndJoin(this.agentBoards, agents)
+        )
         const boardHashes = this.synStore.documentHashesByTag.get("board")
         const archivedHashes = this.synStore.documentHashesByTag.get("archived")
         this.activeBoards = pipe(boardHashes,
@@ -140,6 +188,7 @@ export class BoardList {
 
         const joined = joinAsync([boardHashes, archivedHashes])
 
+
         const asyncJoined = asyncDerived(joined, 
             ([boards,archived]) => [...boards, ...archived]
             )
@@ -149,26 +198,11 @@ export class BoardList {
         this.boardCount =  asyncDerived(joined,
             ([boards,archived]) => boards.length + archived.length
         )
-    }
-
-    boardData = new LazyHoloHashMap( documentHash => {
-        const docStore = new DocumentStore(this.synStore, boardGrammar, documentHash)
-
-        return pipe(docStore.allWorkspacesHashes,
-            workspaces => {
-                let board = this.boards.get(documentHash)
-                let workspace: WorkspaceStore<BoardGrammar>
-                if (!board) {
-                    workspace = new WorkspaceStore(docStore, workspaces[0])
-                    board = new Board(docStore, workspace)
-                    this.boards.set(documentHash, board)
-                } else {
-                    workspace = new WorkspaceStore(docStore, workspaces[0])
-                }
-                return workspace.latestSnapshot
-            },
+        this.boardParticipantsAsync =  pipe(asyncJoined,
+            docHashes => sliceAndJoin(this.boardParticipants, docHashes)
         )
-    })
+
+    }
 
     requestBoardChanges(boardHash:EntryHash, changes) {
         const board = this.boards.get(boardHash)
@@ -177,11 +211,11 @@ export class BoardList {
         }
     }
 
-    public static async Create(synStore: SynStore) {
+    public static async Create(profilesStore: ProfilesStore, synStore: SynStore) {
         const {documentHash, firstCommitHash} = await synStore.createDeterministicDocument(boardListGrammar, {type: CommitTypeBoardList})
         await synStore.client.tagDocument(documentHash, "boardList")
         const documentStore = new DocumentStore(synStore, boardListGrammar, documentHash)
-        const me = new BoardList(synStore, documentStore);
+        const me = new BoardList(profilesStore, synStore, documentStore);
         const workspaceHash = await documentStore.createWorkspace(
             'main',
             firstCommitHash
@@ -192,13 +226,13 @@ export class BoardList {
         return me
     }
 
-    public static async Join(synStore: SynStore, documentHash: EntryHash) {
+    public static async Join(profilesStore: ProfilesStore, synStore: SynStore, documentHash: EntryHash) {
         const documentStore = new DocumentStore(
             synStore,
             boardListGrammar,
             documentHash
           );
-        const me = new BoardList(synStore, documentStore);
+        const me = new BoardList(profilesStore, synStore, documentStore);
         console.log("BoardList", me)
         
         const workspaces = await toPromise(documentStore.allWorkspaces);

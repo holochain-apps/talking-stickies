@@ -16,8 +16,6 @@
 
   let editBoardDialog
 
-  export let profilesStore: ProfilesStore|undefined
-
 </script>
 
 <div class='toolbar'>
@@ -45,7 +43,7 @@
         <div class="nav-button"><Fa icon={faBug} size=2x /></div>
       </a>
     </div>
-    <Folk profilesStore={profilesStore}></Folk>
+    <Folk></Folk>
   </div>
 </div>
 

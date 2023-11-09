@@ -101,12 +101,12 @@ export class TalkingStickiesStore {
         const documentsHashes: Array<EntryHash> = await this.synStore.client.getDocumentsWithTag("boardList");
         if (documentsHashes.length == 0) { 
             console.log(`Found no board list document, creating`)
-            this.boardList = await BoardList.Create(this.synStore);
+            this.boardList = await BoardList.Create(this.profilesStore, this.synStore);
         } else {
             if (documentsHashes.length != 1) {
                 console.log(`Note: found more than one board list document!`)
             }
-            this.boardList = await BoardList.Join(this.synStore, documentsHashes[0])
+            this.boardList = await BoardList.Join(this.profilesStore, this.synStore, documentsHashes[0])
         }
     }
 

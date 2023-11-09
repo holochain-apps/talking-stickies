@@ -1,75 +1,83 @@
 <script lang="ts">
-  import { encodeHashToBase64 } from '@holochain/client';
+  import "@shoelace-style/shoelace/dist/components/skeleton/skeleton.js";
   import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
   import { getContext } from "svelte";
   import type { TalkingStickiesStore } from "./tsStore";
-  import AvatarIcon from './AvatarIcon.svelte';
-  import type { ProfilesStore, Profile} from "@holochain-open-dev/profiles";
-  
-  export let profilesStore: ProfilesStore|undefined
+  import Avatar from './Avatar.svelte';
+  import { encodeHashToBase64, type AgentPubKey } from "@holochain/client";
+  import type { Board } from "./board";
+  import "@holochain-open-dev/stores/dist/debug-store.js"
 
   const { getStore } :any = getContext('tsStore');
   const store:TalkingStickiesStore = getStore();
-  $: participants = store.boardList.participants()
-  $: activeFolk = $participants.active
 
+  $: agents = store.profilesStore.agentsWithProfile
+  $: agentBoards = store.boardList.allAgentBoards
+  
+  //__debugStore(store.boardList.allAgentBoards)
+  //.status=="complete" ? sliceAndJoin( store.boardList.boardParticipants, $agents.value): undefined
 
-  $: allProfiles = profilesStore ? profilesStore.allProfiles : undefined
-
-  export let avatars
   export const close=()=>{dialog.hide()}
-  export const open=()=>{dialog.show()}
+  export const open=()=>{
+    dialog.show()
+    }
   let dialog
 
-  const getProfile = (folk) : Profile | undefined => {
-
-    if ($allProfiles.status != "complete") {
-        return undefined
-    }
-
-    if ($allProfiles) {
-        const profile = $allProfiles.value.get(folk)
-        return profile
-    }
-    return undefined
-  }
 </script>
 
-<sl-dialog label="Participants Online" bind:this={dialog}>
-    <div class="participants">
-        <div class="list">
-            {#if profilesStore}
-                {#each activeFolk.map(f=>{return {folk:f, profile:getProfile(f)}}) as {folk, profile}}
-                    <div class="list-item">
-                        {#if profile}
-                            <AvatarIcon avatar={{url:profile.fields.avatar, name:profile.nickname}} key={folk} size={40} />
-                            <div style="margin-left:10px; font-size:120%">
-                                {profile.nickname}
+    <sl-dialog label="Participants" bind:this={dialog}>
+        <div class="participants">
+            <div class="list">
+                {#if $agents.status == "pending"}
+                    <sl-skeleton
+                        effect="pulse"
+                        style="height: 40px; width: 100%"
+                    ></sl-skeleton>
+                {:else}
+                <h4 style="margin-left:50px">Contributed to:</h4>
+
+                        {#each $agents.status=="complete" ? Array.from($agents.value) : [] as agentPubKey}
+                            <div class="list-item">
+                                <Avatar agentPubKey={agentPubKey} size={40} namePosition="column"/>
+                                <div style="margin-left:10px; font-size:120%">
+                                    {#if $agentBoards.status=="complete"}
+                                    <div class="boards">
+                                        {#each $agentBoards.value.get(agentPubKey) as board}
+                                            <div class="board" on:click={()=>{
+                                                store.boardList.setActiveBoard(board.hash)
+                                                close()
+                                            }}>{board.state.name}</div>
+                                        {/each}
+                                    </div>
+                                    {/if}
+                                </div>
                             </div>
-                        {:else}
-                            <i>{encodeHashToBase64(folk)}</i>
-                        {/if}
-                    </div>
-                {/each}
-            {:else}
-                {#each activeFolk.map(f=>{return {folk:f, folkB64:encodeHashToBase64(f)}}) as {folk, folkB64}}
-                <div class="list-item">
-                    <AvatarIcon avatar={avatars[folkB64]} key={folk} size={40} />
-                    <div style="margin-left:10px; font-size:120%">
-                    {#if avatars[folkB64]}
-                        {avatars[folkB64].name}
-                    {:else} <i>no-name</i>
+                        {/each}
                     {/if}
-                    </div>
-                </div>
-                {/each}
-            {/if}
+            </div>
         </div>
-    </div>
-</sl-dialog>
+    </sl-dialog>
 
 <style>
-    .participants {
+    .boards {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .board {
+        border-radius: 5px;
+        border: 2px solid rgb(166 115 55 / 26%);
+        font-size: 90%;
+        font-weight: bold;
+        padding: 2px;
+        justify-content: center;
+        display: flex;
+        cursor: pointer;
+        margin-right: 5px;
+    }
+    .board:hover {
+        box-shadow: 0px 10px 35px rgb(130 107 58 / 25%);
+        transform: scale(1.1);
     }
     .list {
         display: flex;

@@ -198,7 +198,7 @@
         display: flex;
         align-items: center;
         flex-direction: row;
-        justify-content: flex-start;
+        justify-content: space-between;
         transition: all .25s ease;
         transform: scale(1);
         padding: 15px;
