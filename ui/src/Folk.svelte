@@ -15,7 +15,7 @@
 
     const { getStore } :any = getContext('tsStore');
     const store:TalkingStickiesStore = getStore();
-    const myAgentPubKey = store.myAgentPubKey()
+    const myAgentPubKey = store.myAgentPubKeyB64()
     $: avatars = store.boardList.avatars()
     //@ts-ignore
     $: myProfile = profilesStore ? get(profilesStore.myProfile).value : undefined

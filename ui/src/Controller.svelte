@@ -31,11 +31,6 @@
     const DEFAULT_KD_BG_IMG = ""
     //const DEFAULT_KD_BG_IMG = "https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54461.jpg"
     const NO_BOARD_IMG = "https://holochain.org/img/big_logo.png"
-    //$: boardList = tsStore? tsStore.boardList.stateStore() : undefined
-   // $: boardState = tsStore ? tsStore.getReadableBoardState($activeBoardHash) :  undefined
-    //$: bgUrl = boardState ?  ($boardState.props && $boardState.props.bgUrl) ? $boardState.props.bgUrl : DEFAULT_KD_BG_IMG : NO_BOARD_IMG
-    $: bgImage = `background-image: url("`+ bgUrl+`");`
-    $: myAgentPubKey = tsStore ? tsStore.myAgentPubKey() : undefined
     $: uiProps = tsStore ? tsStore.uiProps : undefined
     $: bgUrl = uiProps ? $uiProps.bgUrl ? $uiProps.bgUrl : DEFAULT_KD_BG_IMG : NO_BOARD_IMG
     $: boardCount = tsStore && tsStore.boardList ? tsStore.boardList.boardCount : undefined

@@ -6,6 +6,7 @@ import {
     type RoleName,
     encodeHashToBase64,
     type EntryHashB64,
+    type AgentPubKey,
   } from '@holochain/client';
 import { EntryRecord, HoloHashMap, LazyHoloHashMap, RecordBag } from '@holochain-open-dev/utils';
 import { SynStore,  SynClient, type Commit, DocumentStore, type Workspace, WorkspaceStore } from '@holochain-syn/core';
@@ -67,8 +68,12 @@ export class TalkingStickiesStore {
         })
     }
 
-    myAgentPubKey(): AgentPubKeyB64 {
+    myAgentPubKeyB64(): AgentPubKeyB64 {
         return encodeHashToBase64(this.client.myPubKey);
+    }
+
+    myAgentPubKey(): AgentPubKey {
+        return this.client.myPubKey;
     }
 
     constructor(

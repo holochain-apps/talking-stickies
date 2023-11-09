@@ -7,7 +7,6 @@
   import "@holochain-open-dev/profiles/dist/elements/profiles-context.js";
   import "@holochain-open-dev/profiles/dist/elements/profile-prompt.js";
   import "@holochain-open-dev/profiles/dist/elements/create-profile.js";
-  import "@holochain-open-dev/profiles/dist/elements/agent-avatar.js";
 
   const appId = import.meta.env.VITE_APP_ID ? import.meta.env.VITE_APP_ID : 'talking-stickies'
   const roleName = 'talking-stickies'

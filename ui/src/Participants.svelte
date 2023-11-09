@@ -3,6 +3,8 @@
   import { encodeHashToBase64 } from "@holochain/client";
   import { getContext } from "svelte";
   import type { TalkingStickiesStore } from "./tsStore";
+  import Avatar from "./Avatar.svelte";
+  import { AgentPubKeyMap } from "@holochain-open-dev/utils";
 
   export let boardHash
 
@@ -20,7 +22,7 @@
     {#if $participants && $participants.status=="complete"}
 
         {#each Array.from($participants.value) as agentPubKey}
-          <agent-avatar disable-tooltip={true} disable-copy={true} agent-pub-key={encodeHashToBase64(agentPubKey)} size={size}/>
+          <Avatar size={size} agentPubKey={agentPubKey} showNickname={false} />
         {/each}
 
     {/if}
