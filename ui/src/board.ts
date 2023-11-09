@@ -278,21 +278,10 @@ export type BoardDelta =
 
 export const CommitTypeBoard :string = "board"
 
-// export class Boards {
-//   boards: Array<AsyncReadable<DocumentStore<BoardGrammar>>> = []
-//   constructor(public synStore: SynStore) {
-//   }
-
-//   async makeBoard(options: BoardState) : Promise<Board> {
-//     const rootHash = await this.synStore.createDeterministicDocument(boardGrammar, {type: CommitTypeBoard})
-//     const documentStore = new DocumentStore(this.synStore, boardGrammar, rootHash);
-//     const date =`${new Date}`
-//     const workspaceHash = documentStore.createWorkspace(
-//       date,
-//       documentStore.rootHash // The initial commit for the workspace
-//     );
-//   }
-// }
+export type BoardStateData = {
+  hash: EntryHash,
+  state: BoardState,
+}
 
 export class Board {
     public session: SessionStore<BoardGrammar> | undefined

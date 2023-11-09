@@ -26,7 +26,7 @@
     const { getStore } :any = getContext('tsStore');
 
     const store:TalkingStickiesStore = getStore();
-    $: boardList = store.boardList.stateStore()
+    $: boardList = store.boardList.boardData
     $: activeHash = store.boardList.activeBoardHash;
     $: activeHashB64 = store.boardList.activeBoardHashB64;
     $: state = store.boardList.getReadableBoardState($activeHash);
@@ -41,20 +41,21 @@
         showSearchResults = true
         if (text == "") return
         const searchText = text.toLocaleLowerCase()
-        $boardList.boards.forEach(b=> {
-            if (b.name.toLocaleLowerCase().includes(searchText)) foundBoards.push(b)
-            const board = store.boardList.getReadableBoardState(decodeHashFromBase64(b.hash))
-            const boardState = get(board)
-            boardState.stickies.forEach((c)=>{
-                if (c.props.text.toLocaleLowerCase().includes(searchText)) {
-                    foundStickies.push({
-                        board: b,
-                        sticky: c.id,
-                        text: c.props.text,
-                    })
-                }
-            })
-        })
+        // FIXME!!
+        // $boardList.boards.forEach(b=> {
+        //     if (b.name.toLocaleLowerCase().includes(searchText)) foundBoards.push(b)
+        //     const board = store.boardList.getReadableBoardState(decodeHashFromBase64(b.hash))
+        //     const boardState = get(board)
+        //     boardState.stickies.forEach((c)=>{
+        //         if (c.props.text.toLocaleLowerCase().includes(searchText)) {
+        //             foundStickies.push({
+        //                 board: b,
+        //                 sticky: c.id,
+        //                 text: c.props.text,
+        //             })
+        //         }
+        //     })
+        // })
 
     }
     const clearSearch = () => {

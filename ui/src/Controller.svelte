@@ -39,7 +39,6 @@
       const store = createStore()
       synStore = store.synStore;
       try {
-        await store.loadBoards()
         tsStore = store
       } catch (e) {
         console.log("Error loading boards:", e)

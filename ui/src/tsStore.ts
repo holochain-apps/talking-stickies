@@ -8,17 +8,13 @@ import {
     type EntryHashB64,
     type AgentPubKey,
   } from '@holochain/client';
-import { EntryRecord, HoloHashMap, LazyHoloHashMap, RecordBag } from '@holochain-open-dev/utils';
-import { SynStore,  SynClient, type Commit, DocumentStore, type Workspace, WorkspaceStore } from '@holochain-syn/core';
-import { CommitTypeBoard, boardGrammar, type BoardGrammar, type BoardState, Board } from './board';
-import { BoardList, CommitTypeBoardList } from './boardList';
+import { SynStore,  SynClient, type Commit } from '@holochain-syn/core';
+import { BoardList } from './boardList';
 import { decode } from '@msgpack/msgpack';
-import {deriveStore, derived, pipe, sliceAndJoin, toPromise, type Derived} from '@holochain-open-dev/stores'
 import TimeAgo from "javascript-time-ago"
 import en from 'javascript-time-ago/locale/en'
-import { type AsyncReadable, asyncDerived, joinAsync} from '@holochain-open-dev/stores'
 
-import { get, writable, type Readable, type Writable } from "svelte/store";
+import { writable, type Writable } from "svelte/store";
 import type { ProfilesStore } from '@holochain-open-dev/profiles';
 
 TimeAgo.addDefaultLocale(en)
@@ -89,33 +85,12 @@ export class TalkingStickiesStore {
           this.zomeName
         );
         //@ts-ignore
-        this.synStore = new SynStore(new SynClient(this.client,this.roleName,this.zomeName))      
+        this.synStore = new SynStore(new SynClient(this.client,this.roleName,this.zomeName))
+        this.boardList = new BoardList(profilesStore, this.synStore) 
     }
 
     commitType(commit: Commit) : string {
         const meta:any = decode(commit.meta)
         return meta.type
-    }
-
-    async findOrMakeRoots(): Promise<any> {
-        const documentsHashes: Array<EntryHash> = await this.synStore.client.getDocumentsWithTag("boardList");
-        if (documentsHashes.length == 0) { 
-            console.log(`Found no board list document, creating`)
-            this.boardList = await BoardList.Create(this.profilesStore, this.synStore);
-        } else {
-            if (documentsHashes.length != 1) {
-                console.log(`Note: found more than one board list document!`)
-            }
-            this.boardList = await BoardList.Join(this.profilesStore, this.synStore, documentsHashes[0])
-        }
-    }
-
-    async loadBoards() : Promise<any> {
-        console.log("fetching all roots...")
-        try {
-            await this.findOrMakeRoots()
-        } catch (e) {
-            console.log("Error Fetching Roots:", e)
-        }
     }
 }
