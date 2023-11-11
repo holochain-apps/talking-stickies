@@ -39,10 +39,6 @@
 
     let aboutDialog
 
-    let boardName = (board: Board) => {
-        return board.latestState ? board.latestState.name : "?"
-    }
-
 </script>
 
 <AboutDialog bind:this={aboutDialog} />

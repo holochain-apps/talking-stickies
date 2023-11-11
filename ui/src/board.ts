@@ -286,13 +286,9 @@ export type BoardStateData = {
 export class Board {
     public session: SessionStore<BoardGrammar> | undefined
     public hashB64: EntryHashB64
-    public latestState: BoardState | undefined
 
     constructor(public document: DocumentStore<BoardGrammar>, public workspace: WorkspaceStore<BoardGrammar>) {
       this.hashB64 = encodeHashToBase64(this.document.documentHash)
-      toPromise(this.workspace.latestSnapshot).then(state=> {
-        this.latestState = state}
-        )
     }
 
     public static async Create(synStore: SynStore) {
