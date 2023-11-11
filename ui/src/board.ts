@@ -1,11 +1,7 @@
 import { WorkspaceStore, DocumentStore, type SessionStore, type SynGrammar, SynStore } from "@holochain-syn/core";
-import { get } from "svelte/store";
+import { get, type Readable } from "svelte/store";
 import { v1 as uuidv1 } from "uuid";
-import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64, type AgentPubKeyB64, type Timestamp } from "@holochain/client";
-import { cloneDeep } from "lodash";
-import { HoloHashMap } from "@holochain-open-dev/utils";
-import { toPromise, type AsyncReadable, type Readable } from "@holochain-open-dev/stores";
-
+import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64, type AgentPubKeyB64 } from "@holochain/client";
   
 export const UngroupedId = "_"
 export class Group {
