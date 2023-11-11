@@ -16,17 +16,19 @@
   const { getStore } :any = getContext("tsStore");
   let tsStore: TalkingStickiesStore = getStore();
 
-  $: activeHash = tsStore.boardList.activeBoardHash;
-  $: state = tsStore.boardList.getReadableBoardState($activeHash);
+  $: activeBoard = tsStore.boardList.activeBoard;
+  $: state = $activeBoard ? $activeBoard.readableState() : undefined
 
 </script>
 
 <div class='sort-options'>
-  {#each $state.voteTypes as {type, toolTip, emoji}}
-  <div class="wrapper sort-button" on:click={handleClick(type)} class:selected={sortOption === type} title="Sort by '{emoji}'">
-    <EmojiIcon emoji="{emoji}" on:click={handleClick(type)}/>
-  </div>
-  {/each}
+  {#if $state}
+    {#each $state.voteTypes as {type, toolTip, emoji}}
+    <div class="wrapper sort-button" on:click={handleClick(type)} class:selected={sortOption === type} title="Sort by '{emoji}'">
+      <EmojiIcon emoji="{emoji}" on:click={handleClick(type)}/>
+    </div>
+    {/each}
+  {/if}
 </div>
 
 <style>
