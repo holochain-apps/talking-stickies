@@ -55,7 +55,7 @@
                     on:click={()=>selectBoard(hash)}
                     class="board" >
                     <div class="board-name">{board.name}</div>
-                    <Participants boardHash={hash}></Participants>
+                    <Participants board={store.boardList.getBoard(hash)}></Participants>
                     <div class="board-bg" style="background-image: url({bgUrl});"></div>
                 </div>
             {/each}

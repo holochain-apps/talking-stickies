@@ -4,14 +4,14 @@
   import { getContext } from "svelte";
   import type { TalkingStickiesStore } from "./tsStore";
   import Avatar from "./Avatar.svelte";
-  import { AgentPubKeyMap } from "@holochain-open-dev/utils";
+  import type { Board } from "./board";
+  import type { AsyncReadable } from "@holochain-open-dev/stores";
 
-  export let boardHash
+  export let board: Board
 
-  const { getStore } :any = getContext("tsStore");
-  let store: TalkingStickiesStore = getStore();
+  // const { getStore } :any = getContext("tsStore");
+  // let store: TalkingStickiesStore = getStore();
 
-  $: board = store.boardList.getBoard(boardHash)
   $: participants = board ? board.sessionParticipants() : undefined
 
   export let size:number = 24;
