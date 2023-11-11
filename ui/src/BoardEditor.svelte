@@ -34,10 +34,8 @@
     const store:TalkingStickiesStore = getStore();
 
 
-    $: activeHash = store.boardList.activeBoardHash;
-    //$: state = store.getReadableBoardState($activeHash);
-    $: board = $activeHash ? store.boardList.boards.get($activeHash) : undefined
-    $: state = board ? board.readableState() : undefined
+    $: activeBoard = store.boardList.activeBoard;
+    $: state = $activeBoard ? $activeBoard.readableState() : undefined
 
     const exportBoard = (state: BoardState) => {
       const prefix = "talking-stickies"
@@ -75,7 +73,7 @@
 
     export const  edit = async (hash: EntryHash)=> {
       boardHash = hash
-      const board: Board | undefined = await store.boardList.boards.get(boardHash)
+      const board: Board | undefined = store.boardList.getBoard(boardHash)
       if (board) {
           const state = board.state()
           text = state.name
