@@ -312,7 +312,7 @@ export class Board {
         return me
     }
 
-    hash() : EntryHash {
+    get hash() : EntryHash {
         return this.document.documentHash
     }
    

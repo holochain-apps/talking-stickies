@@ -154,7 +154,7 @@ export class BoardList {
 
     async makeBoard(options: BoardState, fromHash?: EntryHashB64) : Promise<Board> {
         const board = await Board.Create(this.synStore)
-        this.boards.set(board.hash(), board)
+        this.boards.set(board.hash, board)
         const sessionStore = board.session
         const boardHash = board.hashB64
         this.boards[boardHash] = board 
