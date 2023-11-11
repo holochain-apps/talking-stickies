@@ -9,18 +9,19 @@
     import BoardMenu from "./BoardMenu.svelte";
 
     export let roleName = ""
-  
-    let synStore: SynStore;
-    let tsStore: TalkingStickiesStore;
-    
     export let client : AppAgentClient
     export let profilesStore : ProfilesStore
+  
+    let tsStore: TalkingStickiesStore = new TalkingStickiesStore(
+        profilesStore,
+        client,
+        roleName,
+      );
+    let synStore: SynStore = tsStore.synStore
 
-    $: activeBoardHash = tsStore && tsStore.boardList && tsStore.boardList.activeBoardHash
-    $: activeBoardHashB64 = tsStore && tsStore.boardList && tsStore.boardList.activeBoardHashB64
-    $: activeBoard = tsStore && tsStore.boardList && tsStore.boardList.activeBoard
 
-    initialize()
+    $: activeBoardHash = tsStore.boardList.activeBoardHash
+    $: activeBoard = tsStore.boardList.activeBoard
 
     setContext('synStore', {
       getStore: () => synStore,
@@ -32,27 +33,9 @@
     const DEFAULT_KD_BG_IMG = ""
     //const DEFAULT_KD_BG_IMG = "https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54461.jpg"
     const NO_BOARD_IMG = "https://holochain.org/img/big_logo.png"
-    $: uiProps = tsStore ? tsStore.uiProps : undefined
-    $: bgUrl = uiProps ? $uiProps.bgUrl ? $uiProps.bgUrl : DEFAULT_KD_BG_IMG : NO_BOARD_IMG
-    $: boardCount = tsStore && tsStore.boardList ? tsStore.boardList.boardCount : undefined
-
-    async function initialize() : Promise<void> {
-      const store = createStore()
-      synStore = store.synStore;
-      try {
-        tsStore = store
-      } catch (e) {
-        console.log("Error loading boards:", e)
-      }
-    }
-    function createStore() : TalkingStickiesStore {
-      const store = new TalkingStickiesStore(
-        profilesStore,
-        client,
-        roleName,
-      );
-      return store
-    }
+    $: uiProps = tsStore.uiProps
+    $: bgUrl = $uiProps.bgUrl ? $uiProps.bgUrl : DEFAULT_KD_BG_IMG
+    $: boardCount = tsStore.boardList.boardCount
   
   </script>
   
@@ -62,8 +45,6 @@
   <div class="flex-scrollable-parent">
     <div class="flex-scrollable-container">
       <div class='app'>
-
-      {#if tsStore}
       <div class="wrapper">
 
       <div class="header">
@@ -98,10 +79,8 @@
         {/if}
         </div>
         </div>
-      {:else}
-        <div class="loading"><div class="loader"></div></div>
-      {/if}
-      <div class="background">
+
+        <div class="background">
         <div class="background-overlay"></div>
         <div class="background-image"
               style={`background-image: url(${bgUrl}`}></div>
