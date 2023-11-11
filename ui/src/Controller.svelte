@@ -18,6 +18,7 @@
 
     $: activeBoardHash = tsStore && tsStore.boardList && tsStore.boardList.activeBoardHash
     $: activeBoardHashB64 = tsStore && tsStore.boardList && tsStore.boardList.activeBoardHashB64
+    $: activeBoard = tsStore && tsStore.boardList && tsStore.boardList.activeBoard
 
     initialize()
 
@@ -92,8 +93,8 @@
       {/if}
 
         
-        {#if $activeBoardHash !== undefined}
-          <TalkingStickiesPane />
+        {#if $activeBoard !== undefined}
+          <TalkingStickiesPane activeBoard={$activeBoard}/>
         {/if}
         </div>
         </div>

@@ -14,7 +14,7 @@ export interface BoardRecord {
 }
 
 export class BoardList {
-
+    activeBoard: Writable<Board| undefined> = writable(undefined)
     activeBoards: AsyncReadable<ReadonlyMap<Uint8Array, BoardState>>
     archivedBoards: AsyncReadable<ReadonlyMap<Uint8Array, BoardState>>
     allBoards: AsyncReadable<ReadonlyMap<Uint8Array, BoardState>>
@@ -120,10 +120,13 @@ export class BoardList {
             if (board) {
                 await board.join()
                 console.log("joined")
+                this.activeBoard.update((n) => {return board} )
             } else {
                 console.log("NO BOARD")
             }
-        } 
+        } else {
+            this.activeBoard.update((n) => {return undefined} )
+        }
         this.activeBoardHash.update((n) => {return hash} )
     }
 

@@ -16,6 +16,7 @@
   import { v1 as uuidv1 } from "uuid";
   import ClickEdit from "./ClickEdit.svelte";
   import Masonry from 'svelte-bricks'
+  import type { AgentPubKeyB64 } from "@holochain/client";
 
   
   Marked.setOptions
@@ -39,10 +40,12 @@
   const { getStore } :any = getContext("tsStore");
   let tsStore: TalkingStickiesStore = getStore();
 
-  $: activeHash = tsStore.boardList.activeBoardHash;
-  $: board = tsStore.boardList.getBoard($activeHash)
-  $: participants = board ? board.participants() : undefined
-  $: state = tsStore.boardList.getReadableBoardState($activeHash);
+  export let activeBoard: Board
+
+  $: board = activeBoard
+  $: participants = activeBoard.participants()
+  $: state = activeBoard.readableState()
+
   $: stickies = $state ? $state.stickies : undefined;
   $: sortStickies = sortOption
     ? sortBy((sticky) => countVotes(sticky.props.votes, sortOption) * -1)
@@ -82,7 +85,7 @@
     changes.push({type: 'set-groups',
         groups
         })
-    tsStore.boardList.requestBoardChanges($activeHash, changes)
+    board.requestChanges( changes)
   };
 
   const newSticky = (group: uuidv1) => () => {
@@ -113,7 +116,7 @@
         id: uuidv1(),
         props,
       };
-      tsStore.boardList.requestBoardChanges($activeHash, [{ type: "add-sticky", value: sticky, group}])
+      board.requestChanges( [{ type: "add-sticky", value: sticky, group}])
 
   };
 
@@ -127,14 +130,14 @@
           changes.push({ type: "update-sticky-props", id: sticky.id, props: cloneDeep(props)})
         }
         if (changes.length > 0) {
-          tsStore.boardList.requestBoardChanges($activeHash, changes)
+          board.requestChanges( changes)
         }
       }
       clearEdit()
   };
     
   const deleteSticky = (id: uuidv1) => {
-        tsStore.boardList.requestBoardChanges($activeHash, [{ type: "delete-sticky", id }])
+        board.requestChanges( [{ type: "delete-sticky", id }])
         clearEdit()
     };
   const voteOnSticky = (agent:AgentPubKeyB64, stickies, id: uuidv1, type, max) => {
@@ -166,7 +169,7 @@
         console.log("votes before", sticky.props.votes);
         console.log("votes after", votes);
     
-        tsStore.boardList.requestBoardChanges($activeHash, [
+        board.requestChanges( [
           {
             type: "update-sticky-votes",
             id: sticky.id,
@@ -287,7 +290,7 @@
     const target = findDropGroupParentElement(e.target as HTMLElement)
     var srcId = e.dataTransfer.getData("text");
     if (target.id) {
-      tsStore.boardList.requestBoardChanges($activeHash, [{ type: "update-sticky-group", id:srcId, group:target.id  }])
+      board.requestChanges( [{ type: "update-sticky-group", id:srcId, group:target.id , index:0 }])
     }
     clearDrag()
     //console.log("handleDragDropGroup",e, target )
@@ -298,7 +301,7 @@
     //console.log("handleDragDropCard",e, target )
     var srcId = e.dataTransfer.getData("text");
     if (target.id && (srcId != target.id) && confirm("Merge stickies?")) {
-      tsStore.boardList.requestBoardChanges($activeHash, [{ type: "merge-stickies", dstId: target.id, srcId }])
+      board.requestChanges( [{ type: "merge-stickies", dstId: target.id, srcId }])
     }
     clearDrag()
   }
@@ -393,7 +396,7 @@
                 const idx = newGroups.findIndex(g=>g.id==group.id)
                 if (idx >= 0) {
                   newGroups[idx].name = text
-                  tsStore.boardList.requestBoardChanges($activeHash, [
+                  board.requestChanges( [
                     {
                       type: "set-groups",
                       groups: newGroups
