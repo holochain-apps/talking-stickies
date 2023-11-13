@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getContext } from "svelte";
-    import { decodeHashFromBase64, type EntryHashB64 } from '@holochain/client';
+    import { decodeHashFromBase64, encodeHashToBase64, type EntryHash, type EntryHashB64 } from '@holochain/client';
     import {faSearch } from '@fortawesome/free-solid-svg-icons';
     import Fa from 'svelte-fa';
     import '@shoelace-style/shoelace/dist/components/select/select.js';
@@ -11,67 +11,69 @@
     import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
     import '@shoelace-style/shoelace/dist/components/menu-label/menu-label.js';
     import type { v1 as uuidv1 } from "uuid";
-    import type { BoardRecord } from './boardList';
-    import { get } from 'svelte/store';
     import type { TalkingStickiesStore } from "./tsStore";
+    import { toPromise } from "@holochain-open-dev/stores";
+    import type { BoardState, BoardStateData } from "./board";
 
     type FoundSticky = {
-        board: BoardRecord,
+        hash: EntryHash,
+        state: BoardState,
         sticky: uuidv1,
         text: string,
     }
     let foundStickies: Array<FoundSticky> = []
-    let foundBoards: Array<BoardRecord> = []
-
+    let foundBoards: Array<BoardStateData> = []
+    $: foundStickies
+    $: foundBoards
     const { getStore } :any = getContext('tsStore');
 
     const store:TalkingStickiesStore = getStore();
-    $: boardList = store.boardList.boardData
-    $: activeHash = store.boardList.activeBoardHash;
     $: activeHashB64 = store.boardList.activeBoardHashB64;
-    $: state = store.boardList.getReadableBoardState($activeHash);
 
-    const selectBoard = async (hash: EntryHashB64) => {
-        await store.boardList.setActiveBoard(decodeHashFromBase64(hash))
+    const selectBoard = async (hash: EntryHash) => {
+        await store.boardList.setActiveBoard(hash)
     }
 
-    const doSearch = (text:string) => {
-        foundBoards = []
-        foundStickies = []
+    const doSearch = async (text:string) => {
+        const fb: BoardStateData[] = []
+        const fs: FoundSticky[] = []
         showSearchResults = true
-        if (text == "") return
-        const searchText = text.toLocaleLowerCase()
-        // FIXME!!
-        // $boardList.boards.forEach(b=> {
-        //     if (b.name.toLocaleLowerCase().includes(searchText)) foundBoards.push(b)
-        //     const board = store.boardList.getReadableBoardState(decodeHashFromBase64(b.hash))
-        //     const boardState = get(board)
-        //     boardState.stickies.forEach((c)=>{
-        //         if (c.props.text.toLocaleLowerCase().includes(searchText)) {
-        //             foundStickies.push({
-        //                 board: b,
-        //                 sticky: c.id,
-        //                 text: c.props.text,
-        //             })
-        //         }
-        //     })
-        // })
+        if (text != "") {
+            const searchText = text.toLocaleLowerCase()
+            const all = await toPromise(store.boardList.allBoards)
+            for (const [hash, asyncBoardData] of Array.from(all.entries()) ) {
+                const state = asyncBoardData.latestState
 
+                if (state.name.toLocaleLowerCase().includes(searchText) ||
+                    state.props.description.toLocaleLowerCase().includes(searchText) 
+                    ) fb.push({hash,state:state})
+                state.stickies.forEach((c)=>{
+                    if (c.props.text.toLocaleLowerCase().includes(searchText)) {
+                        fs.push({
+                            hash,
+                            state,
+                            sticky: c.id,
+                            text: c.props.text,
+                        })
+                    }
+                })
+            }
+        }
+        foundBoards = fb
+        foundStickies = fs
     }
     const clearSearch = () => {
         searchInput.value = ""
         showSearchResults = false
     }
 
-    const getStickyGroup = (stickyId: uuidv1) : string => {
-        console.log("GROUPING", $state.grouping)
-        for (const [gId,stickies] of Object.entries($state.grouping)) {
+    const getStickyGroup = (board: BoardState, stickyId: uuidv1) : string => {
+        for (const [gId,stickies] of Object.entries(board.grouping)) {
             if (stickies.includes(stickyId)) {
-                const g = ($state.groups.find((g)=>g.id == gId))
+                const g = (board.groups.find((g)=>g.id == gId))
                 if (g) {
                     return g.name
                 }
-                return "Archived"
             }
         }
         return ""
@@ -89,9 +91,8 @@
         bind:this={searchInput}
         placeholder="Search"
         pill
-        on:sl-input={(e)=>doSearch(e.target.value)}
-        on:sl-blur={(e)=>showSearchResults=false}
-        on:sl-focus={(e)=>doSearch(e.target.value)}
+        on:sl-input={async (e)=>doSearch(e.target.value)}
+        on:sl-focus={async (e)=>doSearch(e.target.value)}
     >
     <span slot="prefix"style="margin-left:10px;"><Fa icon={faSearch}></Fa></span>
     </sl-input>
@@ -101,18 +102,19 @@
         {#if foundStickies.length>0}
             <sl-menu-label>Stickies</sl-menu-label>
             {#each foundStickies as found}
+                {@const stickyGroup = getStickyGroup(found.state, found.sticky)}
                 <sl-menu-item
                     on:mousedown={(e)=>{
-                        if (found.board.hash != $activeHashB64) {
-                            selectBoard(found.board.hash)
+                        if (encodeHashToBase64(found.hash) != $activeHashB64) {
+                            selectBoard(found.hash)
                         }
                         //store.boardList.setActiveSticky(found.card)
                         clearSearch()
                     }}
                 >
                 <div style="margin-left:10px;display:flex;flex-direction: column;">
-                    <span>{found.text} in {getStickyGroup(found.sticky)}</span>
-                    <span style="font-size:70%;color:gray;line-heigth:50%;">Board: {found.board.name}</span>
+                    <span>{found.text} {stickyGroup ? `in ${stickyGroup}` : ''}</span>
+                    <span style="font-size:70%;color:gray;line-heigth:50%;">Board: {found.state.name}</span>
                 </div>
                 </sl-menu-item>
             {/each}
@@ -123,14 +125,14 @@
             {#each foundBoards as found}
                 <sl-menu-item
                     on:mousedown={(e)=>{
-                        if (found.hash != $activeHashB64) {
+                        if (encodeHashToBase64(found.hash) != $activeHashB64) {
                             selectBoard(found.hash)
                         }
                         clearSearch()
                     }}
                 >
                 <div style="margin-left:10px;">
-                    {found.name} 
+                    {found.state.name} 
                 </div>
                 </sl-menu-item>
             {/each}

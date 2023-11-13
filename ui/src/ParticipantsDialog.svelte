@@ -44,9 +44,9 @@
                                     <div class="boards">
                                         {#each $agentBoards.value.get(agentPubKey) as board}
                                             <div class="board" on:click={()=>{
-                                                store.boardList.setActiveBoard(board.hash)
+                                                store.boardList.setActiveBoard(board.board.hash)
                                                 close()
-                                            }}>{board.state.name}</div>
+                                            }}>{board.latestState.name}x</div>
                                         {/each}
                                     </div>
                                     {/if}

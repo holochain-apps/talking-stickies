@@ -2,6 +2,7 @@ import { WorkspaceStore, DocumentStore, type SessionStore, type SynGrammar, SynS
 import { get, type Readable } from "svelte/store";
 import { v1 as uuidv1 } from "uuid";
 import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64, type AgentPubKeyB64 } from "@holochain/client";
+import { BoardType } from "./boardList";
   
 export const UngroupedId = "_"
 export class Group {
@@ -271,9 +272,6 @@ export type BoardDelta =
     },
   };
   
-
-export const CommitTypeBoard :string = "board"
-
 export type BoardStateData = {
   hash: EntryHash,
   state: BoardState,
@@ -288,10 +286,10 @@ export class Board {
     }
 
     public static async Create(synStore: SynStore) {
-        const {documentHash, firstCommitHash} = await synStore.createDocument(boardGrammar, {type: CommitTypeBoard})
+        const {documentHash, firstCommitHash} = await synStore.createDocument(boardGrammar)
 
         const documentStore =  new DocumentStore(synStore, boardGrammar, documentHash)
-        await synStore.client.tagDocument(documentHash, "board")
+        await synStore.client.tagDocument(documentHash, BoardType.active)
 
         const workspaceHash = await documentStore.createWorkspace(
             `${new Date}`,

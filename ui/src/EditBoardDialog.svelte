@@ -27,36 +27,35 @@
     const store:TalkingStickiesStore = getStore();
 
     const updateBoard = async ( name: string, groups: Group[], voteTypes: VoteType[], props: BoardProps) => {
-        // ignore board type we don't update that.
-        const board: Board | undefined = store.boardList.boards.get(boardHash)
+        const board: Board | undefined = await store.boardList.getBoard(boardHash)
         if (board) {
-        let changes = []
-        const state: BoardState = board.state()
-        if (state.name != name) {
-            changes.push(
-            {
-                type: 'set-name',
-                name: name
-            })
-        }
-        if (!isEqual(groups, state.groups)) {
-            changes.push({type: 'set-groups',
-            groups: groups
-            })
-        }
-        if (!isEqual(props, state.props)) {
-            changes.push({type: 'set-props',
-            props: props
-            })
-        }
-        if (!isEqual(voteTypes, state.voteTypes)) {
-            changes.push({type: 'set-vote-types',
-            voteTypes: voteTypes
-            })
-        }
-        if (changes.length > 0) {
-            store.boardList.requestBoardChanges(boardHash, changes)
-        }
+            let changes = []
+            const state: BoardState = board.state()
+            if (state.name != name) {
+                changes.push(
+                {
+                    type: 'set-name',
+                    name: name
+                })
+            }
+            if (!isEqual(groups, state.groups)) {
+                changes.push({type: 'set-groups',
+                groups: groups
+                })
+            }
+            if (!isEqual(props, state.props)) {
+                changes.push({type: 'set-props',
+                props: props
+                })
+            }
+            if (!isEqual(voteTypes, state.voteTypes)) {
+                changes.push({type: 'set-vote-types',
+                voteTypes: voteTypes
+                })
+            }
+            if (changes.length > 0) {
+                board.requestChanges(changes)
+            }
         }
         close()
     }

@@ -73,7 +73,7 @@
 
     export const  edit = async (hash: EntryHash)=> {
       boardHash = hash
-      const board: Board | undefined = store.boardList.getBoard(boardHash)
+      const board: Board | undefined = await store.boardList.getBoard(boardHash)
       if (board) {
           const state = board.state()
           text = state.name
@@ -210,7 +210,7 @@
       </DragDropList> 
       <div class="control" on:click={() => addVoteType()}>
         <Fa icon={faPlus}/>
-        <span>Add vote</span>
+        <span>Add voting type</span>
       </div>
     </div>
   

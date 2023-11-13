@@ -2,14 +2,14 @@
     import { getContext } from "svelte";
     import type { TalkingStickiesStore } from "./tsStore";
     import NewBoardDialog from './NewBoardDialog.svelte';
+    import BoardMenuItem from './BoardMenuItem.svelte';
     import Fa from 'svelte-fa';
     import AboutDialog from "./AboutDialog.svelte";
-    import Participants from "./Participants.svelte";
     import AddCard from "./icons/AddCard.svelte";
     import TSLogoIcon from "./icons/TSLogoIcon.svelte";
     import { faCog } from "@fortawesome/free-solid-svg-icons";
     import type { EntryHash } from "@holochain/client";
-    import type { Board } from "./board";
+    import { BoardType } from "./boardList";
 
     export let wide = false
 
@@ -19,8 +19,8 @@
 
     const store:TalkingStickiesStore = getStore();
 
-    $: boards = store.boardList.activeBoards
-    $: archived = store.boardList.archivedBoards
+    $: activeBoards = store.boardList.activeBoardHashes
+    $: archivedBoards = store.boardList.archivedBoardHashes
 
     $: uiProps = store.uiProps
 
@@ -33,7 +33,7 @@
     }
 
     const unarchiveBoard = async (hash: EntryHash) => {
-        store.boardList.unarchiveBoard(hash)
+        await store.boardList.unarchiveBoard(hash)
         await selectBoard(hash)
     }
 
@@ -47,28 +47,27 @@
     <div style="display:flex;flex-direction: row;">
     <div class="new-board" on:click={()=>newBoardDialog.open()} title="New Board"><AddCard /><span>New Board</span></div>
     </div>
-    {#if $boards.status == "complete"}
+    {#if $activeBoards.status == "complete" && $activeBoards.value.length > 0}
         <h3 class="type-header">Active Boards</h3>
         <div class="boards-section">
-            {#each Array.from($boards.value.entries()) as [hash, board]}
+            {#each $activeBoards.value as hash}
                 <div
                     on:click={()=>selectBoard(hash)}
                     class="board" >
-                    <div class="board-name">{board.name}</div>
-                    <Participants board={store.boardList.getBoard(hash)}></Participants>
+                    <BoardMenuItem boardType={BoardType.active} boardHash={hash}></BoardMenuItem>
                     <div class="board-bg" style="background-image: url({bgUrl});"></div>
                 </div>
             {/each}
         </div>
     {/if}
-    {#if $archived.status == "complete"}
+    {#if $archivedBoards.status == "complete" && $archivedBoards.value.length > 0}
         <h3 class="type-header">Archived Boards</h3>
         <div class="boards-section">
-            {#each Array.from($archived.value.entries()) as [hash, board]}
+            {#each $archivedBoards.value as hash}
                 <div
                     on:click={()=>unarchiveBoard(hash)}
-                    class="board">
-                    <div class="board-name">{board.name}</div>
+                    class="board" >
+                    <BoardMenuItem boardType={BoardType.archived} boardHash={hash}></BoardMenuItem>
                     <div class="board-bg" style="background-image: url({bgUrl});"></div>
                 </div>
             {/each}

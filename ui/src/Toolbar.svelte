@@ -12,13 +12,11 @@
   $: uiProps = store.uiProps
   $: activeBoard = store.boardList.activeBoard;
   $: state = $activeBoard ? $activeBoard.readableState() : undefined
-
   let editBoardDialog
 
 </script>
 
-<div class='toolbar'>
-  <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
+<div class='toolbar'>  <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
   {#if $activeBoard}
     <div style="display: flex;">
     {#if $uiProps.showMenu}

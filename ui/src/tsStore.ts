@@ -88,9 +88,4 @@ export class TalkingStickiesStore {
         this.synStore = new SynStore(new SynClient(this.client,this.roleName,this.zomeName))
         this.boardList = new BoardList(profilesStore, this.synStore) 
     }
-
-    commitType(commit: Commit) : string {
-        const meta:any = decode(commit.meta)
-        return meta.type
-    }
 }
