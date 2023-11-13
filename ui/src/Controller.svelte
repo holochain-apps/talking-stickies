@@ -194,11 +194,11 @@
     }
   }
 
-  .loading {
+  :global(.loading) {
     text-align: center;
     padding-top: 100px;
   }
-  .loader {
+  :global(.loader) {
     border: 8px solid #f3f3f3;
     border-radius: 50%;
     border-top: 8px solid #3498db;
@@ -261,20 +261,5 @@
     padding-top: 135px;
   }
 
-  /* .my-boards {
-    display: flex;
-  }
-  .my-board {
-    border-radius: 5px;
-    border: 1px solid #222;
-    background-color: lightcyan;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100px;
-    width: 100px;
-    margin: 5px;
-  } */
 </style>
 

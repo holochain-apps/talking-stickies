@@ -5,9 +5,6 @@
     import AvatarDialog from './AvatarDialog.svelte';
     import { getContext, onMount } from "svelte";
     import type { TalkingStickiesStore } from "./tsStore";
-    import { cloneDeep } from "lodash";
-    import AvatarIcon from './AvatarIcon.svelte';
-    import type { ProfilesStore } from "@holochain-open-dev/profiles";
     import { get } from 'svelte/store';    
     import Fa from 'svelte-fa'
     import { faUserGroup } from '@fortawesome/free-solid-svg-icons';

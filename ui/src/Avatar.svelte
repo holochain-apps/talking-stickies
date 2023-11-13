@@ -6,10 +6,8 @@
   import type { TalkingStickiesStore } from "./tsStore";
   import { faUser } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
-  import type { AsyncReadable, AsyncStatus } from "@holochain-open-dev/stores";
-  import type { EntryRecord } from "@holochain-open-dev/utils";
 
-    const { getStore } :any = getContext("tsStore");
+  const { getStore } :any = getContext("tsStore");
   let store: TalkingStickiesStore = getStore();
 
   export let agentPubKey: AgentPubKey
