@@ -2,7 +2,6 @@
   import { encodeHashToBase64, type AgentPubKey } from "@holochain/client";
   import "@holochain-open-dev/profiles/dist/elements/agent-avatar.js";
   import { getContext } from "svelte";
-  import type { Profile } from "@holochain-open-dev/profiles";
   import type { TalkingStickiesStore } from "./tsStore";
   import { faUser } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
@@ -59,7 +58,7 @@
         height: 100%;
         align-items: center;
     }
-    .avatar-row agent-avatar{
-        margin-right: 0.5em;       
+    .avatar-row .nickname{
+        margin-left: 0.5em;
     }
 </style>

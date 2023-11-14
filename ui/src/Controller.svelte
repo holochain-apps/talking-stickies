@@ -194,28 +194,6 @@
     }
   }
 
-  :global(.loading) {
-    text-align: center;
-    padding-top: 100px;
-  }
-  :global(.loader) {
-    border: 8px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 8px solid #3498db;
-    width: 50px;
-    height: 50px;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
-    display: inline-block;
-  }
-  @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
-  }
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
   .flex-scrollable-parent {
     position: relative;
     display: flex;

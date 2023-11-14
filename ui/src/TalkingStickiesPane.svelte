@@ -195,7 +195,7 @@
     if (typeof votes[type] === 'undefined') {
       return 0
     }
-    return votes[type][tsStore.myAgentPubKeyB64()] || 0;
+    return votes[type][tsStore.myAgentPubKeyB64] || 0;
   };
 
   const closeBoard = async () => {
@@ -347,7 +347,7 @@
       {#if $participants}
         <div class="participants">
           <div style="display:flex; flex-direction: row">
-            <Avatar agentPubKey={tsStore.myAgentPubKey()} showNickname={false} size={30} />
+            <Avatar agentPubKey={tsStore.myAgentPubKey} showNickname={false} size={30} />
 
             {#each Array.from($participants.entries()) as [agentPubKey, sessionData]}
             <div class:idle={Date.now()-sessionData.lastSeen >30000}>
@@ -448,7 +448,7 @@
                 class="vote"
                 title={toolTip}
                 class:voted={myVotes(props.votes, type) > 0}
-                on:click|stopPropagation={() => voteOnSticky(tsStore.myAgentPubKeyB64(), stickies, id, type, maxVotes)}
+                on:click|stopPropagation={() => voteOnSticky(tsStore.myAgentPubKeyB64, stickies, id, type, maxVotes)}
               >
                 <div class="vote-icon-wrapper">
                   <EmojiIcon emoji={emoji} class="vote-icon" />

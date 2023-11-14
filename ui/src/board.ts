@@ -272,11 +272,11 @@ export type BoardDelta =
     },
   };
   
-export type BoardStateData = {
-  hash: EntryHash,
-  state: BoardState,
-}
-
+  export type BoardStateData = {
+    hash: EntryHash,
+    state: BoardState,
+  }
+  
 export class Board {
     public session: SessionStore<BoardGrammar> | undefined
     public hashB64: EntryHashB64
@@ -334,7 +334,7 @@ export class Board {
       } else {
         return this.session.state
       }
-  }
+    }
 
     requestChanges(deltas: Array<BoardDelta>) {
         console.log("REQUESTING BOARD CHANGES: ", deltas)

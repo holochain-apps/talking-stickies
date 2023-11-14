@@ -1,16 +1,9 @@
 <script lang="ts">
  
-  import { encodeHashToBase64 } from "@holochain/client";
-  import { getContext } from "svelte";
-  import type { TalkingStickiesStore } from "./tsStore";
   import Avatar from "./Avatar.svelte";
   import type { Board } from "./board";
-  import type { AsyncReadable } from "@holochain-open-dev/stores";
 
   export let board: Board
-
-  // const { getStore } :any = getContext("tsStore");
-  // let store: TalkingStickiesStore = getStore();
 
   $: participants = board ? board.sessionParticipants() : undefined
 
@@ -35,10 +28,5 @@
     border-radius: 50%;
     display: flex;
     flex-direction: row
-  }
-  img {
-    width: var(--icon-size, 24px);
-    height: var(--icon-size, 24px);
-    border-radius: 50%;
   }
 </style>

@@ -4,8 +4,6 @@
   import { getContext } from "svelte";
   import type { TalkingStickiesStore } from "./tsStore";
   import Avatar from './Avatar.svelte';
-  import { encodeHashToBase64, type AgentPubKey } from "@holochain/client";
-  import type { Board } from "./board";
   import "@holochain-open-dev/stores/dist/debug-store.js"
 
   const { getStore } :any = getContext('tsStore');

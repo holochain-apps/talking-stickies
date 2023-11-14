@@ -10,7 +10,6 @@ import {
   } from '@holochain/client';
 import { SynStore,  SynClient, type Commit } from '@holochain-syn/core';
 import { BoardList } from './boardList';
-import { decode } from '@msgpack/msgpack';
 import TimeAgo from "javascript-time-ago"
 import en from 'javascript-time-ago/locale/en'
 
@@ -43,6 +42,7 @@ export interface UIProps {
   }
   
 export class TalkingStickiesStore {
+    myAgentPubKeyB64: AgentPubKeyB64
     timeAgo = new TimeAgo('en-US')
     service: TalkingStickiesService;
     boardList: BoardList;
@@ -64,11 +64,7 @@ export class TalkingStickiesStore {
         })
     }
 
-    myAgentPubKeyB64(): AgentPubKeyB64 {
-        return encodeHashToBase64(this.client.myPubKey);
-    }
-
-    myAgentPubKey(): AgentPubKey {
+    get myAgentPubKey(): AgentPubKey {
         return this.client.myPubKey;
     }
 
@@ -79,12 +75,12 @@ export class TalkingStickiesStore {
         protected zomeName: string = ZOME_NAME
     ) {
         this.client = clientIn
+        this.myAgentPubKeyB64 = encodeHashToBase64(this.client.myPubKey);
         this.service = new TalkingStickiesService(
           this.client,
           this.roleName,
           this.zomeName
         );
-        //@ts-ignore
         this.synStore = new SynStore(new SynClient(this.client,this.roleName,this.zomeName))
         this.boardList = new BoardList(profilesStore, this.synStore) 
     }

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getContext } from "svelte";
-    import { decodeHashFromBase64, encodeHashToBase64, type EntryHash, type EntryHashB64 } from '@holochain/client';
+    import { encodeHashToBase64, type EntryHash } from '@holochain/client';
     import {faSearch } from '@fortawesome/free-solid-svg-icons';
     import Fa from 'svelte-fa';
     import '@shoelace-style/shoelace/dist/components/select/select.js';

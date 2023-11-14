@@ -1,17 +1,11 @@
-import { DocumentStore,  type SynStore,  WorkspaceStore, SessionStore } from "@holochain-syn/core";
-import { Board, type BoardStateData } from "./board";
-import { HoloHashMap, LazyHoloHashMap } from "@holochain-open-dev/utils";
+import { DocumentStore,  type SynStore,  WorkspaceStore } from "@holochain-syn/core";
+import { Board } from "./board";
+import { LazyHoloHashMap } from "@holochain-open-dev/utils";
 import { derived, get, writable, type Readable, type Writable } from "svelte/store";
 import { boardGrammar, type BoardDelta, type BoardGrammar, type BoardState } from "./board";
 import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64 } from "@holochain/client";
 import { type AsyncReadable, asyncDerived, joinAsync, pipe, sliceAndJoin, toPromise} from '@holochain-open-dev/stores'
 import type { ProfilesStore } from "@holochain-open-dev/profiles";
-
-export interface BoardRecord {
-    hash: EntryHashB64
-    name: string
-    status: string
-}
 
 export enum BoardType {
     active = "active",
