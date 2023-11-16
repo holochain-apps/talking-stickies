@@ -46,7 +46,6 @@ export class TalkingStickiesStore {
     timeAgo = new TimeAgo('en-US')
     service: TalkingStickiesService;
     boardList: BoardList;
-    createdBoards: Array<EntryHash> = []
     updating = false
     synStore: SynStore;
     client: AppAgentClient;
