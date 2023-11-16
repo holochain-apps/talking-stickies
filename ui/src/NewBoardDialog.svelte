@@ -18,9 +18,9 @@
     const addBoard = async (name: string, groups: Group[], voteTypes: VoteType[],props: BoardProps) => {
         // @ts-ignore
         const board = await store.boardList.makeBoard({name, groups, voteTypes, props, status:""})
+        dialog.hide()
         store.setUIprops({showMenu:false})
         await store.boardList.setActiveBoard(board.hash)
-        dialog.hide()
     }
     export const open = ()=> {
         boardEditor.reset()
