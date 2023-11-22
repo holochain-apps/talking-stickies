@@ -26,8 +26,8 @@
       <div class="open tool-item menu" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><Fa icon={faBars} size=2x /></div>
     {/if}
       <div class="tool-item settings"  on:click={()=> editBoardDialog.open($activeBoard.hash)} title="Settings">
-        <Fa icon={faCog} size="1x" style="margin-right: 10px;"/>
         {$state.name}
+        <Fa icon={faCog} size="1x" style="margin-left: 10px;"/>
       </div>
     </div>
   {/if}

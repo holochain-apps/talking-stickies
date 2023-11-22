@@ -341,9 +341,6 @@
       </div>
     {/if}
     <div style="display:flex;flex-direction: right;">
-      <div class="description">
-        {$state.props.description}
-      </div>
       {#if $participants}
         <div class="participants">
           <div style="display:flex; flex-direction: row">
