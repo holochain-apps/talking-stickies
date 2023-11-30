@@ -33,7 +33,14 @@
       {/if}
   </div>
   <div class="description">
-    Description of board
+    {#if $boardData.status == "complete"}
+      {$boardData.value.latestState.props.description}
+    {:else if $boardData.status == "pending"}
+      <sl-skeleton
+      effect="pulse"
+      style="height: 10px; width: 100%"
+      ></sl-skeleton>  
+    {/if}
   </div>
 </div>
 <style>
