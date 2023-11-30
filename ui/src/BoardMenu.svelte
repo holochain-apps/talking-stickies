@@ -3,7 +3,9 @@
     import type { TalkingStickiesStore } from "./store";
     import NewBoardDialog from './NewBoardDialog.svelte';
     import BoardMenuItem from './BoardMenuItem.svelte';
-    import Fa from 'svelte-fa';
+    import Team from './Team.svelte';
+    import Fa from 'svelte-fa'
+    import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
     import AboutDialog from "./AboutDialog.svelte";
     import AddCard from "./icons/AddCard.svelte";
     import TSLogoIcon from "./icons/TSLogoIcon.svelte";
@@ -44,12 +46,19 @@
 <AboutDialog bind:this={aboutDialog} />
 <div class="board-menu"
     class:wide={wide} >
-    <div style="display:flex;flex-direction: row;">
-    <div class="new-board" on:click={()=>newBoardDialog.open()} title="New Board"><AddCard /><span>New Board</span></div>
+    <div class="team">
+        <h3 class="type-header">Team</h3>
+        <div>
+            <Team/>
+        </div>
     </div>
-    {#if $activeBoards.status == "complete" && $activeBoards.value.length > 0}
-        <h3 class="type-header">Active Boards</h3>
+    <div>
+    <h3 class="type-header">Boards</h3>
+    </div>
+    {#if $activeBoards.status == "complete" && $activeBoards.value.length >= 0}
+
         <div class="boards-section">
+            <div class="new-board" on:click={()=>newBoardDialog.open()} title="New Board"><AddCard /><span>New Board</span></div>
             {#each $activeBoards.value as hash}
                 <div
                     on:click={()=>selectBoard(hash)}
@@ -145,9 +154,9 @@
         color: rgba(95, 90, 83, 1.0);
         text-transform: uppercase;
         opacity: .6;
-        margin-top: 20px;
         margin-bottom: 10px;
         margin-left: 5px;
+        display: block;
     }
 
     .board-name {
@@ -161,7 +170,7 @@
         border: 2px solid rgb(166 115 55 / 26%);
         border-bottom: 2px solid rgb(84 54 19 / 50%);
         border-top: 2px solid rgb(166 115 55 / 15%);
-        box-shadow: 0px 15px 20px rgb(130 107 58 / 25%);
+        box-shadow: 0px 6px 8px rgb(130 107 58 / 25%);
         border-radius: 10px;
         height: 50px;
         display: flex;
@@ -172,7 +181,8 @@
         padding: 15px;
         transition: all .25s ease;
         transform: scale(1);
-        width: 296px;
+        width: 295px;
+        margin-bottom: 15px;
     }
 
     .new-board span {
@@ -181,9 +191,17 @@
         padding: 0 10px;
     }
 
+    .team {
+        padding-bottom: 15px;
+    }
+
+    .team:hover {
+        z-index: 100;
+    }
+
     .board {
-        width: 290px;
-        background: linear-gradient(180deg, rgba(246, 245, 235, 1.0)0%, rgba(255, 255, 255, 1) 100%);
+        width: 295px;
+        background: linear-gradient(180deg, rgba(246, 245, 235, 1.0)0%, rgba(255, 255, 255, 1) 90%);
         border: 2px solid rgb(166 115 55 / 26%);
         border-bottom: 2px solid rgb(84 54 19 / 50%);
         border-top: 2px solid rgb(166 115 55 / 15%);
@@ -196,23 +214,21 @@
         justify-content: space-between;
         transition: all .25s ease;
         transform: scale(1);
-        padding: 15px;
         margin-bottom: 15px;
     }
 
-    .wide .board {
+    .wide .board, .wide .new-board {
         margin-right: 15px;
     }
 
     .board:hover, .new-board:hover {
         cursor: pointer;
         z-index: 100;
-        padding: 15px;
         width: 300px;
         transform: scale(1.03);
         box-shadow: 0px 15px 25px rgb(130 107 58 / 25%);
         z-index: 100;
-        margin-left: -7px;
+        margin-left: -3px;
     }
 
     .new-board:hover {
@@ -220,7 +236,7 @@
     }
 
     .wide .board:hover {
-        margin-left: -5px;
+        margin-left: 0;
         margin-right: 10px;
     }
 
