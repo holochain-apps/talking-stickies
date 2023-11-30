@@ -4,13 +4,13 @@
     import Avatar from './Avatar.svelte';
     import AvatarDialog from './AvatarDialog.svelte';
     import { getContext, onMount } from "svelte";
-    import type { TalkingStickiesStore } from "./tsStore";
+    import type { TalkingStickiesStore } from "./store";
     import { get } from 'svelte/store';    
     import Fa from 'svelte-fa'
     import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
     import { isWeContext } from '@lightningrodlabs/we-applet';
 
-    const { getStore } :any = getContext('tsStore');
+    const { getStore } :any = getContext('store');
     const store:TalkingStickiesStore = getStore();
     //@ts-ignore
     $: myProfile = get(store.profilesStore.myProfile).value

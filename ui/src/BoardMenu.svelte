@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getContext } from "svelte";
-    import type { TalkingStickiesStore } from "./tsStore";
+    import type { TalkingStickiesStore } from "./store";
     import NewBoardDialog from './NewBoardDialog.svelte';
     import BoardMenuItem from './BoardMenuItem.svelte';
     import Fa from 'svelte-fa';
@@ -15,7 +15,7 @@
 
     let newBoardDialog
 
-    const { getStore } :any = getContext('tsStore');
+    const { getStore } :any = getContext('store');
 
     const store:TalkingStickiesStore = getStore();
 

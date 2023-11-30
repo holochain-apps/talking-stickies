@@ -11,7 +11,7 @@
     import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
     import '@shoelace-style/shoelace/dist/components/menu-label/menu-label.js';
     import type { v1 as uuidv1 } from "uuid";
-    import type { TalkingStickiesStore } from "./tsStore";
+    import type { TalkingStickiesStore } from "./store";
     import { toPromise } from "@holochain-open-dev/stores";
     import type { BoardState, BoardStateData } from "./board";
 
@@ -25,7 +25,7 @@
     let foundBoards: Array<BoardStateData> = []
     $: foundStickies
     $: foundBoards
-    const { getStore } :any = getContext('tsStore');
+    const { getStore } :any = getContext('store');
 
     const store:TalkingStickiesStore = getStore();
     $: activeHashB64 = store.boardList.activeBoardHashB64;

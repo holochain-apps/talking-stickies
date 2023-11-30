@@ -1,7 +1,7 @@
 <script lang="ts">
   import EmojiIcon from './icons/EmojiIcon.svelte'
   import { getContext } from "svelte";
-  import type { TalkingStickiesStore } from "./tsStore";
+  import type { TalkingStickiesStore } from "./store";
 
   export let setSortOption
   export let sortOption
@@ -13,10 +13,10 @@
       setSortOption(option)
     }
   }
-  const { getStore } :any = getContext("tsStore");
-  let tsStore: TalkingStickiesStore = getStore();
+  const { getStore } :any = getContext("store");
+  let store: TalkingStickiesStore = getStore();
 
-  $: activeBoard = tsStore.boardList.activeBoard;
+  $: activeBoard = store.boardList.activeBoard;
   $: state = $activeBoard ? $activeBoard.readableState() : undefined
 
 </script>

@@ -1,7 +1,7 @@
 <script lang="ts">
     import Toolbar from './Toolbar.svelte'
     import TalkingStickiesPane from './TalkingStickiesPane.svelte'
-    import { TalkingStickiesStore } from './tsStore'
+    import { TalkingStickiesStore } from './store'
     import { setContext } from 'svelte';
     import type { AppAgentClient } from '@holochain/client';
     import type { SynStore } from '@holochain-syn/store';
@@ -12,30 +12,30 @@
     export let client : AppAgentClient
     export let profilesStore : ProfilesStore
   
-    let tsStore: TalkingStickiesStore = new TalkingStickiesStore(
+    let store: TalkingStickiesStore = new TalkingStickiesStore(
         profilesStore,
         client,
         roleName,
       );
-    let synStore: SynStore = tsStore.synStore
+    let synStore: SynStore = store.synStore
 
 
-    $: activeBoardHash = tsStore.boardList.activeBoardHash
-    $: activeBoard = tsStore.boardList.activeBoard
+    $: activeBoardHash = store.boardList.activeBoardHash
+    $: activeBoard = store.boardList.activeBoard
 
     setContext('synStore', {
       getStore: () => synStore,
     });
   
-    setContext('tsStore', {
-      getStore: () => tsStore,
+    setContext('store', {
+      getStore: () => store,
     });
     const DEFAULT_KD_BG_IMG = ""
     //const DEFAULT_KD_BG_IMG = "https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54461.jpg"
     const NO_BOARD_IMG = "https://holochain.org/img/big_logo.png"
-    $: uiProps = tsStore.uiProps
+    $: uiProps = store.uiProps
     $: bgUrl = $uiProps.bgUrl ? $uiProps.bgUrl : DEFAULT_KD_BG_IMG
-    $: boardCount = tsStore.boardList.boardCount
+    $: boardCount = store.boardList.boardCount
   
   </script>
   

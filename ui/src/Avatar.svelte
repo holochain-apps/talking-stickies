@@ -2,11 +2,11 @@
   import { encodeHashToBase64, type AgentPubKey } from "@holochain/client";
   import "@holochain-open-dev/profiles/dist/elements/agent-avatar.js";
   import { getContext } from "svelte";
-  import type { TalkingStickiesStore } from "./tsStore";
+  import type { TalkingStickiesStore } from "./store";
   import { faUser } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
 
-  const { getStore } :any = getContext("tsStore");
+  const { getStore } :any = getContext("store");
   let store: TalkingStickiesStore = getStore();
 
   export let agentPubKey: AgentPubKey

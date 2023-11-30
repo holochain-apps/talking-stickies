@@ -5,7 +5,7 @@
   import EmojiIcon from "./icons/EmojiIcon.svelte";
   import AddGroupIcon from "./icons/AddGroupIcon.svelte";
   import { sortBy } from "lodash/fp";
-  import type { TalkingStickiesStore } from "./tsStore";
+  import type { TalkingStickiesStore } from "./store";
   import SortSelector from "./SortSelector.svelte";
   import { Marked, Renderer } from "@ts-stack/markdown";
   import { cloneDeep, isEqual } from "lodash";
@@ -37,8 +37,8 @@
     sortOption = newSortOption;
   }
 
-  const { getStore } :any = getContext("tsStore");
-  let tsStore: TalkingStickiesStore = getStore();
+  const { getStore } :any = getContext("store");
+  let store: TalkingStickiesStore = getStore();
 
   export let activeBoard: Board
 
@@ -195,12 +195,12 @@
     if (typeof votes[type] === 'undefined') {
       return 0
     }
-    return votes[type][tsStore.myAgentPubKeyB64] || 0;
+    return votes[type][store.myAgentPubKeyB64] || 0;
   };
 
   const closeBoard = async () => {
-    await tsStore.boardList.closeActiveBoard()
-    tsStore.setUIprops({showMenu:true})
+    await store.boardList.closeActiveBoard()
+    store.setUIprops({showMenu:true})
   };
   const groupWidth = (groupId) : string => {
     let len = Object.keys($state.grouping).length
@@ -347,7 +347,7 @@
       {#if $participants}
         <div class="participants">
           <div style="display:flex; flex-direction: row">
-            <Avatar agentPubKey={tsStore.myAgentPubKey} showNickname={false} size={30} />
+            <Avatar agentPubKey={store.myAgentPubKey} showNickname={false} size={30} />
 
             {#each Array.from($participants.entries()) as [agentPubKey, sessionData]}
             <div class:idle={Date.now()-sessionData.lastSeen >30000}>
@@ -448,7 +448,7 @@
                 class="vote"
                 title={toolTip}
                 class:voted={myVotes(props.votes, type) > 0}
-                on:click|stopPropagation={() => voteOnSticky(tsStore.myAgentPubKeyB64, stickies, id, type, maxVotes)}
+                on:click|stopPropagation={() => voteOnSticky(store.myAgentPubKeyB64, stickies, id, type, maxVotes)}
               >
                 <div class="vote-icon-wrapper">
                   <EmojiIcon emoji={emoji} class="vote-icon" />

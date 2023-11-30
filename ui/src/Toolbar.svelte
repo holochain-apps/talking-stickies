@@ -4,10 +4,10 @@
   import EditBoardDialog from "./EditBoardDialog.svelte";
   import { faBars, faBug, faClose, faCog } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
-  import type { TalkingStickiesStore } from "./tsStore";
+  import type { TalkingStickiesStore } from "./store";
   import { getContext } from "svelte";
 
-  const { getStore } :any = getContext('tsStore');
+  const { getStore } :any = getContext('store');
   const store:TalkingStickiesStore = getStore();
   $: uiProps = store.uiProps
   $: activeBoard = store.boardList.activeBoard;

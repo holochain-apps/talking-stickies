@@ -1,6 +1,6 @@
 <script lang="ts">
     import BoardEditor from './BoardEditor.svelte';
-    import type { TalkingStickiesStore } from './tsStore';
+    import type { TalkingStickiesStore } from './store';
     import { getContext } from 'svelte';
     import type { BoardProps, Group, VoteType } from './board';
     import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
@@ -11,7 +11,7 @@
     let editCategoryDefs = []
     let dialog: SlDialog
     
-    const { getStore } :any = getContext('tsStore');
+    const { getStore } :any = getContext('store');
 
     const store:TalkingStickiesStore = getStore();
 

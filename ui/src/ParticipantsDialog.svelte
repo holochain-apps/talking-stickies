@@ -2,11 +2,11 @@
   import "@shoelace-style/shoelace/dist/components/skeleton/skeleton.js";
   import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
   import { getContext } from "svelte";
-  import type { TalkingStickiesStore } from "./tsStore";
+  import type { TalkingStickiesStore } from "./store";
   import Avatar from './Avatar.svelte';
   import "@holochain-open-dev/stores/dist/debug-store.js"
 
-  const { getStore } :any = getContext('tsStore');
+  const { getStore } :any = getContext('store');
   const store:TalkingStickiesStore = getStore();
 
   $: agents = store.profilesStore.agentsWithProfile

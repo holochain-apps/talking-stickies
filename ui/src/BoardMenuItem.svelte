@@ -1,13 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher, getContext } from "svelte";
-  import type { TalkingStickiesStore } from "./tsStore";
+  import type { TalkingStickiesStore } from "./store";
   import type { EntryHash } from "@holochain/client";
   import "@shoelace-style/shoelace/dist/components/skeleton/skeleton.js";
   import Participants from "./Participants.svelte";
   import { BoardType } from "./boardList";
 
   const dispatch = createEventDispatcher()
-  const { getStore } :any = getContext('tsStore');
+  const { getStore } :any = getContext('store');
   const store:TalkingStickiesStore = getStore();
 
   export let boardHash: EntryHash
