@@ -343,12 +343,14 @@
     <div style="display:flex;flex-direction: right;">
       {#if $participants}
         <div class="participants">
-          <div style="display:flex; flex-direction: row">
-            <Avatar agentPubKey={store.myAgentPubKey} showNickname={false} size={30} />
-
+          <div style="display:flex; flex-direction: row; align-items:top">
+            <div style="margin-right:5px">
+              <Avatar agentPubKey={store.myAgentPubKey} showNickname={false} size={30} />
+            </div>
             {#each Array.from($participants.entries()) as [agentPubKey, sessionData]}
-            <div class:idle={Date.now()-sessionData.lastSeen >30000}>
-              <Avatar agentPubKey={agentPubKey} showNickname={false} size={30} />
+            <div style="margin-right:5px"
+              class:idle={Date.now()-sessionData.lastSeen >30000}>
+                <Avatar agentPubKey={agentPubKey} showNickname={false} size={30} />
             </div>
             {/each}
 

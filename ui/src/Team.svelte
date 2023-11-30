@@ -73,12 +73,14 @@
     }
     .list {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        align-items:top;
     }
     .list-item {
         display: flex;
         align-items: center;
         position: relative;
+        margin: 0 15px 0 0;
     }
 
     .list-item:hover {
