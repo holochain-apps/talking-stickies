@@ -2,7 +2,7 @@
   import Search from "./Search.svelte";
   import Folk from "./Folk.svelte";
   import EditBoardDialog from "./EditBoardDialog.svelte";
-  import { faBars, faBug, faClose, faCog } from "@fortawesome/free-solid-svg-icons";
+  import { faArrowTurnDown, faBars, faBug, faClose, faCog, faHome } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
   import type { TalkingStickiesStore } from "./store";
   import { getContext } from "svelte";
@@ -14,21 +14,39 @@
   $: state = $activeBoard ? $activeBoard.readableState() : undefined
   let editBoardDialog
 
+  const closeBoard = async () => {
+    await store.boardList.closeActiveBoard(false)
+    store.setUIprops({showMenu:true})
+  };
+
+  const leaveBoard = async () => {
+    await store.boardList.closeActiveBoard(true)
+    store.setUIprops({showMenu:true})
+  };
+
 </script>
 
 <div class='toolbar'>  <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
   {#if $activeBoard}
     <div style="display: flex;">
-    {#if $uiProps.showMenu}
-      <div class="close tool-item menu" on:click={()=>{store.setUIprops({showMenu:false})}}><div title="Hide Board Menu"><Fa icon={faClose} size=2x color="#fff" /></div></div>
+      {#if $uiProps.showMenu}
+        <div class="close tool-item menu" on:click={()=>{store.setUIprops({showMenu:false})}}><div title="Hide Board Menu"><Fa icon={faClose} size=2x color="#fff" /></div></div>
 
-    {:else}
-      <div class="open tool-item menu" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><Fa icon={faBars} size=2x /></div>
-    {/if}
+      {:else}
+        <div class="open tool-item menu" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><Fa icon={faBars} size=2x /></div>
+      {/if}
+      <div  class="tool-item nav-button icon-button" on:click={closeBoard} title="Close">
+        <Fa icon={faHome} size=2x />
+      </div>
+      <div  class="tool-item nav-button icon-button" on:click={leaveBoard} title="Leave">
+        <Fa icon={faArrowTurnDown} size=2x />
+      </div>
       <div class="tool-item settings"  on:click={()=> editBoardDialog.open($activeBoard.hash)} title="Settings">
         {$state.name}
         <Fa icon={faCog} size="1x" style="margin-left: 10px;"/>
       </div>
+      
+
     </div>
   {/if}
 
@@ -146,5 +164,9 @@
     display: flex;
     flex: 0 0 auto;
     align-items: center;
+  }
+  .icon-button {
+    margin-right: 15px;
+    width:50px;
   }
 </style>

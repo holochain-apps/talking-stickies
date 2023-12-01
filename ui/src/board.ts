@@ -3,6 +3,7 @@ import { get, type Readable } from "svelte/store";
 import { v1 as uuidv1 } from "uuid";
 import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64, type AgentPubKeyB64 } from "@holochain/client";
 import { BoardType } from "./boardList";
+import { toPromise } from "@holochain-open-dev/stores";
   
 export const UngroupedId = "_"
 export class Group {
@@ -320,6 +321,13 @@ export class Board {
       }
     }
 
+    async forceLeave() {
+      if (!this.session) {
+        await this.join()
+      }
+      this.leave()
+    }
+
     state(): BoardState | undefined {
         if (!this.session) {
           return undefined
@@ -343,6 +351,12 @@ export class Board {
 
     sessionParticipants() {
       return this.workspace.sessionParticipants
+    }
+
+    async isParticipant(agent: AgentPubKey) : Promise<boolean> {
+      const agentB64= encodeHashToBase64(agent)
+      const participants = await toPromise(this.sessionParticipants())
+      return participants.find(h=>encodeHashToBase64(h)==agentB64) ? true : false
     }
 
     participants()  {

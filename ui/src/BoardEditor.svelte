@@ -10,24 +10,9 @@
     import Fa from 'svelte-fa'
     import { faPlus, faGripVertical, faTrash, faFileExport } from '@fortawesome/free-solid-svg-icons';
     import { cloneDeep } from "lodash";
-    import sanitize from "sanitize-filename";
 
     import type { TalkingStickiesStore } from './store';
     import type { EntryHash } from '@holochain/client';
-
-
-    const download = (filename: string, text: string) => {
-      var element = document.createElement('a');
-      element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(text));
-      element.setAttribute('download', filename);
-
-      element.style.display = 'none';
-      document.body.appendChild(element);
-
-      element.click();
-
-      document.body.removeChild(element);
-    }
 
     const { getStore } :any = getContext('store');
 
@@ -36,13 +21,6 @@
 
     $: activeBoard = store.boardList.activeBoard;
     $: state = $activeBoard ? $activeBoard.readableState() : undefined
-
-    const exportBoard = (state: BoardState) => {
-      const prefix = "talking-stickies"
-      const fileName = sanitize(`${prefix}_export_${state.name}.json`)
-      download(fileName, JSON.stringify(state))
-      alert(`Your board was exported to your Downloads folder as: '${fileName}'`)
-    }
 
     export let handleSave
     export let handleDelete = undefined
@@ -220,12 +198,7 @@
     </div>
 
     <div class='controls'>
-      {#if boardHash}
-        <div class="control" on:click={() => exportBoard($state)} title="Export">
-          <Fa icon={faFileExport} />
-          <span>Export</span>
-        </div>
-      {/if}
+
       {#if handleDelete}
         <div class="control" on:click={handleDelete}>
           Archive

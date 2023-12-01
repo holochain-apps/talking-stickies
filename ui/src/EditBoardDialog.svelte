@@ -59,11 +59,11 @@
         }
         close()
     }
-    const archiveBoard = async () => {
-        await store.boardList.archiveBoard(boardHash)
-        store.setUIprops({showMenu: true})
-        close()
-    }
+    // const archiveBoard = async () => {
+    //     await store.boardList.archiveBoard(boardHash)
+    //     store.setUIprops({showMenu: true})
+    //     close()
+    // }
     const close = ()=>{
         dialog.hide()
         boardHash=undefined
@@ -81,7 +81,7 @@ on:sl-request-close={(event)=>{
     if (event.detail.source === 'overlay') {
     event.preventDefault();    
 }}}>
-    <BoardEditor bind:this={boardEditor} handleSave={updateBoard} handleDelete={archiveBoard} cancelEdit={close}/>
+    <BoardEditor bind:this={boardEditor} handleSave={updateBoard} cancelEdit={close}/>
 </sl-dialog>
 
 <style>

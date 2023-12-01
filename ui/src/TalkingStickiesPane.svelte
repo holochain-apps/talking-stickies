@@ -11,7 +11,7 @@
   import { cloneDeep, isEqual } from "lodash";
   import { Group, UngroupedId, type Sticky, type StickyProps, Board } from "./board";
   import EditBoardDialog from "./EditBoardDialog.svelte";
-  import { faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
+  import { faArrowTurnDown, faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
   import { v1 as uuidv1 } from "uuid";
   import ClickEdit from "./ClickEdit.svelte";
@@ -198,10 +198,6 @@
     return votes[type][store.myAgentPubKeyB64] || 0;
   };
 
-  const closeBoard = async () => {
-    await store.boardList.closeActiveBoard()
-    store.setUIprops({showMenu:true})
-  };
   const groupWidth = (groupId) : string => {
     let len = Object.keys($state.grouping).length
     if (len > 1 && $state.grouping[UngroupedId].length == 0) len -= 1
@@ -357,11 +353,6 @@
           </div>
         </div>
       {/if}
-      <div>
-        <sl-button  class="board-button" on:click={closeBoard} title="Close">
-          <Fa icon={faClose} />
-        </sl-button>
-      </div>
     </div>
   </div>
   <Masonry
