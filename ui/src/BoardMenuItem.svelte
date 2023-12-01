@@ -3,10 +3,11 @@
   import type { TalkingStickiesStore } from "./store";
   import type { EntryHash } from "@holochain/client";
   import "@shoelace-style/shoelace/dist/components/skeleton/skeleton.js";
+  import "@shoelace-style/shoelace/dist/components/dropdown/dropdown.js";
   import Participants from "./Participants.svelte";
   import { BoardType } from "./boardList";
   import { exportBoard } from "./export"
-  import { faFileExport } from "@fortawesome/free-solid-svg-icons";
+  import { faEllipsisV, faFileExport } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
 
 
@@ -28,16 +29,51 @@
   }
 
   $: boardData = store.boardList.boardData2.get(boardHash)
-
+  let menu
 </script>
 <div class="wrapper">
   <div class="board-info" on:click={()=>{dispatch("select")}}>
       {#if $boardData.status == "complete"}
-        {@const board = $boardData.value.board}
-        <div class="board-name">{$boardData.value.latestState.name}</div>
+        {@const latestState = $boardData.value.latestState}
+        <div class="board-name">{latestState.name}</div>
+        <div style="display:flex; flex-direction:row">
         {#if boardType == BoardType.active}
           <Participants board={$boardData.value.board}></Participants>
         {/if}
+        <sl-dropdown bind:this={menu}>
+            <div slot="trigger" class="three-dots"
+            on:click={(e)=>{
+              e.stopPropagation()
+              menu.show()
+            }}
+          >
+            <Fa icon={faEllipsisV}></Fa>
+          </div>
+
+          <sl-menu style="max-width: 100px;"
+            on:mouseleave={menu.hide()}
+            on:click={(e)=>e.stopPropagation()}
+            on:sl-select={(e)=>{
+              console.log("EE",e)
+              switch(e.detail.item.value) {
+                case "archive": archiveBoard(); break;
+                case "unarchive": unarchiveBoard(); break;
+                case "export": exportBoard(latestState); break;
+              }
+              menu.hide()
+            }}>
+            <sl-menu-item value="export">
+              <Fa  icon={faFileExport} />
+              Export
+            </sl-menu-item>
+            {#if boardType == BoardType.active}
+              <sl-menu-item value="archive">Archive</sl-menu-item>
+            {:else}
+              <sl-menu-item value="unarchive">Unarchive</sl-menu-item>
+            {/if}
+          </sl-menu>
+        </sl-dropdown>
+      </div>
       {:else if $boardData.status == "pending"}
         <sl-skeleton
           effect="pulse"
@@ -50,10 +86,8 @@
   <div class="description">
     {#if $boardData.status == "complete"}
       {@const latestState = $boardData.value.latestState}
-      {@const board = $boardData.value.board}
-
-
       {latestState.props.description}
+
       <div class="controls">
         <div class="control" on:click={(e) => {
           e.stopPropagation()
@@ -91,6 +125,14 @@
   </div>
 </div>
 <style>
+  .three-dots {
+    margin-left: 5px; 
+    padding-left: 10px;
+    padding-right: 10px; 
+    margin-top:4px; 
+    border:1px solid;
+    border-radius: 50%;
+  }
   .wrapper {
     width: 100%;
     z-index: 100;
