@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Group, type BoardProps, UngroupedId, Board, VoteType, type BoardState } from './board';
+    import { Group, type BoardProps, UngroupedId, Board, VoteType } from './board';
     import { getContext, onMount } from 'svelte';
   	import DragDropList, { VerticalDropZone, reorder, type DropEvent } from 'svelte-dnd-list';
     import 'emoji-picker-element';
@@ -8,7 +8,7 @@
     import '@shoelace-style/shoelace/dist/components/input/input.js';
     import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
     import Fa from 'svelte-fa'
-    import { faPlus, faGripVertical, faTrash, faFileExport } from '@fortawesome/free-solid-svg-icons';
+    import { faPlus, faGripVertical, faTrash, faSpinner } from '@fortawesome/free-solid-svg-icons';
     import { cloneDeep } from "lodash";
 
     import type { TalkingStickiesStore } from './store';
@@ -105,10 +105,9 @@
       voteTypes = reorder(voteTypes, from.index, to.index);
     }
    let showEmojiPicker :number|undefined = undefined
-   let emojiDialog,colorDialog
-   let showColorPicker :number|undefined = undefined
-   let hex
+   let emojiDialog
    $: valuesValid = text != ""
+   let saving = false
 </script>
 
   <div class='board-editor'>
@@ -209,9 +208,20 @@
       </div>
     
       <div class="control"
-        class:disabled={!valuesValid} 
-        style="margin-left:10px" on:click={() => handleSave(text, groups, voteTypes, props)} >
-        <span>Save</span>
+        class:disabled={!valuesValid || saving} 
+        style="margin-left:10px; width:70px;" on:click={async () => {
+          saving = true
+          await handleSave(text, groups, voteTypes, props)
+          saving = false
+          }} >
+          
+        <span >
+          {#if saving}
+            <Fa class="spinning" icon={faSpinner}></Fa>
+          {:else}
+            Save
+          {/if}
+        </span>
         
       </div>
     </div>
