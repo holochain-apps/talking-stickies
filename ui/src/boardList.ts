@@ -4,7 +4,7 @@ import { LazyHoloHashMap } from "@holochain-open-dev/utils";
 import { derived, get, writable, type Readable, type Writable } from "svelte/store";
 import { boardGrammar, type BoardDelta, type BoardGrammar, type BoardState } from "./board";
 import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64 } from "@holochain/client";
-import { type AsyncReadable, asyncDerived, joinAsync, pipe, sliceAndJoin, toPromise} from '@holochain-open-dev/stores'
+import { type AsyncReadable, asyncDerived, joinAsync, pipe, sliceAndJoin, toPromise, alwaysSubscribed} from '@holochain-open-dev/stores'
 import type { ProfilesStore } from "@holochain-open-dev/profiles";
 
 export enum BoardType {
@@ -38,13 +38,14 @@ export class BoardList {
         const docStore = this.documents.get(documentHash)
 
         const board = pipe(docStore.allWorkspaces,
-            workspaces => 
-                new Board(docStore,  new WorkspaceStore(docStore, Array.from(workspaces.keys())[0]))
-        )
+            workspaces => {
+                return new Board(docStore,  new WorkspaceStore(docStore, Array.from(workspaces.keys())[0]))
+            }
+        ) 
         const latestState = pipe(board, 
             board => board.workspace.latestSnapshot
             )
-        return pipe(joinAsync([board, latestState]), ([board, latestState]) => {return {board,latestState}})
+        return alwaysSubscribed(pipe(joinAsync([board, latestState]), ([board, latestState]) => {return {board,latestState}}))
     })
 
     agentBoardHashes: LazyHoloHashMap<AgentPubKey, AsyncReadable<Array<BoardAndLatestState>>> = new LazyHoloHashMap(agent =>

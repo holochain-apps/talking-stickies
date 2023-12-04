@@ -7,7 +7,7 @@
   import Participants from "./Participants.svelte";
   import { BoardType } from "./boardList";
   import { exportBoard } from "./export"
-  import { faEllipsisV, faFileExport } from "@fortawesome/free-solid-svg-icons";
+  import { faArrowTurnDown, faEllipsisV, faFileExport } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
 
 
@@ -19,14 +19,16 @@
   export let boardType: BoardType
 
   const archiveBoard = async () => {
-        await store.boardList.archiveBoard(boardHash)
-       //store.setUIprops({showMenu: true})
+    await store.boardList.archiveBoard(boardHash)
   }
 
   const unarchiveBoard = async () => {
-        await store.boardList.unarchiveBoard(boardHash)
-       //store.setUIprops({showMenu: true})
+    await store.boardList.unarchiveBoard(boardHash)
   }
+
+  const leaveBoard = async () => {
+    await store.boardList.closeActiveBoard(true)
+  };
 
   $: boardData = store.boardList.boardData2.get(boardHash)
   let menu
@@ -35,6 +37,7 @@
   <div class="board-info" on:click={()=>{dispatch("select")}}>
       {#if $boardData.status == "complete"}
         {@const latestState = $boardData.value.latestState}
+        {@const board = $boardData.value.board}
         <div class="board-name">{latestState.name}</div>
         <div style="display:flex; flex-direction:row">
         {#if boardType == BoardType.active}
@@ -54,14 +57,20 @@
             on:mouseleave={menu.hide()}
             on:click={(e)=>e.stopPropagation()}
             on:sl-select={(e)=>{
-              console.log("EE",e)
               switch(e.detail.item.value) {
+                case "leave": leaveBoard(); break;
                 case "archive": archiveBoard(); break;
                 case "unarchive": unarchiveBoard(); break;
                 case "export": exportBoard(latestState); break;
               }
               menu.hide()
             }}>
+            {#if board.session}
+            <sl-menu-item value="leave">
+              <Fa  icon={faArrowTurnDown} />
+              Leave
+            </sl-menu-item>
+            {/if}
             <sl-menu-item value="export">
               <Fa  icon={faFileExport} />
               Export
@@ -89,6 +98,7 @@
       {latestState.props.description}
 
       <div class="controls">
+
         <div class="control" on:click={(e) => {
           e.stopPropagation()
           exportBoard(latestState)
