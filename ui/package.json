@@ -33,7 +33,7 @@
     "emoji-picker-element": "1.18.3",
     "javascript-time-ago": "2.3.7",
     "@types/javascript-time-ago": "^2.0.3",
-    "@lightningrodlabs/we-applet": "^0.12.1",
+    "@lightningrodlabs/we-applet": "^0.12.2",
     "svelte-bricks": "0.2.1"
   },
   "devDependencies": {

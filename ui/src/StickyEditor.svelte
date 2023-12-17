@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { onMount } from "svelte";
+  import { getContext, onMount } from "svelte";
   import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
   import '@shoelace-style/shoelace/dist/components/button/button.js';
   import CancelIcon from "./icons/CancelIcon.svelte";
@@ -7,13 +7,20 @@
   import AcceptIcon from "./icons/AcceptIcon.svelte";
   import type { v1 as uuidv1 } from "uuid";
   import type { StickyProps } from "./board";
-  import { onVisible } from "./util";
+  import { hrlB64WithContextToRaw, hrlWithContextToB64, onVisible } from "./util";
+  import type { TalkingStickiesStore } from "./store";
+  import Fa from "svelte-fa";
+  import { faPaperclip, faTrash } from "@fortawesome/free-solid-svg-icons";
+  import type { HrlB64WithContext } from "@lightningrodlabs/we-applet";
+
+  const { getStore } :any = getContext('store');
+  const store:TalkingStickiesStore = getStore();
 
   export let handleSave
   export let handleDelete = undefined
   export let cancelEdit
 
-  const DEFAULT_PROPS = {text:"", color:"", votes:{}}
+  const DEFAULT_PROPS = {text:"", color:"", votes:{}, attachments:[]}
 
   export let props:StickyProps = DEFAULT_PROPS
   export let stickyId:uuidv1 = ""
@@ -33,6 +40,23 @@
         inputElement.focus()
     })
 	});
+
+  const addAttachment = async (stickyId: string) => {
+    const hrl = await store.weClient.userSelectHrl()
+    if (hrl) {
+      if (props.attachments === undefined) {
+        props.attachments = []
+      }
+      props.attachments.push(hrlWithContextToB64(hrl))
+      props = props
+
+    }
+  }
+  const removeAttachment = (idx: number) => {
+    props.attachments.splice(idx,1)
+    props = props
+
+  }
 
 </script>
 <div class='sticky-editor {props.color}'>
@@ -64,10 +88,41 @@
     {/if}
     </div>
     <div>
+      {#if store.weClient}
+        <button class="control" on:click={()=>addAttachment(stickyId)} >          
+          <Fa icon={faPaperclip}/>
+        </button>
+      {/if}
       <button class="control" on:click={()=>cancelEdit(stickyId)} ><CancelIcon /></button>
       <button class="control" on:click={() => handleSave(groupId, props)} ><AcceptIcon /></button>
     </div>
   </div>
+  {#if store.weClient && props.attachments}
+  <div style="display:flex;flex-direction:row;flex-wrap:wrap; ">
+    {#each props.attachments as attachment, i}
+      {#await store.weClient.entryInfo(hrlB64WithContextToRaw(attachment).hrl)}
+        loading..
+      {:then { entryInfo }}
+        <div
+          style="display:flex;flex-direction:row;margin-right:15px;align-items:center;">
+          <sl-icon src={entryInfo.icon_src} ></sl-icon>
+          {entryInfo.name}
+          <sl-button circle size="small"
+            on:click={()=>{
+              removeAttachment(i)
+              }}
+            >
+            <Fa icon={faTrash}></Fa>
+          </sl-button> 
+        </div>
+        
+      {:catch error}
+        Oops. something's wrong.
+      {/await}
+    {/each}
+  </div>
+{/if}
+
 </div>
 
 <style>

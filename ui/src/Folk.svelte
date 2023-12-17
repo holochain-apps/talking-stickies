@@ -5,7 +5,6 @@
     import { getContext, onMount } from "svelte";
     import type { TalkingStickiesStore } from "./store";
     import { get } from 'svelte/store';    
-    import { isWeContext } from '@lightningrodlabs/we-applet';
 
     const { getStore } :any = getContext('store');
     const store:TalkingStickiesStore = getStore();
@@ -25,7 +24,7 @@
     }
 
 </script>
-{#if !isWeContext()}
+{#if store.weClient}
     <div class="nav-button tool-item" on:click={editAvatar} title={myName ? myName:"Edit Avatar"}>
         <Avatar size={28} agentPubKey={store.myAgentPubKey} placeholder={true} showNickname={false}/>
     </div>

@@ -7,12 +7,15 @@
     import type { SynStore } from '@holochain-syn/store';
     import type { ProfilesStore } from "@holochain-open-dev/profiles";
     import BoardMenu from "./BoardMenu.svelte";
+  import type { WeClient } from '@lightningrodlabs/we-applet';
 
     export let roleName = ""
     export let client : AppAgentClient
+    export let weClient : WeClient
     export let profilesStore : ProfilesStore
-  
+
     let store: TalkingStickiesStore = new TalkingStickiesStore(
+        weClient,
         profilesStore,
         client,
         roleName,

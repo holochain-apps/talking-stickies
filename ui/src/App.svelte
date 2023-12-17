@@ -2,7 +2,7 @@
   import Controller from './Controller.svelte'
   import { AppAgentWebsocket, AdminWebsocket } from '@holochain/client';
   import '@shoelace-style/shoelace/dist/themes/light.css';
-  import { WeClient, isWeContext } from '@lightningrodlabs/we-applet';
+  import { WeClient, isWeContext, initializeHotReload } from '@lightningrodlabs/we-applet';
   import { ProfilesClient, ProfilesStore } from '@holochain-open-dev/profiles';
   import "@holochain-open-dev/profiles/dist/elements/profiles-context.js";
   import "@holochain-open-dev/profiles/dist/elements/profile-prompt.js";
@@ -13,9 +13,10 @@
   const roleName = 'talking-stickies'
   const appPort = import.meta.env.VITE_APP_PORT ? import.meta.env.VITE_APP_PORT : 8888
   const adminPort = import.meta.env.VITE_ADMIN_PORT
-  const url = `ws://localhost:${appPort}`;
+  const url = `ws://127.0.0.1:${appPort}`;
 
   let client: AppAgentWebsocket
+  let weClient: WeClient
   let profilesStore : ProfilesStore|undefined = undefined
 
   let connected = false
@@ -23,10 +24,17 @@
 
   async function initialize() : Promise<void> {
     let profilesClient
+    if ((import.meta as any).env.DEV) {
+      try {
+        await initializeHotReload();
+      } catch (e) {
+        console.warn("Could not initialize applet hot-reloading. This is only expected to work in a We context in dev mode.")
+      }
+    }
     if (!isWeContext()) {
       console.log("adminPort is", adminPort)
       if (adminPort) {
-        const adminWebsocket = await AdminWebsocket.connect(new URL(`ws://localhost:${adminPort}`))
+        const adminWebsocket = await AdminWebsocket.connect(new URL(`ws://127.0.0.1:${adminPort}`))
         const x = await adminWebsocket.listApps({})
         console.log("apps", x)
         const cellIds = await adminWebsocket.listCellIds()
@@ -38,7 +46,7 @@
       profilesClient = new ProfilesClient(client, appId);
     } 
     else {
-      const weClient = await WeClient.connect();
+      weClient = await WeClient.connect();
 
       if (
         !(weClient.renderInfo.type === "applet-view")
@@ -71,7 +79,7 @@
         ></create-profile>
       </div>
     {:else}
-      <Controller  client={client} profilesStore={profilesStore} roleName={roleName}></Controller>
+      <Controller  client={client} weClient={weClient} profilesStore={profilesStore} roleName={roleName}></Controller>
     {/if}
 
   </profiles-context>

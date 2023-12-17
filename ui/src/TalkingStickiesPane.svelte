@@ -11,14 +11,15 @@
   import { cloneDeep, isEqual } from "lodash";
   import { Group, UngroupedId, type Sticky, type StickyProps, Board } from "./board";
   import EditBoardDialog from "./EditBoardDialog.svelte";
-  import { faArrowTurnDown, faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
+  import { faPlus } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
   import { v1 as uuidv1 } from "uuid";
   import ClickEdit from "./ClickEdit.svelte";
   import Masonry from 'svelte-bricks'
   import type { AgentPubKeyB64 } from "@holochain/client";
-
   
+  import { hrlB64WithContextToRaw } from './util';
+
   Marked.setOptions
   ({
     renderer: new Renderer,
@@ -461,6 +462,26 @@
               </div>
             {/each}
           </div>
+          {#if store.weClient && props.attachments}
+            <div style="display:flex;flex-direction:row;flex-wrap:wrap">
+              {#each props.attachments as attachment}
+                {#await store.weClient.entryInfo(hrlB64WithContextToRaw(attachment).hrl)}
+                  <sl-button size="small" loading></sl-button>
+                {:then { entryInfo }}
+                  <sl-button  size="small"
+                    on:click={()=>{
+                        const hrl = hrlB64WithContextToRaw(attachment)
+                        store.weClient.openHrl(hrl.hrl, hrl.context)
+                      }}
+                    style="display:flex;flex-direction:row;margin-right:5px"><sl-icon src={entryInfo.icon_src} slot="prefix"></sl-icon>
+                    {entryInfo.name}
+                  </sl-button> 
+                {:catch error}
+                  Oops. something's wrong.
+                {/await}
+              {/each}
+            </div>
+          {/if}
         </div>
       {/if}
     {/each}

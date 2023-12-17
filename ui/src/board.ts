@@ -4,7 +4,8 @@ import { v1 as uuidv1 } from "uuid";
 import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64, type AgentPubKeyB64 } from "@holochain/client";
 import { BoardType } from "./boardList";
 import { toPromise } from "@holochain-open-dev/stores";
-  
+import type { HrlB64WithContext } from "@lightningrodlabs/we-applet";
+
 export const UngroupedId = "_"
 export class Group {
       id: uuidv1
@@ -27,7 +28,8 @@ export class VoteType {
 export type StickyProps = {
   text: string,
   color: string,
-  votes: Object;
+  votes: Object,
+  attachments: Array<HrlB64WithContext>
 }
 
 export type Sticky = {
