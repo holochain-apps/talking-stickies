@@ -8,6 +8,7 @@
   import "@holochain-open-dev/profiles/dist/elements/profile-prompt.js";
   import "@holochain-open-dev/profiles/dist/elements/create-profile.js";
   import TSLogoIcon from "./icons/TSLogoIcon.svelte";
+  import { appletServices } from './we';
 
   const appId = import.meta.env.VITE_APP_ID ? import.meta.env.VITE_APP_ID : 'talking-stickies'
   const roleName = 'talking-stickies'
@@ -46,7 +47,7 @@
       profilesClient = new ProfilesClient(client, appId);
     } 
     else {
-      weClient = await WeClient.connect();
+      weClient = await WeClient.connect(appletServices);
 
       if (
         !(weClient.renderInfo.type === "applet-view")
