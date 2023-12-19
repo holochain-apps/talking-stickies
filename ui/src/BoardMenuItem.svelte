@@ -66,10 +66,10 @@
               menu.hide()
             }}>
             {#if board.session}
-            <sl-menu-item value="leave">
-              <Fa  icon={faArrowTurnDown} />
-              Leave
-            </sl-menu-item>
+              <sl-menu-item value="leave">
+                <Fa  icon={faArrowTurnDown} />
+                Leave
+              </sl-menu-item>
             {/if}
             <sl-menu-item value="export">
               <Fa  icon={faFileExport} />
@@ -92,56 +92,28 @@
         {$boardData.error}
       {/if}
   </div>
-  <div class="description">
     {#if $boardData.status == "complete"}
       {@const latestState = $boardData.value.latestState}
-      {latestState.props.description}
-
-      <div class="controls">
-
-        <div class="control" on:click={(e) => {
-          e.stopPropagation()
-          exportBoard(latestState)
-          }} title="Export">
-          <Fa icon={faFileExport} />
-          <span>Export</span>
-        </div>
-
-        {#if boardType == BoardType.active}
-          <div class="control"
-            on:click={async (e)=>{
-              e.stopPropagation()
-              archiveBoard()
-            }}
-            title="Archive"
-            >Archive</div>
-        {:else}
-          <div class="control"
-            on:click={async (e)=>{
-              e.stopPropagation()
-              unarchiveBoard()
-            }}
-            title="Unarchive"
-            >Unarchive</div>
-        {/if}
-      </div>
-    {:else if $boardData.status == "pending"}
-      <sl-skeleton
-      effect="pulse"
-      style="height: 10px; width: 100%"
-      ></sl-skeleton>  
+      {#if latestState.props.description}
+        <div class="description">{latestState.props.description}</div>
+      {/if}
     {/if}
 
-  </div>
 </div>
 <style>
   .three-dots {
     margin-left: 5px; 
-    padding-left: 10px;
-    padding-right: 10px; 
-    margin-top:4px; 
+    padding-top: 2px;
+    padding-left: 5px;
+    padding-right: 5px; 
+    margin-top:2px; 
     border:1px solid;
-    border-radius: 50%;
+    border-color: gray;
+    background-color: lightgray;
+    border-radius: 5px;
+  }
+  .three-dots:hover {
+    background-color: lightblue;
   }
   .wrapper {
     width: 100%;
