@@ -6,6 +6,7 @@ import type { BoardDelta, BoardState } from "./board";
 import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64 } from "@holochain/client";
 import { type AsyncReadable, asyncDerived, joinAsync, pipe, sliceAndJoin, toPromise, alwaysSubscribed} from '@holochain-open-dev/stores'
 import type { ProfilesStore } from "@holochain-open-dev/profiles";
+import { cloneDeep } from "lodash";
 
 export enum BoardType {
     active = "active",
@@ -147,6 +148,15 @@ export class BoardList {
             }
             this.setActiveBoard(undefined)
         }
+    }
+
+    async cloneBoard(board: BoardState) : Promise<Board>  {
+        const newBoard = cloneDeep(board) as BoardState
+        newBoard.stickies = []
+        newBoard.props.description = ""
+        Object.keys(newBoard.grouping).forEach(key=>newBoard.grouping[key] = [])
+        newBoard.name = `copy of ${newBoard.name}`
+        return this.makeBoard(newBoard)
     }
 
     async makeBoard(options: BoardState, fromHash?: EntryHashB64) : Promise<Board> {

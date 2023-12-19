@@ -3,7 +3,7 @@
     import { getContext } from 'svelte';
     import type { TalkingStickiesStore } from './store';
     import Fa from 'svelte-fa';
-    import { faFileExport, faFileImport, faSpinner } from '@fortawesome/free-solid-svg-icons';
+    import { faClone, faFileExport, faFileImport, faSpinner } from '@fortawesome/free-solid-svg-icons';
     import {asyncDerived, toPromise} from '@holochain-open-dev/stores'
     import type { Board, BoardEphemeralState, BoardState } from './board';
     import { BoardType } from './boardList';
@@ -16,6 +16,11 @@
 
     const store:TalkingStickiesStore = getStore();
 
+    const createBoardFrom = async (oldBoard: BoardState) => {
+        const board = await store.boardList.cloneBoard(oldBoard)
+        store.setUIprops({showMenu:false})
+        store.boardList.setActiveBoard(board.hash)
+    }
 
     let fileinput;
 	const onFileSelected = (e)=>{
@@ -92,6 +97,27 @@
         <div class="export-import" on:click={()=>{exportAllBoards()}} title="Export All Boards"><Fa color="#fff" icon={faFileExport} size=20px style="margin-left: 15px;"/><span>Export All Boards</span></div>
     {/if}
 
+    {#await toPromise(store.boardList.allBoards)}
+        <div class="spinning" ><Fa icon={faSpinner} color="#fff"/></div>
+    {:then boards}
+        <sl-dropdown skidding=15>
+            <sl-button slot="trigger" caret><Fa icon={faClone} size=20px style="margin-right: 10px"/><span>Clone Board From </span></sl-button>
+            <sl-menu>
+                    {#each Array.from(boards.entries()) as [key,board]}
+                        <sl-menu-item on:click={()=>{
+                            createBoardFrom(board.latestState)
+                        }} >
+                            {board.latestState.name}
+                        </sl-menu-item>
+                    {/each}
+
+            </sl-menu>
+        </sl-dropdown>
+    {:catch err}
+        Error: {err}
+    {/await}
+
+
     <input style="display:none" type="file" accept=".json" on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
 
     </div>
@@ -109,7 +135,7 @@
         font-size: 80%;
     }
     .export-import {
-        margin-top:5px;
+        margin-bottom:5px;
         box-sizing: border-box;
         position: relative;
         width: 100%;
