@@ -1,9 +1,16 @@
 <script lang="ts">
     import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
-  import { getContext } from 'svelte';
-  import type { TalkingStickiesStore } from './store';
-  import Fa from 'svelte-fa';
-  import { faFileImport } from '@fortawesome/free-solid-svg-icons';
+    import { getContext } from 'svelte';
+    import type { TalkingStickiesStore } from './store';
+    import Fa from 'svelte-fa';
+    import { faFileExport, faFileImport, faSpinner } from '@fortawesome/free-solid-svg-icons';
+    import {asyncDerived, toPromise} from '@holochain-open-dev/stores'
+    import type { Board, BoardEphemeralState, BoardState } from './board';
+    import { BoardType } from './boardList';
+    import { DocumentStore, WorkspaceStore } from '@holochain-syn/core';
+    import { encodeHashToBase64 } from '@holochain/client';
+    import { deserializeExport, exportBoards } from './export';
+
     let dialog
     const { getStore } :any = getContext('store');
 
@@ -16,14 +23,45 @@
         let reader = new FileReader();
 
         reader.addEventListener("load", async () => {
-            const b = JSON.parse(reader.result as string)
-            const board = await store.boardList.makeBoard(b)
-            store.setUIprops({showMenu:false})
-            store.boardList.setActiveBoard(board.hash)
+            const importedBoardStates = deserializeExport(reader.result as string)
+            if ( importedBoardStates.length > 0) {
+                const boards:Array<Board> = []
+                for (const b of importedBoardStates) {
+                    boards.push(await store.boardList.makeBoard(b))
+                }
+                if (importedBoardStates.length == 1) {
+                    store.setUIprops({showMenu:false})
+                    store.boardList.setActiveBoard(boards[0].hash)
+                }
+            }
+            importing = false
         }, false);
+        importing = true
         reader.readAsText(file);
     };
     export const open = ()=>{dialog.show()}
+
+    const exportAllBoards = async () => {
+        const boardStates = []
+        exporting = true
+
+        const hashes = await toPromise(asyncDerived(store.synStore.documentsByTag.get(BoardType.active),x=>Array.from(x.keys())))
+        const docs = hashes.map(hash=>new DocumentStore<BoardState, BoardEphemeralState>(store.synStore, hash))
+        for (const docStore of docs) {
+            try {
+                const workspaces = await toPromise(docStore.allWorkspaces)
+                const workspaceStore = new WorkspaceStore(docStore, Array.from(workspaces.keys())[0])
+                boardStates.push(await toPromise(workspaceStore.latestSnapshot))
+            } catch(e) {
+                console.log("Error getting snapshot for ", encodeHashToBase64(docStore.documentHash), e)
+            }
+        }
+        exportBoards(boardStates)
+        exporting = false
+    }
+
+    let importing = false
+    let exporting = false
 </script>
 
 
@@ -35,8 +73,25 @@
             This project's real-time syncronization is powered by <a href="https://github.com/holochain/syn">Syn</a>, 
             a library that makes it really easy to build this kind of real-time collaboaration into Holochain apps.
         </p>
-    <p class="small">Copyright © 2023 Holochain Foundation.  This software is distributed under the MIT License</p>
-    <div class="new-board" on:click={()=>{fileinput.click();}} title="Import Board"><Fa icon={faFileImport} size=2x style="margin-left: 15px;"/><span>Import Board </span></div>
+    <p class="small">Copyright © 2023 Holochain Foundation.  This software is distributed under the MIT License</p> 
+ 
+    {#if importing}
+        <div class="export-import" title="Import Boards">
+            <div class="spinning" style="margin:auto"><Fa icon={faSpinner} color="#fff"/></div>
+        </div>
+    {:else}
+        <div class="export-import" on:click={()=>{fileinput.click();}} title="Import Boards">
+            <Fa color="#fff" icon={faFileImport} size=20px style="margin-left: 15px;"/><span>Import Boards </span>
+        </div>
+    {/if}
+    {#if exporting}
+        <div class="export-import" title="Import Boards">
+            <div class="spinning" style="margin:auto"><Fa icon={faSpinner}  color="#fff"/></div>
+        </div>
+    {:else}
+        <div class="export-import" on:click={()=>{exportAllBoards()}} title="Export All Boards"><Fa color="#fff" icon={faFileExport} size=20px style="margin-left: 15px;"/><span>Export All Boards</span></div>
+    {/if}
+
     <input style="display:none" type="file" accept=".json" on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
 
     </div>
@@ -53,7 +108,8 @@
      .small {
         font-size: 80%;
     }
-    .new-board {
+    .export-import {
+        margin-top:5px;
         box-sizing: border-box;
         position: relative;
         width: 100%;
@@ -65,7 +121,7 @@
         align-items: center;
         border-radius: 5px;
     }
-    .new-board:hover {
+    .export-import:hover {
         cursor: pointer;
         z-index: 100;
         transform: scale(1.03);
@@ -74,7 +130,7 @@
         margin-left: -3px;
     }
 
-    .new-board span {
+    .export-import span {
         color: #fff;
         display: block;
         padding: 0 15px;
