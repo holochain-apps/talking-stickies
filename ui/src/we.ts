@@ -1,6 +1,6 @@
 import { DocumentStore, SynClient, SynStore, WorkspaceStore } from '@holochain-syn/core';
-import { CellType, type AppAgentClient, type RoleName, type ZomeName, type EntryHash, type DnaHash } from '@holochain/client';
-import { Board, boardGrammar, type BoardGrammar } from './board';
+import { CellType, type AppAgentClient, type RoleName, type ZomeName, type DnaHash } from '@holochain/client';
+import { Board, type BoardEphemeralState, type BoardState } from './board';
 import { asyncDerived, pipe, sliceAndJoin, toPromise } from '@holochain-open-dev/stores';
 import { BoardType } from './boardList';
 import { LazyHoloHashMap } from '@holochain-open-dev/utils';
@@ -51,7 +51,7 @@ export const appletServices: AppletServices = {
         const synClient = new SynClient(appletClient, roleName, ZOME_NAME);
         const synStore = new SynStore(synClient);
         const documentHash = hrl[1]
-        const docStore = new DocumentStore(synStore, boardGrammar, documentHash)
+        const docStore = new DocumentStore<BoardState, BoardEphemeralState> (synStore, documentHash)
         const workspaces = await toPromise(docStore.allWorkspaces)
         const workspace = new WorkspaceStore(docStore, Array.from(workspaces.keys())[0])
         const latestSnapshot = await toPromise(workspace.latestSnapshot)
@@ -70,12 +70,9 @@ export const appletServices: AppletServices = {
         const synClient = new SynClient(appletClient, ROLE_NAME, ZOME_NAME);
         const synStore = new SynStore(synClient);
         const boardHashes = asyncDerived(synStore.documentsByTag.get(BoardType.active),x=>Array.from(x.keys()))
-
-        const documents: LazyHoloHashMap<EntryHash, DocumentStore<BoardGrammar>> = new LazyHoloHashMap( documentHash =>
-            new DocumentStore(synStore, boardGrammar, documentHash))
             
         const boardData = new LazyHoloHashMap( documentHash => {
-            const docStore = documents.get(documentHash)
+            const docStore = synStore.documents.get(documentHash)
     
             const workspace = pipe(docStore.allWorkspaces,
                 workspaces => {
