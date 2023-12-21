@@ -35,8 +35,7 @@
                         <div class="boards">
                             {#each $agentBoards.value.get(agentPubKey) as board}
                                 <div class="board" on:click={()=>{
-                                    store.boardList.setActiveBoard(board.board.hash)
-                                    store.setUIprops({showMenu:false})
+                                    store.setActiveBoard(board.board.hash)
                                 }}>{board.latestState.name}</div>
                             {/each}
                         </div>

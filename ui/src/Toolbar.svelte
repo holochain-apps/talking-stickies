@@ -15,13 +15,11 @@
   let editBoardDialog
 
   const closeBoard = async () => {
-    await store.boardList.closeActiveBoard(false)
-    store.setUIprops({showMenu:true})
+    await store.closeActiveBoard(false)
   };
 
   const leaveBoard = async () => {
-    await store.boardList.closeActiveBoard(true)
-    store.setUIprops({showMenu:true})
+    await store.closeActiveBoard(true)
   };
 
 </script>

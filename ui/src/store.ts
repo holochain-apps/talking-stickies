@@ -64,6 +64,35 @@ export class TalkingStickiesStore {
         })
     }
 
+    async setActiveBoard(hash: EntryHash | undefined) {
+        const board = await this.boardList.setActiveBoard(hash)
+        let bgUrl = ""
+        if (board) {
+            const state = board.state()
+            if (state) {
+                bgUrl = state.props.bgUrl
+            }
+        }
+        this.setUIprops({showMenu:false, bgUrl})
+    }
+
+    async closeActiveBoard(leave: boolean) {
+        await this.boardList.closeActiveBoard(leave)
+        this.setUIprops({showMenu:true, bgUrl:""})
+    }
+
+
+    async archiveBoard(documentHash: EntryHash) {
+        const wasActive = this.boardList.archiveBoard(documentHash)
+        if (wasActive ) {
+            this.setUIprops({showMenu:true, bgUrl:""})
+        }
+    }
+
+    async unarchiveBoard(documentHash: EntryHash) {
+        this.boardList.unarchiveBoard(documentHash)
+    }
+
     get myAgentPubKey(): AgentPubKey {
         return this.client.myPubKey;
     }

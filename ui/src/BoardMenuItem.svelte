@@ -18,14 +18,6 @@
   export let boardHash: EntryHash
   export let boardType: BoardType
 
-  const archiveBoard = async () => {
-    await store.boardList.archiveBoard(boardHash)
-  }
-
-  const unarchiveBoard = async () => {
-    await store.boardList.unarchiveBoard(boardHash)
-  }
-
   const leaveBoard = async () => {
     await store.boardList.closeActiveBoard(true)
   };
@@ -59,8 +51,8 @@
             on:sl-select={(e)=>{
               switch(e.detail.item.value) {
                 case "leave": leaveBoard(); break;
-                case "archive": archiveBoard(); break;
-                case "unarchive": unarchiveBoard(); break;
+                case "archive": store.archiveBoard(boardHash); break;
+                case "unarchive": store.unarchiveBoard(boardHash); break;
                 case "export": exportBoard(latestState); break;
               }
               menu.hide()

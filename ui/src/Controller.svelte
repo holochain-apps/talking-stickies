@@ -34,8 +34,8 @@
       getStore: () => store,
     });
     const DEFAULT_KD_BG_IMG = ""
-    //const DEFAULT_KD_BG_IMG = "https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54461.jpg"
-    const NO_BOARD_IMG = "https://holochain.org/img/big_logo.png"
+    // const DEFAULT_KD_BG_IMG = "https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54461.jpg"
+    // const NO_BOARD_IMG = "https://holochain.org/img/big_logo.png"
     $: uiProps = store.uiProps
     $: bgUrl = $uiProps.bgUrl ? $uiProps.bgUrl : DEFAULT_KD_BG_IMG
     $: boardCount = store.boardList.boardCount
@@ -76,7 +76,6 @@
         </div>
       {/if}
 
-        
         {#if $activeBoard !== undefined}
           <TalkingStickiesPane activeBoard={$activeBoard}/>
         {/if}

@@ -18,8 +18,7 @@
 
     const createBoardFrom = async (oldBoard: BoardState) => {
         const board = await store.boardList.cloneBoard(oldBoard)
-        store.setUIprops({showMenu:false})
-        store.boardList.setActiveBoard(board.hash)
+        store.setActiveBoard(board.hash)
     }
 
     let fileinput;
@@ -35,8 +34,7 @@
                     boards.push(await store.boardList.makeBoard(b))
                 }
                 if (importedBoardStates.length == 1) {
-                    store.setUIprops({showMenu:false})
-                    store.boardList.setActiveBoard(boards[0].hash)
+                    store.setActiveBoard(boards[0].hash)
                 }
             }
             importing = false

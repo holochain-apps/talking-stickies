@@ -30,8 +30,7 @@
 
 
     const selectBoard = async (hash: EntryHash) => {
-        store.setUIprops({showMenu:false})
-        await store.boardList.setActiveBoard(hash)
+        await store.setActiveBoard(hash)
     }
 
     const unarchiveBoard = async (hash: EntryHash) => {

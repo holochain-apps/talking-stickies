@@ -108,10 +108,10 @@ export class BoardList {
         return board.board
     }
 
-    async setActiveBoard(hash: EntryHash | undefined) {
+    async setActiveBoard(hash: EntryHash | undefined) : Promise<Board | undefined> {
+        let board: Board | undefined = undefined
         if (hash) {
-            const board = (await toPromise(this.boardData2.get(hash))).board
-
+            board = (await toPromise(this.boardData2.get(hash))).board
             if (board) {
                 await board.join()
                 console.log("joined")
@@ -123,6 +123,9 @@ export class BoardList {
             this.activeBoard.update((n) => {return undefined} )
         }
         this.activeBoardHash.update((n) => {return hash} )
+        console.log("C", board)
+
+        return board
     }
 
     async archiveBoard(documentHash: EntryHash) {
