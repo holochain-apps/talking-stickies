@@ -35,16 +35,20 @@
       {:else}
         <div class="open tool-item menu" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><Fa icon={faBars} size=2x /></div>
       {/if}
-      <div  class="tool-item nav-button icon-button" on:click={closeBoard} title="Close">
-        <Fa icon={faHome} size=2x />
-      </div>
-      <div  class="tool-item nav-button icon-button" on:click={leaveBoard} title="Leave">
-        <Fa icon={faArrowTurnDown} size=2x />
-      </div>
-      <div class="tool-item settings"  on:click={()=> editBoardDialog.open($activeBoard.hash)} title="Settings">
-        {$state.name}
-        <Fa icon={faCog} size="1x" style="margin-left: 10px;"/>
-      </div>
+      <sl-dropdown>
+        <sl-button slot="trigger" caret class="board-options">{$state.name}</sl-button>
+        <sl-menu>
+          <sl-menu-item on:click={()=> editBoardDialog.open($activeBoard.hash)} >
+            <Fa icon={faCog} size="1x" /> Board Settings
+          </sl-menu-item>
+          <sl-menu-item on:click={closeBoard} title="Leave">
+            <Fa icon={faClose} size=1x /> Close Board
+          </sl-menu-item>
+          <sl-menu-item on:click={leaveBoard} title="Leave">
+            <Fa icon={faArrowTurnDown} size=1x /> Leave Board
+          </sl-menu-item>
+        </sl-menu>
+      </sl-dropdown>
       
 
     </div>
@@ -92,7 +96,14 @@
     cursor: pointer;
   }
 
-  .tool-item {
+  .board-options::part(base) {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(95, 90, 83, 1.0);
+    font-family: "Figtree", sans-serif !important;
+  }
+
+  .tool-item, .board-options::part(base) {
     background: #FFFFFF;
     border: 2px solid rgb(166 115 55 / 26%);
     border-bottom: 2px solid rgb(84 54 19 / 50%);
@@ -107,7 +118,7 @@
     transform: scale(1);
   }
 
-  .tool-item:hover {
+  .tool-item:hover,  .board-options::part(base):hover {
     cursor: pointer;
     transform: scale(1.15);
   }
@@ -168,5 +179,9 @@
   .icon-button {
     margin-right: 15px;
     width:50px;
+  }
+
+  sl-menu::part(panel) {
+    border-radius: 10px
   }
 </style>

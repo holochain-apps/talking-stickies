@@ -50,7 +50,7 @@
               menu.show()
             }}
           >
-            <Fa icon={faEllipsisV}></Fa>
+            <Fa icon={faEllipsisV} class="three-dots-icon"></Fa>
           </div>
 
           <sl-menu style="max-width: 100px;"
@@ -106,15 +106,19 @@
     padding-top: 2px;
     padding-left: 5px;
     padding-right: 5px; 
-    margin-top:2px; 
-    border:1px solid;
-    border-color: gray;
-    background-color: lightgray;
+    margin-top:2px;
+    width: 26px;
+    height: 26px;
     border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  .three-dots:hover {
-    background-color: lightblue;
+
+  .three-dots-icon {
+    font-size: 24px;
   }
+
   .wrapper {
     width: 100%;
     z-index: 100;
