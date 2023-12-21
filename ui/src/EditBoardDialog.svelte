@@ -57,6 +57,7 @@
                 board.requestChanges(changes)
             }
         }
+        store.setUIprops({bgUrl: props.bgUrl})
         close()
     }
     // const archiveBoard = async () => {
