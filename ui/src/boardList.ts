@@ -123,17 +123,19 @@ export class BoardList {
             this.activeBoard.update((n) => {return undefined} )
         }
         this.activeBoardHash.update((n) => {return hash} )
-        console.log("C", board)
 
         return board
     }
 
-    async archiveBoard(documentHash: EntryHash) {
+    async archiveBoard(documentHash: EntryHash) : Promise<boolean> {
+        let wasActive = false
         await this.synStore.client.removeDocumentTag(documentHash, BoardType.active)
         await this.synStore.client.tagDocument(documentHash, BoardType.archived)
         if (encodeHashToBase64(get(this.activeBoardHash)) == encodeHashToBase64(documentHash)) {
             await this.setActiveBoard(undefined)
+            wasActive = true
         }
+        return wasActive
     }
 
     async unarchiveBoard(documentHash: EntryHash) {
