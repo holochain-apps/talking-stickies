@@ -65,10 +65,13 @@
 
     let importing = false
     let exporting = false
+
+    $: allBoards = store.boardList.allBoards
+
 </script>
 
 
-<sl-dialog label="TalkingStickies!: UI v0.7.1 for DNA v0.6.0" bind:this={dialog} width={600} >
+<sl-dialog label="TalkingStickies!: UI v0.8.0 for DNA v0.7.0" bind:this={dialog} width={600} >
     <div class="about">
         <p>TalkingStickies! is a demonstration Holochain app built by the Holochain Foundation.</p>
         <p> <b>Developers:</b>
@@ -95,25 +98,24 @@
         <div class="export-import" on:click={()=>{exportAllBoards()}} title="Export All Boards"><Fa color="#fff" icon={faFileExport} size=20px style="margin-left: 15px;"/><span>Export All Boards</span></div>
     {/if}
 
-    {#await toPromise(store.boardList.allBoards)}
-        <div class="spinning" ><Fa icon={faSpinner} color="#fff"/></div>
-    {:then boards}
+    {#if $allBoards.status == "pending"}
+        <div class="spinning" ><Fa icon={faSpinner}  color="#fff"></Fa></div>
+    {:else if $allBoards.status == "complete"}
         <sl-dropdown skidding=15>
             <sl-button slot="trigger" caret><Fa icon={faClone} size=20px style="margin-right: 10px"/><span>Clone Board From </span></sl-button>
             <sl-menu>
-                    {#each Array.from(boards.entries()) as [key,board]}
-                        <sl-menu-item on:click={()=>{
-                            createBoardFrom(board.latestState)
-                        }} >
-                            {board.latestState.name}
-                        </sl-menu-item>
-                    {/each}
-
+                {#each Array.from($allBoards.value.entries()) as [key,board]}
+                    <sl-menu-item on:click={()=>{
+                        createBoardFrom(board.latestState)
+                    }} >
+                        {board.latestState.name}
+                    </sl-menu-item>
+                {/each}
             </sl-menu>
         </sl-dropdown>
-    {:catch err}
-        Error: {err}
-    {/await}
+    {:else if $allBoards.status == "error"}
+        Error: {$allBoards.error}
+    {/if}
 
 
     <input style="display:none" type="file" accept=".json" on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
