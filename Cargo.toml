@@ -9,8 +9,8 @@ members = ["dnas/*/zomes/coordinator/*", "dnas/*/zomes/integrity/*"]
 resolver = "2"
 
 [workspace.dependencies]
-hdi = "=0.3.3"
-hdk = "=0.2.3"
+hdi = "0.4"
+hdk = "0.3"
 serde = "1"
 
 [workspace.dependencies.talking-stickies]
@@ -24,9 +24,3 @@ path = "dnas/talking-stickies/zomes/coordinator/profiles"
 
 [workspace.dependencies.profiles_integrity]
 path = "dnas/talking-stickies/zomes/integrity/profiles"
-
-[workspace.dependencies.file_storage]
-path = "dnas/talking-stickies/zomes/coordinator/file_storage"
-
-[workspace.dependencies.file_storage_integrity]
-path = "dnas/talking-stickies/zomes/integrity/file_storage"
