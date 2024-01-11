@@ -1,6 +1,7 @@
 <script lang="ts">
   import { encodeHashToBase64, type AgentPubKey } from "@holochain/client";
   import "@holochain-open-dev/profiles/dist/elements/agent-avatar.js";
+  import "@shoelace-style/shoelace/dist/components/skeleton/skeleton.js";
   import { getContext } from "svelte";
   import type { TalkingStickiesStore } from "./store";
   import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -26,7 +27,10 @@
 <div class="avatar-{namePosition}"
     >
     {#if $profile.status == "pending"}
-    ( ? )
+        <sl-skeleton
+        effect="pulse"
+        style={`height: ${size}px; width: ${size}px;`}
+        ></sl-skeleton>
     {:else if $profile.status == "complete"}
 
         {#if showAvatar}
