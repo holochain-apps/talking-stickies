@@ -7,11 +7,10 @@
   import AcceptIcon from "./icons/AcceptIcon.svelte";
   import type { v1 as uuidv1 } from "uuid";
   import type { StickyProps } from "./board";
-  import { hrlB64WithContextToRaw, hrlWithContextToB64, onVisible } from "./util";
+  import { hrlWithContextToB64, onVisible } from "./util";
   import type { TalkingStickiesStore } from "./store";
-  import Fa from "svelte-fa";
-  import { faPaperclip, faTrash } from "@fortawesome/free-solid-svg-icons";
-  import type { HrlB64WithContext } from "@lightningrodlabs/we-applet";
+  import SvgIcon from "./SvgIcon.svelte";
+  import AttachmentsList from "./AttachmentsList.svelte";
 
   const { getStore } :any = getContext('store');
   const store:TalkingStickiesStore = getStore();
@@ -90,7 +89,7 @@
     <div>
       {#if store.weClient}
         <button class="control" on:click={()=>addAttachment(stickyId)} >          
-          <Fa icon={faPaperclip}/>
+          <SvgIcon icon=link/>
         </button>
       {/if}
       <button class="control" on:click={()=>cancelEdit(stickyId)} ><CancelIcon /></button>
@@ -98,30 +97,10 @@
     </div>
   </div>
   {#if store.weClient && props.attachments}
-  <div style="display:flex;flex-direction:row;flex-wrap:wrap; ">
-    {#each props.attachments as attachment, i}
-      {#await store.weClient.entryInfo(hrlB64WithContextToRaw(attachment).hrl)}
-        loading..
-      {:then { entryInfo }}
-        <div
-          style="display:flex;flex-direction:row;margin-right:15px;align-items:center;">
-          <sl-icon src={entryInfo.icon_src} ></sl-icon>
-          {entryInfo.name}
-          <sl-button circle size="small"
-            on:click={()=>{
-              removeAttachment(i)
-              }}
-            >
-            <Fa icon={faTrash}></Fa>
-          </sl-button> 
-        </div>
-        
-      {:catch error}
-        Oops. something's wrong.
-      {/await}
-    {/each}
-  </div>
-{/if}
+    <AttachmentsList attachments={props.attachments} 
+      on:remove-attachment={(e)=>removeAttachment(e.detail)}
+    />
+  {/if}
 
 </div>
 

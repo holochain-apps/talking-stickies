@@ -7,8 +7,7 @@
     import '@shoelace-style/shoelace/dist/components/button/button.js';
     import '@shoelace-style/shoelace/dist/components/input/input.js';
     import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
-    import Fa from 'svelte-fa'
-    import { faPlus, faGripVertical, faTrash, faSpinner } from '@fortawesome/free-solid-svg-icons';
+    import SvgIcon from './SvgIcon.svelte'
     import { cloneDeep } from "lodash";
 
     import type { TalkingStickiesStore } from './store';
@@ -29,7 +28,7 @@
     let boardHash:EntryHash|undefined = undefined
     let text = ''
     let description = ''
-    let props:BoardProps = {bgUrl: "", description:""}
+    let props:BoardProps = {bgUrl: "", description:"", attachments:[]}
     let groups: Array<Group> = []
     let voteTypes: Array<VoteType> = []
     let nameInput
@@ -37,7 +36,7 @@
 
     export const reset = () => {
       text = ''
-      props = {bgUrl: "", description:""}
+      props = {bgUrl: "", description:"", attachments:[]}
       groups = []
       voteTypes = []
       nameInput.value = ""
@@ -132,15 +131,15 @@
         itemClass="unselectable"
         >
         <div class="group">
-          <div class="grip" ><Fa icon={faGripVertical}/></div>
+          <div class="grip" ><SvgIcon icon=faGripVertical size=12px/></div>
           <sl-input class='textarea' value={groups[index].name} on:input={e=>groups[index].name = e.target.value}></sl-input>
           <sl-button size="small"  on:click={deleteGroup(index)}>
-          <Fa icon={faTrash}/>
+          <SvgIcon icon=faTrash size=12px/>
           </sl-button>
         </div>
       </DragDropList>
       <div class="control" on:click={() => addGroup()}>
-        <Fa icon={faPlus}/>
+        <SvgIcon icon=faPlus size=12px/>
         <span>Add sticky group</span>
       </div>
     </div>
@@ -168,7 +167,7 @@
         itemClass="unselectable"
         >
         <div class="vote-type">
-          <div class="grip" ><Fa icon={faGripVertical}/></div>
+          <div class="grip" ><SvgIcon icon=faGripVertical size=12px/></div>
           <sl-button on:click={()=>{showEmojiPicker = index;emojiDialog.show()}} >
             <span style="font-size:180%">{voteTypes[index].emoji}</span>
           </sl-button>
@@ -181,12 +180,12 @@
             on:input={e=>voteTypes[index].toolTip = e.target.value}> </sl-input>
 
           <sl-button size="small"   on:click={deleteVoteType(index)} >
-            <Fa icon={faTrash}/> 
+            <SvgIcon icon=faTrash  size=12px/> 
           </sl-button>
         </div>
       </DragDropList> 
       <div class="control" on:click={() => addVoteType()}>
-        <Fa icon={faPlus}/>
+        <SvgIcon icon=faPlus size=12px/>
         <span>Add voting type</span>
       </div>
     </div>
@@ -217,7 +216,7 @@
           
         <span >
           {#if saving}
-            <Fa class="spinning" icon={faSpinner}></Fa>
+            <div class="spinning"><SvgIcon icon=faSpinner /></div>
           {:else}
             Save
           {/if}
@@ -272,7 +271,7 @@
   }
 
   .textarea.vote-type::part(base) {
-    max-width: 170px;
+    max-width: 165px;
   }
 
   .controls {

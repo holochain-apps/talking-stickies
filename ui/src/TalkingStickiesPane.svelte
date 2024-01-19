@@ -11,14 +11,13 @@
   import { cloneDeep, isEqual } from "lodash";
   import { Group, UngroupedId, type Sticky, type StickyProps, Board } from "./board";
   import EditBoardDialog from "./EditBoardDialog.svelte";
-  import { faPlus } from "@fortawesome/free-solid-svg-icons";
-  import Fa from "svelte-fa";
   import { v1 as uuidv1 } from "uuid";
   import ClickEdit from "./ClickEdit.svelte";
   import Masonry from 'svelte-bricks'
   import type { AgentPubKeyB64 } from "@holochain/client";
-  
-  import { hrlB64WithContextToRaw } from './util';
+  import AttachmentsDialog from "./AttachmentsDialog.svelte"
+  import SvgIcon from "./SvgIcon.svelte";
+  import AttachmentsList from "./AttachmentsList.svelte";
 
   Marked.setOptions
   ({
@@ -42,6 +41,7 @@
   let store: TalkingStickiesStore = getStore();
 
   export let activeBoard: Board
+  export let standAlone = false
 
   $: board = activeBoard
   $: participants = activeBoard.participants()
@@ -60,6 +60,7 @@
 
   let groups:{ [key:string]: Group } = {}
   let stickiesMap:{ [key:string]:Sticky } ={}
+  let attachmentsDialog : AttachmentsDialog
 
   const sorted = (itemIds, sortFn)=> {
     var items = itemIds.map((id)=>stickiesMap[id])
@@ -324,13 +325,43 @@
 </script>
 
 <div class="board">
-  <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
+  {#if !standAlone}
+    <EditBoardDialog bind:this={editBoardDialog}></EditBoardDialog>
+  {/if}
   {#if $state}
-  <div class="top-bar">
+  <div class="top-bar"
+       class:stand-alone-top-bar={standAlone}
+  >
+    <div style="display:flex;align-items:center"> 
+      {#if standAlone}
+        <h2 style="margin-right: 20px;">{$state.name}</h2>
+      {/if}
+      <div class="add-group" on:click={newGroup(uuidv1())}>
+          <div style="margin-right: 5px; display: flex;"><AddGroupIcon /></div>
+          Add Group
+      </div>
+      {#if store.weClient}
+        <AttachmentsDialog activeBoard={activeBoard} bind:this={attachmentsDialog}></AttachmentsDialog>
 
-    <div class="add-group" on:click={newGroup(uuidv1())}>
-        <div style="margin-right: 5px; display: flex;"><AddGroupIcon /></div>
-        Add Group
+        <div style="display:flex;align-items:center;"> 
+          {#if $state.boundTo.length>0}
+            <div style="margin-left:10px;display:flex; align-items: center">
+              <span style="margin-right: 5px;">Bound To:</span>
+              <AttachmentsList allowDelete={false} attachments={$state.boundTo} />
+            </div>
+          {/if}
+          <div style="margin-left:10px; display:flex">
+            <button class="attachment-button" style="margin-right:10px" on:click={()=>attachmentsDialog.open(undefined)} >          
+              <SvgIcon icon="link" size="20px"/>
+            </button>
+            {#if $state.props.attachments}
+              <AttachmentsList attachments={$state.props.attachments}
+                allowDelete={false}/>
+            {/if}
+          </div>
+        </div>
+      {/if}
+
     </div>
     {#if $state.voteTypes.length>0}
       <div class="sortby">
@@ -463,24 +494,7 @@
             {/each}
           </div>
           {#if store.weClient && props.attachments}
-            <div style="display:flex;flex-direction:row;flex-wrap:wrap">
-              {#each props.attachments as attachment}
-                {#await store.weClient.entryInfo(hrlB64WithContextToRaw(attachment).hrl)}
-                  <sl-button size="small" loading></sl-button>
-                {:then { entryInfo }}
-                  <sl-button  size="small"
-                    on:click={()=>{
-                        const hrl = hrlB64WithContextToRaw(attachment)
-                        store.weClient.openHrl(hrl.hrl, hrl.context)
-                      }}
-                    style="display:flex;flex-direction:row;margin-right:5px"><sl-icon src={entryInfo.icon_src} slot="prefix"></sl-icon>
-                    {entryInfo.name}
-                  </sl-button> 
-                {:catch error}
-                  Oops. something's wrong.
-                {/await}
-              {/each}
-            </div>
+            <AttachmentsList attachments={props.attachments} allowDelete={false} />
           {/if}
         </div>
       {/if}
@@ -493,7 +507,7 @@
     <div class="add-sticky" on:click={newSticky(group.id)}>
       <div style="display: flex;">
         Add Sticky
-        <div style="margin-left:5px"><Fa icon={faPlus}/></div>
+        <div style="margin-left:5px"><SvgIcon icon=faPlus size=16px/></div>
       </div>
     </div>
     </div>
@@ -530,6 +544,9 @@
     left: 0;
     height: 0;
     padding: 0 15px;
+  }
+  .stand-alone-top-bar {
+    top: 30px;
   }
 
   .left-items {
@@ -864,4 +881,25 @@
 :global(hr) {
     opacity: .4;
 }
+
+:global(.attachment-button) {
+    width: 35px;
+    height: 35px;
+    padding: 4px;
+    border-radius: 50%;
+    border: 1px solid rgba(235, 235, 238, 1.0);
+    background-color: rgba(255,255,255,.8);    
+    box-shadow: 0 4px 5px rgba(0,0,0,.2);
+  }
+:global(.attachment-button:hover) {
+    transform: scale(1.25);
+  }
+
+:global(.attachment-group:active) {
+  border-color: rgb(76, 106, 167);
+  background-color: rgb(77, 123, 214);
+  box-shadow: 0 4px 5px rgba(0,0,0,.2);
+  border-bottom: 2px solid rgb(60, 83, 127);
+}
+
 </style>

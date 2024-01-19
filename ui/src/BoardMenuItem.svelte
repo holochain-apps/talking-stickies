@@ -7,9 +7,7 @@
   import Participants from "./Participants.svelte";
   import { BoardType } from "./boardList";
   import { exportBoard } from "./export"
-  import { faArrowTurnDown, faEllipsisV, faFileExport } from "@fortawesome/free-solid-svg-icons";
-  import Fa from "svelte-fa";
-
+  import SvgIcon from "./SvgIcon.svelte";
 
   const dispatch = createEventDispatcher()
   const { getStore } :any = getContext('store');
@@ -42,7 +40,7 @@
               menu.show()
             }}
           >
-            <Fa icon={faEllipsisV} class="three-dots-icon"></Fa>
+            <SvgIcon icon=faEllipsisV size=6px/>
           </div>
 
           <sl-menu style="max-width: 100px;"
@@ -59,12 +57,12 @@
             }}>
             {#if board.session}
               <sl-menu-item value="leave">
-                <Fa  icon={faArrowTurnDown} />
+                <SvgIcon  icon=faArrowTurnDown />
                 Leave
               </sl-menu-item>
             {/if}
             <sl-menu-item value="export">
-              <Fa  icon={faFileExport} />
+              <SvgIcon  icon=faFileExport />
               Export
             </sl-menu-item>
             {#if boardType == BoardType.active}
@@ -105,10 +103,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  .three-dots-icon {
-    font-size: 24px;
   }
 
   .wrapper {

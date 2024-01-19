@@ -3,16 +3,16 @@
     import TalkingStickiesPane from './TalkingStickiesPane.svelte'
     import { TalkingStickiesStore } from './store'
     import { setContext } from 'svelte';
-    import type { AppAgentClient } from '@holochain/client';
+    import type { AppAgentClient, EntryHash } from '@holochain/client';
     import type { SynStore } from '@holochain-syn/store';
     import type { ProfilesStore } from "@holochain-open-dev/profiles";
-    import BoardMenu from "./BoardMenu.svelte";
     import type { WeClient } from '@lightningrodlabs/we-applet';
 
     export let roleName = ""
     export let client : AppAgentClient
     export let weClient : WeClient
     export let profilesStore : ProfilesStore
+    export let board : EntryHash
 
     let store: TalkingStickiesStore = new TalkingStickiesStore(
         weClient,
@@ -21,9 +21,8 @@
         roleName,
       );
     let synStore: SynStore = store.synStore
+    store.boardList.setActiveBoard(board)
 
-
-    $: activeBoardHash = store.boardList.activeBoardHash
     $: activeBoard = store.boardList.activeBoard
 
     setContext('synStore', {
@@ -47,58 +46,17 @@
       <div class='app'>
       <div class="wrapper">
 
-      <div class="header">
-        <Toolbar />
-      </div>
       <div class="workspace" style="display:flex">
-      {#if $uiProps.showMenu && $boardCount.status == "complete"}
-        {#if $activeBoardHash === undefined}
-          <div class="board-menu" >
-            <BoardMenu wide={true}></BoardMenu>
-          </div>
-        {:else}
-          <div class="board-menu">
-            <BoardMenu wide={false}></BoardMenu>
-          </div>
-          <div class="board-menu-pad">
-            <BoardMenu wide={false}></BoardMenu>
-          </div>
-        {/if}
-      {:else}
-        <div class="board-menu slideOut">
-          <BoardMenu wide={false}></BoardMenu>
-        </div>
-        <div class="board-menu-pad slideOut">
-          <BoardMenu wide={false}></BoardMenu>
-        </div>
-      {/if}
 
         {#if $activeBoard !== undefined}
-          <TalkingStickiesPane activeBoard={$activeBoard}/>
-        {/if}
-        {#if $boardCount.status == "error"}
-          <div class="error-msg">{$boardCount.error}</div>
+          <TalkingStickiesPane activeBoard={$activeBoard} standAlone={true}/>
         {/if}
         </div>
-        </div>
-
-        <div class="background">
-        <div class="background-overlay"></div>
-        <div class="background-image"
-              style={`background-image: url(${bgUrl}`}></div>
       </div>
     </div>
   </div>
 </div>
 <style>
-  .error-msg {
-    margin:auto;
-    display: flex;
-    width:50%;
-    border-radius: 10px;
-    border:  2px solid red;
-    padding: 20px;
-  }
   .app {
     margin: 0;
     padding-bottom: 10px;
@@ -110,39 +68,6 @@
     position: relative;
   }
 
-  .board-menu, .board-menu-pad {
-      animation-duration: .3s;
-      animation-name: slideIn;
-      animation-iteration-count: 1;
-      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1.1);
-      z-index: 199;
-      --margin-end-position: 0px;
-      --margin-start-position: -330px;
-      margin-left: 0;
-
-    }
-
-    .board-menu {
-      position: fixed;
-      top: 80px;
-    }
-
-    .board-menu:hover {
-      z-index: 200;
-    }
-
-    .board-menu.slideOut, .board-menu-pad.slideOut {
-      animation-duration: .3s;
-      animation-name: slideOut;
-      --margin-end-position: -343px;
-      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1.1);
-      --margin-start-position: 0px;
-      margin-left: -343px;
-    }
-
-    .board-menu-pad {
-      visibility: hidden;
-    }
 
     @keyframes slideIn {
         from {
@@ -162,36 +87,6 @@
             margin-left: var(--margin-end-position);
         }
     }
-
-  .background {
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  .background-overlay {
-    background: linear-gradient(144deg, #fcfbf5 0%, rgb(230 225 215) 100%);
-    position: absolute;
-    z-index: 2;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    opacity: .7;
-  }
-
-  .background-image {
-    position: absolute;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-size: cover;
-  }
 
   :global(:root) {
     --resizeable-height: 200px;
@@ -215,14 +110,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-  }
-  .flex-scrollable-x {
-    max-width: 100%;
-    overflow-x: auto;
-  }
-  .flex-scrollable-y {
-    max-height: 100%;
-    overflow-y: auto;
   }
 
   .wrapper {

@@ -1,4 +1,4 @@
-import { decodeHashFromBase64, encodeHashToBase64 } from "@holochain/client";
+import { decodeHashFromBase64, encodeHashToBase64, type AppAgentClient, type DnaHash, CellType } from "@holochain/client";
 import type { HrlB64WithContext, HrlWithContext } from "@lightningrodlabs/we-applet";
 
 export function onVisible(element, callback) {
@@ -24,3 +24,11 @@ export function hrlB64WithContextToRaw(hrlB64: HrlB64WithContext): HrlWithContex
     context: hrlB64.context,
   };
 }
+
+export const getMyDna = async (role:string, client: AppAgentClient) : Promise<DnaHash>  => {
+  const appInfo = await client.appInfo();
+  const dnaHash = (appInfo.cell_info[role][0] as any)[
+    CellType.Provisioned
+  ].cell_id[0];
+  return dnaHash
+} 

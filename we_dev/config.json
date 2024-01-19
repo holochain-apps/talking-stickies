@@ -41,6 +41,12 @@
             "instanceName": "notebooks",
             "registeringAgent": 1,
             "joiningAgents": [2]
+          },
+          {
+            "name": "kando",
+            "instanceName": "kando",
+            "registeringAgent": 1,
+            "joiningAgents": [2]
           }
         ]
       }
@@ -52,11 +58,11 @@
         "description": "Let's do it!",
         "icon": {
           "type": "filesystem",
-          "path": "./we_dev/talking-stickies-icon.png"
+          "path": "/home/eric/code/metacurrency/holochain/talking-stickies/we_dev/talking-stickies-icon.png"
         },
         "source": {
           "type": "localhost",
-          "happPath": "./workdir/talking-stickies.happ",
+          "happPath": "/home/eric/code/metacurrency/holochain/talking-stickies/workdir/talking-stickies.happ",
           "uiPort": 8888
         }
       },
@@ -70,7 +76,20 @@
         },
         "source": {
           "type": "https",
-          "url": "https://github.com/lightningrodlabs/notebooks/releases/download/v0.0.10/notebooks.webhapp"
+          "url": "https://github.com/lightningrodlabs/notebooks/releases/download/v0.0.13/notebooks.webhapp"
+        }
+      },
+      {
+        "name": "kando",
+        "subtitle": "kanban boards",
+        "description": "Real-time kanban boards based on syn",
+        "icon": {
+          "type": "filesystem",
+          "path": "/home/eric/code/metacurrency/holochain/kando/we_dev/kando_icon.png"
+        },
+        "source": {
+          "type": "https",
+          "url": "https://github.com/holochain-apps/kando/releases/download/v0.8.12/kando.webhapp"
         }
       }
     ]

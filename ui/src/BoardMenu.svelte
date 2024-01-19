@@ -4,12 +4,10 @@
     import NewBoardDialog from './NewBoardDialog.svelte';
     import BoardMenuItem from './BoardMenuItem.svelte';
     import Team from './Team.svelte';
-    import Fa from 'svelte-fa'
-    import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
+    import SvgIcon from './SvgIcon.svelte'
     import AboutDialog from "./AboutDialog.svelte";
     import AddCard from "./icons/AddCard.svelte";
     import TSLogoIcon from "./icons/TSLogoIcon.svelte";
-    import { faCog } from "@fortawesome/free-solid-svg-icons";
     import type { EntryHash } from "@holochain/client";
     import { BoardType } from "./boardList";
 
@@ -87,7 +85,7 @@
         class:slideOut={$uiProps.showMenu == false}
         on:click={()=>aboutDialog.open()}>   
         <div class="logo" title="About TalkingStickies!"><TSLogoIcon /></div>
-        <Fa icon={faCog} class="cog" size="1.5x" color="rgba(95, 90, 83, 1.0)"/>
+        <div class="cog"><SvgIcon icon=faCog size="1.5x" color="rgba(95, 90, 83, 1.0)"/></div>
     </div>
 </div>
 

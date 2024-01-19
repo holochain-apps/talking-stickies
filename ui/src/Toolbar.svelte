@@ -2,10 +2,9 @@
   import Search from "./Search.svelte";
   import Folk from "./Folk.svelte";
   import EditBoardDialog from "./EditBoardDialog.svelte";
-  import { faArrowTurnDown, faBars, faBug, faClose, faCog, faHome } from "@fortawesome/free-solid-svg-icons";
-  import Fa from "svelte-fa";
   import type { TalkingStickiesStore } from "./store";
   import { getContext } from "svelte";
+  import SvgIcon from "./SvgIcon.svelte";
 
   const { getStore } :any = getContext('store');
   const store:TalkingStickiesStore = getStore();
@@ -28,27 +27,25 @@
   {#if $activeBoard}
     <div style="display: flex;">
       {#if $uiProps.showMenu}
-        <div class="close tool-item menu" on:click={()=>{store.setUIprops({showMenu:false})}}><div title="Hide Board Menu"><Fa icon={faClose} size=2x color="#fff" /></div></div>
+        <div class="close tool-item menu" on:click={()=>{store.setUIprops({showMenu:false})}}><div title="Hide Board Menu"><SvgIcon icon=faClose size=16px color="#fff" /></div></div>
 
       {:else}
-        <div class="open tool-item menu" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><Fa icon={faBars} size=2x /></div>
+        <div class="open tool-item menu" on:click={()=>{store.setUIprops({showMenu:true})}}  title="Show Board Menu"><SvgIcon icon=faBars size=16px /></div>
       {/if}
       <sl-dropdown>
         <sl-button slot="trigger" caret class="board-options">{$state.name}</sl-button>
         <sl-menu>
           <sl-menu-item on:click={()=> editBoardDialog.open($activeBoard.hash)} >
-            <Fa icon={faCog} size="1x" /> Board Settings
+            <SvgIcon icon=faCog size=16px /> Board Settings
           </sl-menu-item>
           <sl-menu-item on:click={closeBoard} title="Leave">
-            <Fa icon={faClose} size=1x /> Close Board
+            <SvgIcon icon=faClose size=16px /> Close Board
           </sl-menu-item>
           <sl-menu-item on:click={leaveBoard} title="Leave">
-            <Fa icon={faArrowTurnDown} size=1x /> Leave Board
+            <SvgIcon icon=faArrowTurnDown size=16px /> Leave Board
           </sl-menu-item>
         </sl-menu>
       </sl-dropdown>
-      
-
     </div>
   {/if}
 
@@ -57,7 +54,7 @@
   <div class="items">
     <div class="tool-item bugs">
       <a href="https://github.com/holochain-apps/talking-stickies/issues" title="Report a problem in our GitHub repo" target="_blank">
-        <div class="nav-button"><Fa icon={faBug} size=2x /></div>
+        <div class="nav-button"><SvgIcon icon=faBug size=16 /></div>
       </a>
     </div>
     <Folk></Folk>
