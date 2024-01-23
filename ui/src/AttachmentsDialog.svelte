@@ -20,14 +20,14 @@
 
   export let activeBoard: Board
   export const close=()=>{dialog.hide()}
-  export const open=(c: Sticky)=>{
+  export const open= async (c: Sticky)=>{
     sticky = c
     if (sticky) {
       attachments = sticky.props.attachments ? cloneDeep(sticky.props.attachments): []
     } else {
       attachments = activeBoard.state().props.attachments
     }
-    bind.refresh()
+    await bind.refresh()
     dialog.show()
   }
   let dialog

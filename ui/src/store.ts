@@ -7,6 +7,7 @@ import {
     encodeHashToBase64,
     type EntryHashB64,
     type AgentPubKey,
+    type DnaHash,
   } from '@holochain/client';
 import { SynStore,  SynClient, type Commit } from '@holochain-syn/core';
 import { BoardList } from './boardList';
@@ -16,6 +17,7 @@ import en from 'javascript-time-ago/locale/en'
 import { writable, type Writable } from "svelte/store";
 import type { ProfilesStore } from '@holochain-open-dev/profiles';
 import type { WeClient } from '@lightningrodlabs/we-applet';
+import { getMyDna } from './util';
 
 TimeAgo.addDefaultLocale(en)
 
@@ -56,6 +58,7 @@ export class TalkingStickiesStore {
         recent: [],
         bgUrl: ""
     })
+    dnaHash: DnaHash
 
     setUIprops(props:{}) {
         this.uiProps.update((n) => {
@@ -105,6 +108,10 @@ export class TalkingStickiesStore {
         protected zomeName: string = ZOME_NAME
     ) {
         this.client = clientIn
+        getMyDna(roleName, clientIn).then(res=>{
+            this.dnaHash = res
+          })
+
         this.myAgentPubKeyB64 = encodeHashToBase64(this.client.myPubKey);
         this.service = new TalkingStickiesService(
           this.client,
