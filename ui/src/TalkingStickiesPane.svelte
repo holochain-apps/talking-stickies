@@ -18,6 +18,7 @@
   import AttachmentsDialog from "./AttachmentsDialog.svelte"
   import SvgIcon from "./SvgIcon.svelte";
   import AttachmentsList from "./AttachmentsList.svelte";
+  import type { HrlWithContext } from "@lightningrodlabs/we-applet";
 
   Marked.setOptions
   ({
@@ -321,6 +322,10 @@
 
   let [minColWidth, maxColWidth, gap] = [300, 1200, 30]
   let width, height
+  const copyHrlToClipboard = () => {
+    const attachment: HrlWithContext = { hrl: [store.dnaHash, activeBoard.hash], context: {} }
+    store.weClient?.hrlToClipboard(attachment)
+  }
 
 </script>
 
@@ -351,6 +356,10 @@
             </div>
           {/if}
           <div style="margin-left:10px; display:flex">
+            <button title="Add Board to Pocket" class="attachment-button" style="margin-left:10px;margin-right:5px;" on:click={()=>copyHrlToClipboard()} >          
+              <SvgIcon icon="addToPocket" size="20px"/>
+            </button>
+    
             <button class="attachment-button" style="margin-right:10px" on:click={()=>attachmentsDialog.open(undefined)} >          
               <SvgIcon icon="link" size="20px"/>
             </button>
