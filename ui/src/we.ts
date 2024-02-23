@@ -49,11 +49,11 @@ export const appletServices: AppletServices = {
         const docStore = new DocumentStore<BoardState, BoardEphemeralState> (synStore, documentHash)
         const workspaces = await toPromise(docStore.allWorkspaces)
         const workspace = new WorkspaceStore(docStore, Array.from(workspaces.keys())[0])
-        const latestSnapshot = await toPromise(workspace.latestSnapshot)
+        const latestState = await toPromise(workspace.latestState)
 
         return {
           icon_src: BOARD_ICON_SRC,
-          name: latestSnapshot.name,
+          name: latestState.name,
         };
     },
     search: async (
@@ -75,7 +75,7 @@ export const appletServices: AppletServices = {
                 }
             ) 
             const latestState = pipe(workspace, 
-                w => w.latestSnapshot
+                w => w.latestState
                 )
             return latestState
         })
