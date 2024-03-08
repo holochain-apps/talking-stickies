@@ -18,7 +18,9 @@
   import AttachmentsDialog from "./AttachmentsDialog.svelte"
   import SvgIcon from "./SvgIcon.svelte";
   import AttachmentsList from "./AttachmentsList.svelte";
-  import type { HrlWithContext } from "@lightningrodlabs/we-applet";
+  import { weaveUrlFromWal, type HrlWithContext } from "@lightningrodlabs/we-applet";
+  import { hrlB64WithContextToRaw } from "./util";
+  import '@lightningrodlabs/we-elements/dist/elements/wal-embed.js';
 
   Marked.setOptions
   ({
@@ -503,7 +505,18 @@
             {/each}
           </div>
           {#if store.weClient && props.attachments}
-            <AttachmentsList attachments={props.attachments} allowDelete={false} />
+            {#each props.attachments as attachment}
+              <wal-embed
+                on:click={(e)=>{
+                  console.log(e)
+                  e.stopPropagation()
+                }}
+                class="embed"
+                style="margin-top: 20px;"
+                src={weaveUrlFromWal(hrlB64WithContextToRaw(attachment),false)}
+                  >
+              </wal-embed>
+            {/each}
           {/if}
         </div>
       {/if}

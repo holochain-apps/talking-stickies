@@ -8,7 +8,6 @@
   import '@shoelace-style/shoelace/dist/components/button/button.js';
   import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
   import AttachmentsList from "./AttachmentsList.svelte";
-  import AttachmentsBind from "./AttachmentsBind.svelte";
   import SvgIcon from "./SvgIcon.svelte";
 
   const { getStore } :any = getContext("store");
@@ -27,11 +26,9 @@
     } else {
       attachments = activeBoard.state().props.attachments
     }
-    await bind.refresh()
     dialog.show()
   }
   let dialog
-  let bind
 
   function removeAttachment(index: number) {
     attachments.splice(index, 1);
@@ -77,16 +74,9 @@
   <div style="">
       <h3>Search Linkables:</h3> 
       <sl-button style="margin-top:5px;margin-right: 5px" circle on:click={()=>addAttachment()} >
-        <SvgIcon icon=link size=12 />
+        <SvgIcon icon=searchPlus size=20 />
   </sl-button>
   </div> 
-  <div style="margin-top:20px">
-    <AttachmentsBind
-        bind:this = {bind}
-        activeBoard={activeBoard}
-        on:add-binding={(e)=>_addAttachment(e.detail)} 
-        />
-    </div>
   {/if}
 </sl-dialog>
 
