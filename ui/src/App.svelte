@@ -1,5 +1,7 @@
 <script lang="ts">
   import Controller from './Controller.svelte'
+  import ControllerBoard from './ControllerBoard.svelte'
+  import ControllerCreate from './ControllerCreate.svelte'
   import { AppAgentWebsocket, AdminWebsocket } from '@holochain/client';
   import '@shoelace-style/shoelace/dist/themes/light.css';
   import { WeClient, isWeContext, initializeHotReload } from '@lightningrodlabs/we-applet';
@@ -9,6 +11,17 @@
   import "@holochain-open-dev/profiles/dist/elements/create-profile.js";
   import TSLogoIcon from "./icons/TSLogoIcon.svelte";
   import { appletServices } from './we';
+
+  let createView
+
+  enum RenderType {
+    App,
+    Board,
+    CreateBoard,
+    BlockActiveBoards
+  }
+  let renderType = RenderType.App
+  let hrlWithContext
 
   const appId = import.meta.env.VITE_APP_ID ? import.meta.env.VITE_APP_ID : 'talking-stickies'
   const roleName = 'talking-stickies'
@@ -22,7 +35,6 @@
 
   let connected = false
   initialize()
-
   async function initialize() : Promise<void> {
     let profilesClient
     if ((import.meta as any).env.DEV) {
@@ -51,11 +63,70 @@
     else {
       weClient = await WeClient.connect(appletServices);
 
-      if (
-        !(weClient.renderInfo.type === "applet-view")
-        && !(weClient.renderInfo.view.type === "main")
-      ) throw new Error("This Applet only implements the applet main view.");
+      switch (weClient.renderInfo.type) {
+        case "applet-view":
+          switch (weClient.renderInfo.view.type) {
+            case "main":
+              // here comes your rendering logic for the main view
+              break;
+            case "block":
+              switch(weClient.renderInfo.view.block) {
+                case "active_boards":
+                  renderType = RenderType.BlockActiveBoards
+                  break;
+                default:
+                  throw new Error("Unknown applet-view block type:"+weClient.renderInfo.view.block);
+              }
+              break;
+            case "attachable":
+              switch (weClient.renderInfo.view.roleName) {
+                case "talking-stickies":
+                  switch (weClient.renderInfo.view.integrityZomeName) {
+                    case "syn_integrity":
+                      switch (weClient.renderInfo.view.entryType) {
+                        case "document":
+                          renderType = RenderType.Board
+                          hrlWithContext = weClient.renderInfo.view.hrlWithContext
+                          break;
+                        default:
+                          throw new Error("Unknown entry type:"+weClient.renderInfo.view.entryType);
+                      }
+                      break;
+                    default:
+                      throw new Error("Unknown integrity zome:"+weClient.renderInfo.view.integrityZomeName);
+                  }
+                  break;
+                default:
+                  throw new Error("Unknown role name:"+weClient.renderInfo.view.roleName);
+              }
+              break;
+            case "creatable":
+              switch (weClient.renderInfo.view.name) {
+                case "board":
+                  renderType = RenderType.CreateBoard
+                  createView = weClient.renderInfo.view
+              }              
+              break;
+            default:
+              throw new Error("Unsupported applet-view type");
+          }
+          break;
+        case "cross-applet-view":
+          switch (this.weClient.renderInfo.view.type) {
+            case "main":
+              // here comes your rendering logic for the cross-applet main view
+              //break;
+            case "block":
+              //
+              //break;
+            default:
+              throw new Error("Unknown cross-applet-view render type.")
+          }
+          break;
+        default:
+          throw new Error("Unknown render view type");
 
+      }
       //@ts-ignore
       client = weClient.renderInfo.appletClient;
       //@ts-ignore
@@ -82,9 +153,14 @@
         ></create-profile>
       </div>
     {:else}
-      <Controller  client={client} weClient={weClient} profilesStore={profilesStore} roleName={roleName}></Controller>
+      {#if renderType== RenderType.CreateBoard}
+        <ControllerCreate  view={createView} client={client} weClient={weClient} profilesStore={profilesStore} roleName={roleName}></ControllerCreate>
+      {:else if renderType== RenderType.App}
+        <Controller  client={client} weClient={weClient} profilesStore={profilesStore} roleName={roleName}></Controller>
+      {:else if  renderType== RenderType.Board}
+        <ControllerBoard  board={hrlWithContext.hrl[1]} client={client} weClient={weClient} profilesStore={profilesStore} roleName={roleName}></ControllerBoard>
+      {/if}
     {/if}
-
   </profiles-context>
 {:else}
   <div class="loading"><div class="loader"></div></div> 

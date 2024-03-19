@@ -42,7 +42,7 @@ export class BoardList {
             }
         ) 
         const latestState = pipe(board, 
-            board => board.workspace.latestSnapshot
+            board => board.workspace.latestState
             )
         return alwaysSubscribed(pipe(joinAsync([board, latestState]), ([board, latestState]) => {return {board,latestState}}))
     })
@@ -164,23 +164,11 @@ export class BoardList {
         return this.makeBoard(newBoard)
     }
 
-    async makeBoard(options: BoardState, fromHash?: EntryHashB64) : Promise<Board> {
-        const board = await Board.Create(this.synStore)
-        const sessionStore = board.session
+    async makeBoard(options: Partial<BoardState>) : Promise<Board> {
         if (!options.name) {
             options.name = "untitled"
         }
-        if (options !== undefined) {
-            let changes : BoardDelta[] = [{
-                type: "set-state",
-                state: options
-                },
-            ]
-            if (changes.length > 0) {
-                board.requestChanges(changes)
-                await sessionStore.commitChanges()
-            }        
-        }
+        const board = await Board.Create(this.synStore, options)
         return board
     }
 }

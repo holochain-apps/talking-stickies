@@ -1,10 +1,10 @@
 <script lang="ts">
   import { encodeHashToBase64, type AgentPubKey } from "@holochain/client";
   import "@holochain-open-dev/profiles/dist/elements/agent-avatar.js";
+  import "@shoelace-style/shoelace/dist/components/skeleton/skeleton.js";
   import { getContext } from "svelte";
   import type { TalkingStickiesStore } from "./store";
-  import { faUser } from "@fortawesome/free-solid-svg-icons";
-  import Fa from "svelte-fa";
+  import SvgIcon from "./SvgIcon.svelte";
 
   const { getStore } :any = getContext("store");
   let store: TalkingStickiesStore = getStore();
@@ -26,12 +26,15 @@
 <div class="avatar-{namePosition}"
     >
     {#if $profile.status == "pending"}
-    ( ? )
+        <sl-skeleton
+        effect="pulse"
+        style={`height: ${size}px; width: ${size}px;`}
+        ></sl-skeleton>
     {:else if $profile.status == "complete"}
 
         {#if showAvatar}
             {#if placeholder && !$profile.value.entry.fields.avatar}
-                <Fa icon={faUser} size=2x style="margin-left:5px;margin-right:5px"></Fa>
+                <SvgIcon size=16 icon=faUser style="margin-left:5px;margin-right:5px" />
             {:else}
             <!-- <div title={nickname}> -->
                 <agent-avatar title={nickname} disable-tooltip={true} disable-copy={true} size={size} agent-pub-key="{agentPubKeyB64}"></agent-avatar>

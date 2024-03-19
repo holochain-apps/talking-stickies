@@ -2,8 +2,7 @@
     import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
     import { getContext } from 'svelte';
     import type { TalkingStickiesStore } from './store';
-    import Fa from 'svelte-fa';
-    import { faClone, faFileExport, faFileImport, faSpinner } from '@fortawesome/free-solid-svg-icons';
+    import SvgIcon from './SvgIcon.svelte';
     import {asyncDerived, toPromise} from '@holochain-open-dev/stores'
     import type { Board, BoardEphemeralState, BoardState } from './board';
     import { BoardType } from './boardList';
@@ -71,7 +70,7 @@
 </script>
 
 
-<sl-dialog label="TalkingStickies!: UI v0.9.0 for DNA v0.8.0" bind:this={dialog} width={600} >
+<sl-dialog label="TalkingStickies!: UI v0.9.1 for DNA v0.9.0" bind:this={dialog} width={600} >
     <div class="about">
         <p>TalkingStickies! is a demonstration Holochain app built by the Holochain Foundation.</p>
         <p> <b>Developers:</b>
@@ -79,30 +78,30 @@
             This project's real-time syncronization is powered by <a href="https://github.com/holochain/syn">Syn</a>, 
             a library that makes it really easy to build this kind of real-time collaboaration into Holochain apps.
         </p>
-    <p class="small">Copyright © 2023 Holochain Foundation.  This software is distributed under the MIT License</p> 
+    <p class="small">Copyright © 2023-2024 Holochain Foundation.  This software is distributed under the MIT License</p> 
  
     {#if importing}
         <div class="export-import" title="Import Boards">
-            <div class="spinning" style="margin:auto"><Fa icon={faSpinner} color="#fff"/></div>
+            <div class="spinning" style="margin:auto"><SvgIcon icon=faSpinner color="#fff"/></div>
         </div>
     {:else}
         <div class="export-import" on:click={()=>{fileinput.click();}} title="Import Boards">
-            <Fa color="#fff" icon={faFileImport} size=20px style="margin-left: 15px;"/><span>Import Boards </span>
+            <SvgIcon color="#fff" icon=faFileImport size=20px style="margin-left: 15px;"/><span>Import Boards </span>
         </div>
     {/if}
     {#if exporting}
         <div class="export-import" title="Import Boards">
-            <div class="spinning" style="margin:auto"><Fa icon={faSpinner}  color="#fff"/></div>
+            <div class="spinning" style="margin:auto"><SvgIcon icon=faSpinner  color="#fff"/></div>
         </div>
     {:else}
-        <div class="export-import" on:click={()=>{exportAllBoards()}} title="Export All Boards"><Fa color="#fff" icon={faFileExport} size=20px style="margin-left: 15px;"/><span>Export All Boards</span></div>
+        <div class="export-import" on:click={()=>{exportAllBoards()}} title="Export All Boards"><SvgIcon color="#fff" icon=faFileExport size=20px style="margin-left: 15px;"/><span>Export All Boards</span></div>
     {/if}
 
     {#if $allBoards.status == "pending"}
-        <div class="spinning" ><Fa icon={faSpinner}  color="#fff"></Fa></div>
+        <div class="spinning" ><SvgIcon icon=faSpinner  color="#fff" /></div>
     {:else if $allBoards.status == "complete"}
         <sl-dropdown skidding=15>
-            <sl-button slot="trigger" caret><Fa icon={faClone} size=20px style="margin-right: 10px"/><span>Clone Board From </span></sl-button>
+            <sl-button slot="trigger" caret><SvgIcon icon=faClone size=20px style="margin-right: 10px"/><span>Clone Board From </span></sl-button>
             <sl-menu>
                 {#each Array.from($allBoards.value.entries()) as [key,board]}
                     <sl-menu-item on:click={()=>{
