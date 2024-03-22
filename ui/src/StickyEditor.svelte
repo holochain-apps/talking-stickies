@@ -7,10 +7,11 @@
   import AcceptIcon from "./icons/AcceptIcon.svelte";
   import type { v1 as uuidv1 } from "uuid";
   import type { StickyProps } from "./board";
-  import { hrlWithContextToB64, onVisible } from "./util";
+  import { onVisible } from "./util";
   import type { TalkingStickiesStore } from "./store";
   import SvgIcon from "./SvgIcon.svelte";
   import AttachmentsList from "./AttachmentsList.svelte";
+  import { weaveUrlFromWal } from "@lightningrodlabs/we-applet";
 
   const { getStore } :any = getContext('store');
   const store:TalkingStickiesStore = getStore();
@@ -41,12 +42,12 @@
 	});
 
   const addAttachment = async (stickyId: string) => {
-    const hrl = await store.weClient.userSelectHrl()
-    if (hrl) {
+    const wal = await store.weClient.userSelectWal()
+    if (wal) {
       if (props.attachments === undefined) {
         props.attachments = []
       }
-      props.attachments.push(hrlWithContextToB64(hrl))
+      props.attachments.push(weaveUrlFromWal(wal))
       props = props
 
     }

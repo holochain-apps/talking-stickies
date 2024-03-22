@@ -18,8 +18,7 @@
   import AttachmentsDialog from "./AttachmentsDialog.svelte"
   import SvgIcon from "./SvgIcon.svelte";
   import AttachmentsList from "./AttachmentsList.svelte";
-  import { weaveUrlFromWal, type HrlWithContext } from "@lightningrodlabs/we-applet";
-  import { hrlB64WithContextToRaw } from "./util";
+  import { weaveUrlFromWal, type WAL } from "@lightningrodlabs/we-applet";
   import '@lightningrodlabs/we-elements/dist/elements/wal-embed.js';
 
   Marked.setOptions
@@ -324,9 +323,9 @@
 
   let [minColWidth, maxColWidth, gap] = [300, 1200, 30]
   let width, height
-  const copyHrlToClipboard = () => {
-    const attachment: HrlWithContext = { hrl: [store.dnaHash, activeBoard.hash], context: {} }
-    store.weClient?.hrlToClipboard(attachment)
+  const copyWalToPocket = () => {
+    const attachment: WAL = { hrl: [store.dnaHash, activeBoard.hash], context: {} }
+    store.weClient?.walToPocket(attachment)
   }
 
 </script>
@@ -358,7 +357,7 @@
             </div>
           {/if}
           <div style="margin-left:10px; display:flex">
-            <button title="Add Board to Pocket" class="attachment-button" style="margin-left:10px;margin-right:5px;" on:click={()=>copyHrlToClipboard()} >          
+            <button title="Add Board to Pocket" class="attachment-button" style="margin-left:10px;margin-right:5px;" on:click={()=>copyWalToPocket()} >          
               <SvgIcon icon="addToPocket" size="20px"/>
             </button>
     
@@ -513,7 +512,7 @@
                 }}
                 class="embed"
                 style="margin-top: 20px;"
-                src={weaveUrlFromWal(hrlB64WithContextToRaw(attachment),false)}
+                src={attachment}
                   >
               </wal-embed>
             {/each}

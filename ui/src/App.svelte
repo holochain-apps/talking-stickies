@@ -21,7 +21,7 @@
     BlockActiveBoards
   }
   let renderType = RenderType.App
-  let hrlWithContext
+  let wal
 
   const appId = import.meta.env.VITE_APP_ID ? import.meta.env.VITE_APP_ID : 'talking-stickies'
   const roleName = 'talking-stickies'
@@ -49,7 +49,7 @@
       if (adminPort) {
         const url = `ws://localhost:${adminPort}`
 
-        const adminWebsocket = await AdminWebsocket.connect({url})
+        const adminWebsocket = await AdminWebsocket.connect({url: new URL(url)})
         const x = await adminWebsocket.listApps({})
         console.log("apps", x)
         const cellIds = await adminWebsocket.listCellIds()
@@ -57,7 +57,7 @@
         await adminWebsocket.authorizeSigningCredentials(cellIds[0])
       }
       console.log("appPort and Id is", appPort, appId)
-      client = await AppAgentWebsocket.connect(appId, {url})
+      client = await AppAgentWebsocket.connect(appId, {url: new URL(url)})
       profilesClient = new ProfilesClient(client, appId);
     } 
     else {
@@ -78,7 +78,7 @@
                   throw new Error("Unknown applet-view block type:"+weClient.renderInfo.view.block);
               }
               break;
-            case "attachable":
+            case "asset":
               switch (weClient.renderInfo.view.roleName) {
                 case "talking-stickies":
                   switch (weClient.renderInfo.view.integrityZomeName) {
@@ -86,7 +86,7 @@
                       switch (weClient.renderInfo.view.entryType) {
                         case "document":
                           renderType = RenderType.Board
-                          hrlWithContext = weClient.renderInfo.view.hrlWithContext
+                          wal = weClient.renderInfo.view.wal
                           break;
                         default:
                           throw new Error("Unknown entry type:"+weClient.renderInfo.view.entryType);
@@ -158,7 +158,7 @@
       {:else if renderType== RenderType.App}
         <Controller  client={client} weClient={weClient} profilesStore={profilesStore} roleName={roleName}></Controller>
       {:else if  renderType== RenderType.Board}
-        <ControllerBoard  board={hrlWithContext.hrl[1]} client={client} weClient={weClient} profilesStore={profilesStore} roleName={roleName}></ControllerBoard>
+        <ControllerBoard  board={wal.hrl[1]} client={client} weClient={weClient} profilesStore={profilesStore} roleName={roleName}></ControllerBoard>
       {/if}
     {/if}
   </profiles-context>
