@@ -18,7 +18,7 @@
   import AttachmentsDialog from "./AttachmentsDialog.svelte"
   import SvgIcon from "./SvgIcon.svelte";
   import AttachmentsList from "./AttachmentsList.svelte";
-  import { weaveUrlFromWal, type WAL } from "@lightningrodlabs/we-applet";
+  import type { WAL } from "@lightningrodlabs/we-applet";
   import '@lightningrodlabs/we-elements/dist/elements/wal-embed.js';
 
   Marked.setOptions
