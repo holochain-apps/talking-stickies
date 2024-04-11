@@ -78,7 +78,7 @@ export default defineConfig({
         },
         source: {
           type: "https",
-          url: "https://github.com/holochain-apps/gamez/releases/download/v0.3.100/gamez.webhapp"
+          url: "https://github.com/holochain-apps/gamez/releases/download/v0.4.2/gamez.webhapp"
         },
       },
       {
@@ -91,7 +91,7 @@ export default defineConfig({
       },
       source: {
         type: 'https',
-        url: 'https://github.com/lightningrodlabs/notebooks/releases/download/v0.2.0/notebooks.webhapp',
+        url: 'https://github.com/lightningrodlabs/notebooks/releases/download/v0.2.4/notebooks.webhapp',
       },
     },
   ],
