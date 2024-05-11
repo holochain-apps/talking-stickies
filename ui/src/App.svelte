@@ -2,7 +2,7 @@
   import Controller from './Controller.svelte'
   import ControllerBoard from './ControllerBoard.svelte'
   import ControllerCreate from './ControllerCreate.svelte'
-  import { AppAgentWebsocket, AdminWebsocket } from '@holochain/client';
+  import { AppWebsocket, AdminWebsocket } from '@holochain/client';
   import '@shoelace-style/shoelace/dist/themes/light.css';
   import { WeClient, isWeContext, initializeHotReload } from '@lightningrodlabs/we-applet';
   import { ProfilesClient, ProfilesStore } from '@holochain-open-dev/profiles';
@@ -29,7 +29,7 @@
   const adminPort = import.meta.env.VITE_ADMIN_PORT
   const url = `ws://127.0.0.1:${appPort}`;
 
-  let client: AppAgentWebsocket
+  let client: AppWebsocket
   let weClient: WeClient
   let profilesStore : ProfilesStore|undefined = undefined
 
@@ -57,7 +57,7 @@
         await adminWebsocket.authorizeSigningCredentials(cellIds[0])
       }
       console.log("appPort and Id is", appPort, appId)
-      client = await AppAgentWebsocket.connect(appId, {url: new URL(url)})
+      client = await AppWebsocket.connect({url: new URL(url)})
       profilesClient = new ProfilesClient(client, appId);
     } 
     else {

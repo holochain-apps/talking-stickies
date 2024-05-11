@@ -23,7 +23,6 @@ export const exportBoard = (state: BoardState) => {
 }
 
 export const exportBoards = (boards: Array<BoardState>) => {
-    const prefix = "kando"
     const date = new Date();
     const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-`
         + date.getHours() + "_" + ("00" + date.getMinutes()).slice(-2) +"_"+ ("00" + date.getSeconds()).slice(-2)
