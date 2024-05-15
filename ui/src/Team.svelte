@@ -5,12 +5,43 @@
   import Avatar from './Avatar.svelte';
   import AgentName from './AgentName.svelte';
   import "@holochain-open-dev/stores/dist/debug-store.js"
+  import { joinAsync, pipe, sliceAndJoin, type AsyncReadable } from "@holochain-open-dev/stores";
+  import { encodeHashToBase64, type AgentPubKey } from "@holochain/client";
+  import type { BoardAndLatestState } from "./boardList";
+  import { LazyHoloHashMap } from "@holochain-open-dev/utils";
 
   const { getStore } :any = getContext('store');
   const store:TalkingStickiesStore = getStore();
 
+  const agentBoardHashes: LazyHoloHashMap<AgentPubKey, AsyncReadable<Array<BoardAndLatestState>>> = new LazyHoloHashMap(agent =>
+        pipe(this.activeBoardHashes,
+            documentHashes => joinAsync(documentHashes.map(documentHash=>this.synStore.documents.get(documentHash).allAuthors)),
+            (documentsAuthors, documentHashes) => {
+                const agentBoardHashes: AsyncReadable<BoardAndLatestState>[] = []
+                const b64 = encodeHashToBase64(agent)
+                for (let i = 0; i< documentsAuthors.length; i+=1) {
+                    if (documentsAuthors[i].find(a=>encodeHashToBase64(a) == b64)) {
+                        const hash = documentHashes[i]
+                        //const state = this.boardData2.get(hash).workspace.latestSnapshot
+                        //agentDocuments.push(asyncDerived(state, state=>{return {hash, state}}))
+                        const x = this.boardData2.get(hash)
+                        agentBoardHashes.push(x)
+                    }
+                }
+                return joinAsync(agentBoardHashes)
+            },
+        )
+    )
+
+
+  const allAgentBoards:AsyncReadable<ReadonlyMap<AgentPubKey, Array<BoardAndLatestState>>> = pipe(store.profilesStore.agentsWithProfile,
+            agents=>{
+                return sliceAndJoin(agentBoardHashes, agents, {errors: "filter_out"})
+            }
+        )
+
   $: agents = store.profilesStore.agentsWithProfile
-  $: agentBoards = store.boardList.allAgentBoards
+  $: agentBoards = allAgentBoards
 
 </script>
 

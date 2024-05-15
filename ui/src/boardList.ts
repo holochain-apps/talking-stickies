@@ -47,34 +47,11 @@ export class BoardList {
         return alwaysSubscribed(pipe(joinAsync([board, latestState]), ([board, latestState]) => {return {board,latestState}}))
     })
 
-    agentBoardHashes: LazyHoloHashMap<AgentPubKey, AsyncReadable<Array<BoardAndLatestState>>> = new LazyHoloHashMap(agent =>
-        pipe(this.activeBoardHashes,
-            documentHashes => joinAsync(documentHashes.map(documentHash=>this.synStore.documents.get(documentHash).allAuthors)),
-            (documentsAuthors, documentHashes) => {
-                const agentBoardHashes: AsyncReadable<BoardAndLatestState>[] = []
-                const b64 = encodeHashToBase64(agent)
-                for (let i = 0; i< documentsAuthors.length; i+=1) {
-                    if (documentsAuthors[i].find(a=>encodeHashToBase64(a) == b64)) {
-                        const hash = documentHashes[i]
-                        //const state = this.boardData2.get(hash).workspace.latestSnapshot
-                        //agentDocuments.push(asyncDerived(state, state=>{return {hash, state}}))
-                        const x = this.boardData2.get(hash)
-                        agentBoardHashes.push(x)
-                    }
-                }
-                return joinAsync(agentBoardHashes)
-            },
-        )
-    )
         
     allAgentBoards: AsyncReadable<ReadonlyMap<AgentPubKey, Array<BoardAndLatestState>>>
    
 
-    constructor(public profilseStore: ProfilesStore, public synStore: SynStore) {
-        this.allAgentBoards = pipe(this.profilseStore.agentsWithProfile,
-            agents=>sliceAndJoin(this.agentBoardHashes, agents)
-        )
-   
+    constructor(public profilseStore: ProfilesStore, public synStore: SynStore) {   
 
         const boardHashes = asyncDerived(this.synStore.documentsByTag.get(BoardType.active),x=>Array.from(x.keys()))
         this.activeBoardHashes = boardHashes
