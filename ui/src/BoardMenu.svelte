@@ -10,6 +10,7 @@
     import TSLogoIcon from "./icons/TSLogoIcon.svelte";
     import type { EntryHash } from "@holochain/client";
     import { BoardType } from "./boardList";
+    import { isWeContext } from "@lightningrodlabs/we-applet";
 
     export let wide = false
 
@@ -43,12 +44,14 @@
 <AboutDialog bind:this={aboutDialog} />
 <div class="board-menu"
     class:wide={wide} >
-    <div class="team">
-        <h3 class="type-header">Team</h3>
-        <div>
-            <Team/>
+    {#if !isWeContext()}
+        <div class="team">
+            <h3 class="type-header">Team</h3>
+            <div>
+                <Team/>
+            </div>
         </div>
-    </div>
+    {/if}
     <div>
     <h3 class="type-header">Boards</h3>
     </div>
