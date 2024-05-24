@@ -42,7 +42,7 @@
 	});
 
   const addAttachment = async (stickyId: string) => {
-    const wal = await store.weClient.userSelectWal()
+    const wal = await store.weaveClient.userSelectWal()
     if (wal) {
       if (props.attachments === undefined) {
         props.attachments = []
@@ -88,7 +88,7 @@
     {/if}
     </div>
     <div>
-      {#if store.weClient}
+      {#if store.weaveClient}
         <button class="control" on:click={()=>addAttachment(stickyId)} >          
           <SvgIcon icon=link/>
         </button>
@@ -97,7 +97,7 @@
       <button class="control" on:click={() => handleSave(groupId, props)} ><AcceptIcon /></button>
     </div>
   </div>
-  {#if store.weClient && props.attachments}
+  {#if store.weaveClient && props.attachments}
     <AttachmentsList attachments={props.attachments} 
       on:remove-attachment={(e)=>removeAttachment(e.detail)}
     />

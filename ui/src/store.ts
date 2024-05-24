@@ -16,7 +16,7 @@ import en from 'javascript-time-ago/locale/en'
 
 import { writable, type Writable } from "svelte/store";
 import type { ProfilesStore } from '@holochain-open-dev/profiles';
-import type { WeClient } from '@lightningrodlabs/we-applet';
+import type { WeaveClient } from '@lightningrodlabs/we-applet';
 import { getMyDna } from './util';
 
 TimeAgo.addDefaultLocale(en)
@@ -101,7 +101,7 @@ export class TalkingStickiesStore {
     }
 
     constructor(
-        public weClient : WeClient,
+        public weaveClient : WeaveClient,
         public profilesStore: ProfilesStore,
         protected clientIn: AppClient,
         protected roleName: RoleName,

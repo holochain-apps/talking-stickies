@@ -37,7 +37,7 @@
   }
 
   const addAttachment = async () => {
-    const hrl = await store.weClient.userSelectWal()
+    const hrl = await store.weaveClient.userSelectWal()
     if (hrl) {
       _addAttachment(hrl)
     }

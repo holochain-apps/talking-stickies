@@ -2,9 +2,9 @@
   import Controller from './Controller.svelte'
   import ControllerBoard from './ControllerBoard.svelte'
   import ControllerCreate from './ControllerCreate.svelte'
-  import { AppWebsocket, AdminWebsocket } from '@holochain/client';
+  import { AppWebsocket, AdminWebsocket, type AppWebsocketConnectionOptions } from '@holochain/client';
   import '@shoelace-style/shoelace/dist/themes/light.css';
-  import { WeClient, isWeContext, initializeHotReload } from '@lightningrodlabs/we-applet';
+  import { WeaveClient, isWeContext, initializeHotReload } from '@lightningrodlabs/we-applet';
   import { ProfilesClient, ProfilesStore } from '@holochain-open-dev/profiles';
   import "@holochain-open-dev/profiles/dist/elements/profiles-context.js";
   import "@holochain-open-dev/profiles/dist/elements/profile-prompt.js";
@@ -30,7 +30,7 @@
   const url = `ws://127.0.0.1:${appPort}`;
 
   let client: AppWebsocket
-  let weClient: WeClient
+  let weaveClient: WeaveClient
   let profilesStore : ProfilesStore|undefined = undefined
 
   let connected = false
@@ -44,12 +44,16 @@
         console.warn("Could not initialize applet hot-reloading. This is only expected to work in a We context in dev mode.")
       }
     }
+    let tokenResp;
     if (!isWeContext()) {
       console.log("adminPort is", adminPort)
       if (adminPort) {
         const url = `ws://localhost:${adminPort}`
 
         const adminWebsocket = await AdminWebsocket.connect({url: new URL(url)})
+        tokenResp = await adminWebsocket.issueAppAuthenticationToken({
+          installed_app_id: appId,
+        });
         const x = await adminWebsocket.listApps({})
         console.log("apps", x)
         const cellIds = await adminWebsocket.listCellIds()
@@ -57,54 +61,62 @@
         await adminWebsocket.authorizeSigningCredentials(cellIds[0])
       }
       console.log("appPort and Id is", appPort, appId)
-      client = await AppWebsocket.connect({url: new URL(url)})
+      const params: AppWebsocketConnectionOptions = { url: new URL(url) };
+      if (tokenResp) params.token = tokenResp.token;
+      client = await AppWebsocket.connect(params);
       profilesClient = new ProfilesClient(client, appId);
     } 
     else {
-      weClient = await WeClient.connect(appletServices);
+      weaveClient = await WeaveClient.connect(appletServices);
 
-      switch (weClient.renderInfo.type) {
+      switch (weaveClient.renderInfo.type) {
         case "applet-view":
-          switch (weClient.renderInfo.view.type) {
+          switch (weaveClient.renderInfo.view.type) {
             case "main":
               // here comes your rendering logic for the main view
               break;
             case "block":
-              switch(weClient.renderInfo.view.block) {
+              switch(weaveClient.renderInfo.view.block) {
                 case "active_boards":
                   renderType = RenderType.BlockActiveBoards
                   break;
                 default:
-                  throw new Error("Unknown applet-view block type:"+weClient.renderInfo.view.block);
+                  throw new Error("Unknown applet-view block type:"+weaveClient.renderInfo.view.block);
               }
               break;
             case "asset":
-              switch (weClient.renderInfo.view.roleName) {
-                case "talking-stickies":
-                  switch (weClient.renderInfo.view.integrityZomeName) {
-                    case "syn_integrity":
-                      switch (weClient.renderInfo.view.entryType) {
-                        case "document":
-                          renderType = RenderType.Board
-                          wal = weClient.renderInfo.view.wal
+              if (!weaveClient.renderInfo.view.recordInfo) {
+                  throw new Error(
+                    "Talking-Stickies does not implement asset views pointing to DNAs instead of Records."
+                  );
+                } else {
+                  switch (weaveClient.renderInfo.view.recordInfo.roleName) {
+                    case "talking-stickies":
+                      switch (weaveClient.renderInfo.view.recordInfo.integrityZomeName) {
+                        case "syn_integrity":
+                          switch (weaveClient.renderInfo.view.recordInfo.entryType) {
+                            case "document":
+                              renderType = RenderType.Board
+                              wal = weaveClient.renderInfo.view.wal
+                              break;
+                            default:
+                              throw new Error("Unknown entry type:"+weaveClient.renderInfo.view.recordInfo.entryType);
+                          }
                           break;
                         default:
-                          throw new Error("Unknown entry type:"+weClient.renderInfo.view.entryType);
+                          throw new Error("Unknown integrity zome:"+weaveClient.renderInfo.view.recordInfo.integrityZomeName);
                       }
                       break;
                     default:
-                      throw new Error("Unknown integrity zome:"+weClient.renderInfo.view.integrityZomeName);
+                      throw new Error("Unknown role name:"+weaveClient.renderInfo.view.recordInfo.roleName);
                   }
-                  break;
-                default:
-                  throw new Error("Unknown role name:"+weClient.renderInfo.view.roleName);
-              }
+                }
               break;
             case "creatable":
-              switch (weClient.renderInfo.view.name) {
+              switch (weaveClient.renderInfo.view.name) {
                 case "board":
                   renderType = RenderType.CreateBoard
-                  createView = weClient.renderInfo.view
+                  createView = weaveClient.renderInfo.view
               }              
               break;
             default:
@@ -112,7 +124,7 @@
           }
           break;
         case "cross-applet-view":
-          switch (this.weClient.renderInfo.view.type) {
+          switch (this.weaveClient.renderInfo.view.type) {
             case "main":
               // here comes your rendering logic for the cross-applet main view
               //break;
@@ -128,9 +140,9 @@
 
       }
       //@ts-ignore
-      client = weClient.renderInfo.appletClient;
+      client = weaveClient.renderInfo.appletClient;
       //@ts-ignore
-      profilesClient = weClient.renderInfo.profilesClient;
+      profilesClient = weaveClient.renderInfo.profilesClient;
     }
     profilesStore = new ProfilesStore(profilesClient);
     connected = true
@@ -154,11 +166,11 @@
       </div>
     {:else}
       {#if renderType== RenderType.CreateBoard}
-        <ControllerCreate  view={createView} client={client} weClient={weClient} profilesStore={profilesStore} roleName={roleName}></ControllerCreate>
+        <ControllerCreate  view={createView} client={client} weaveClient={weaveClient} profilesStore={profilesStore} roleName={roleName}></ControllerCreate>
       {:else if renderType== RenderType.App}
-        <Controller  client={client} weClient={weClient} profilesStore={profilesStore} roleName={roleName}></Controller>
+        <Controller  client={client} weaveClient={weaveClient} profilesStore={profilesStore} roleName={roleName}></Controller>
       {:else if  renderType== RenderType.Board}
-        <ControllerBoard  board={wal.hrl[1]} client={client} weClient={weClient} profilesStore={profilesStore} roleName={roleName}></ControllerBoard>
+        <ControllerBoard  board={wal.hrl[1]} client={client} weaveClient={weaveClient} profilesStore={profilesStore} roleName={roleName}></ControllerBoard>
       {/if}
     {/if}
   </profiles-context>

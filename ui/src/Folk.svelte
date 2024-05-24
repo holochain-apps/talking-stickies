@@ -24,7 +24,7 @@
     }
 
 </script>
-{#if !store.weClient}
+{#if !store.weaveClient}
     <div class="nav-button tool-item" on:click={editAvatar} title={myName ? myName:"Edit Avatar"}>
         <Avatar size={28} agentPubKey={store.myAgentPubKey} placeholder={true} showNickname={false}/>
     </div>

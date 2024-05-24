@@ -3,7 +3,7 @@ import type { BoardEphemeralState, BoardState } from './board';
 import { asyncDerived, pipe, sliceAndJoin, toPromise } from '@holochain-open-dev/stores';
 import { BoardType } from './boardList';
 import { LazyHoloHashMap } from '@holochain-open-dev/utils';
-import type { AppletHash, AppletServices, AssetInfo, WAL, WeServices } from '@lightningrodlabs/we-applet';
+import type { AppletHash, AppletServices, AssetInfo, RecordInfo, WAL, WeaveServices } from '@lightningrodlabs/we-applet';
 import { getMyDna } from './util';
 import type { AppClient, RoleName, ZomeName } from '@holochain/client';
 
@@ -31,11 +31,13 @@ export const appletServices: AppletServices = {
 
     getAssetInfo: async (
       appletClient: AppClient,
-      roleName: RoleName,
-      integrityZomeName: ZomeName,
-      entryType: string,
-      wal: WAL
+      wal: WAL,
+      recordInfo: RecordInfo,
     ): Promise<AssetInfo | undefined> => {
+      if (recordInfo) {
+        const roleName: RoleName = recordInfo.roleName
+        // const integrityZomeName: ZomeName = recordInfo.integrityZomeName
+        const entryType: string = recordInfo.entryType
 
         const synClient = new SynClient(appletClient, roleName, ZOME_NAME);
         const synStore = new SynStore(synClient);
@@ -49,11 +51,14 @@ export const appletServices: AppletServices = {
           icon_src: BOARD_ICON_SRC,
           name: latestState.name,
         };
+      } else {
+        throw new Error("Null WAL not supported, must supply a recordInfo")
+      }
     },
     search: async (
       appletClient: AppClient,
       appletHash: AppletHash,
-      weServices: WeServices,
+      weServices: WeaveServices,
       searchFilter: string
     ): Promise<Array<WAL>> => {
         const synClient = new SynClient(appletClient, ROLE_NAME, ZOME_NAME);

@@ -325,7 +325,7 @@
   let width, height
   const copyWalToPocket = () => {
     const attachment: WAL = { hrl: [store.dnaHash, activeBoard.hash], context: {} }
-    store.weClient?.walToPocket(attachment)
+    store.weaveClient?.walToPocket(attachment)
   }
 
 </script>
@@ -346,7 +346,7 @@
           <div style="margin-right: 5px; display: flex;"><AddGroupIcon /></div>
           Add Group
       </div>
-      {#if store.weClient}
+      {#if store.weaveClient}
         <AttachmentsDialog activeBoard={activeBoard} bind:this={attachmentsDialog}></AttachmentsDialog>
 
         <div style="display:flex;align-items:center;"> 
@@ -503,7 +503,7 @@
               </div>
             {/each}
           </div>
-          {#if store.weClient && props.attachments}
+          {#if store.weaveClient && props.attachments}
             {#each props.attachments as attachment}
               <wal-embed
                 on:click={(e)=>{
