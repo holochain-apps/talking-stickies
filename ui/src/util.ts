@@ -10,6 +10,9 @@ export function onVisible(element, callback) {
     }).observe(element);
 }
 
+// @ts-ignore because this is magic maid available in the vite.config.ts and I don't
+// know how to get around the error messages
+export const APP_VERSION = __APP_VERSION__
 export type WALUrl = string
 
 export const hashEqual = (a:EntryHash, b:EntryHash) : boolean => {
