@@ -3,7 +3,7 @@
   import { createEventDispatcher, getContext } from "svelte";
   import type { TalkingStickiesStore } from "./store";
   import type {  WALUrl } from "./util";
-  import { weaveUrlToWAL } from "@lightningrodlabs/we-applet";
+  import { weaveUrlToWAL } from "@theweave/api";
   import SvgIcon from "./SvgIcon.svelte";
   import { hrlToString } from "@holochain-open-dev/utils";
 

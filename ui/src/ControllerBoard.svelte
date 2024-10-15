@@ -6,7 +6,7 @@
     import type { AppClient, EntryHash } from '@holochain/client';
     import type { SynStore } from '@holochain-syn/store';
     import type { ProfilesStore } from "@holochain-open-dev/profiles";
-    import type { WeaveClient } from '@lightningrodlabs/we-applet';
+    import type { WeaveClient } from '@theweave/api';
 
     export let roleName = ""
     export let client : AppClient

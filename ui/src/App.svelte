@@ -4,7 +4,7 @@
   import ControllerCreate from './ControllerCreate.svelte'
   import { AppWebsocket, AdminWebsocket, type AppWebsocketConnectionOptions } from '@holochain/client';
   import '@shoelace-style/shoelace/dist/themes/light.css';
-  import { WeaveClient, isWeContext, initializeHotReload } from '@lightningrodlabs/we-applet';
+  import { WeaveClient, isWeContext, initializeHotReload } from '@theweave/api';
   import { ProfilesClient, ProfilesStore } from '@holochain-open-dev/profiles';
   import "@holochain-open-dev/profiles/dist/elements/profiles-context.js";
   import "@holochain-open-dev/profiles/dist/elements/profile-prompt.js";

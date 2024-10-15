@@ -16,7 +16,7 @@ import en from 'javascript-time-ago/locale/en'
 
 import { writable, type Writable } from "svelte/store";
 import type { ProfilesStore } from '@holochain-open-dev/profiles';
-import type { WeaveClient } from '@lightningrodlabs/we-applet';
+import type { WeaveClient } from '@theweave/api';
 import { getMyDna } from './util';
 
 TimeAgo.addDefaultLocale(en)

@@ -18,8 +18,8 @@
   import AttachmentsDialog from "./AttachmentsDialog.svelte"
   import SvgIcon from "./SvgIcon.svelte";
   import AttachmentsList from "./AttachmentsList.svelte";
-  import type { WAL } from "@lightningrodlabs/we-applet";
-  import '@lightningrodlabs/we-elements/dist/elements/wal-embed.js';
+  import type { WAL } from "@theweave/api";
+  import '@theweave/elements/dist/elements/wal-embed.js';
 
   Marked.setOptions
   ({

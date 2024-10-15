@@ -4,7 +4,7 @@ import { v1 as uuidv1 } from "uuid";
 import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64, type AgentPubKeyB64 } from "@holochain/client";
 import { BoardType } from "./boardList";
 import { toPromise } from "@holochain-open-dev/stores";
-import type { HrlB64WithContext } from "@lightningrodlabs/we-applet";
+import type { HrlB64WithContext } from "@theweave/api";
 import { cloneDeep } from "lodash";
 
 export const UngroupedId = "_"

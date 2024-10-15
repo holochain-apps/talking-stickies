@@ -9,7 +9,7 @@
     import { DocumentStore, WorkspaceStore } from '@holochain-syn/core';
     import { encodeHashToBase64 } from '@holochain/client';
     import { deserializeExport, exportBoards } from './export';
-    import { APP_VERSION } from './util';
+    import { APP_VERSION, DNA_VERSION } from './util';
 
     let dialog
     const { getStore } :any = getContext('store');
@@ -71,7 +71,7 @@
 </script>
 
 
-<sl-dialog label="TalkingStickies!: UI {APP_VERSION} for DNA v0.10.0" bind:this={dialog} width={600} >
+<sl-dialog label="TalkingStickies!: UI {APP_VERSION} for DNA {DNA_VERSION}" bind:this={dialog} width={600} >
     <div class="about">
         <p>TalkingStickies! is a demonstration Holochain app built by the Holochain Foundation.</p>
         <p> <b>Developers:</b>

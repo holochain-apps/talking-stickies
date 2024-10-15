@@ -11,7 +11,7 @@
   import type { TalkingStickiesStore } from "./store";
   import SvgIcon from "./SvgIcon.svelte";
   import AttachmentsList from "./AttachmentsList.svelte";
-  import { weaveUrlFromWal } from "@lightningrodlabs/we-applet";
+  import { weaveUrlFromWal } from "@theweave/api";
 
   const { getStore } :any = getContext('store');
   const store:TalkingStickiesStore = getStore();

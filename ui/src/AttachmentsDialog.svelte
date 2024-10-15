@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type WAL, isWeContext, weaveUrlFromWal } from "@lightningrodlabs/we-applet";
+  import { type WAL, isWeContext, weaveUrlFromWal } from "@theweave/api";
   import { cloneDeep } from "lodash";
   import type { Board, Sticky } from "./board";
   import { getContext } from "svelte";

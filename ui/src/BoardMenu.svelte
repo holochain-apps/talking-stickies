@@ -10,7 +10,7 @@
     import TSLogoIcon from "./icons/TSLogoIcon.svelte";
     import type { EntryHash } from "@holochain/client";
     import { BoardType } from "./boardList";
-    import { isWeContext } from "@lightningrodlabs/we-applet";
+    import { isWeContext } from "@theweave/api";
 
     export let wide = false
 
