@@ -42,7 +42,7 @@
 	});
 
   const addAttachment = async (stickyId: string) => {
-    const wal = await store.weaveClient.userSelectWal()
+    const wal = await store.weaveClient.assets.userSelectAsset()
     if (wal) {
       if (props.attachments === undefined) {
         props.attachments = []

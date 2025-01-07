@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type WAL, isWeContext, weaveUrlFromWal } from "@theweave/api";
+  import { type WAL, isWeaveContext, weaveUrlFromWal } from "@theweave/api";
   import { cloneDeep } from "lodash";
   import type { Board, Sticky } from "./board";
   import { getContext } from "svelte";
@@ -37,7 +37,7 @@
   }
 
   const addAttachment = async () => {
-    const hrl = await store.weaveClient.userSelectWal()
+    const hrl = await store.weaveClient.assets.userSelectAsset()
     if (hrl) {
       _addAttachment(hrl)
     }
@@ -67,7 +67,7 @@
 </script>
 
 <sl-dialog label={sticky? "Sticky Links":"Board Links"} bind:this={dialog}>
-  {#if isWeContext()}
+  {#if isWeaveContext()}
   <AttachmentsList attachments={attachments}
       on:remove-attachment={(e)=>removeAttachment(e.detail)}/>
 

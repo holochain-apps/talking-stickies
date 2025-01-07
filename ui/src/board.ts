@@ -4,8 +4,8 @@ import { v1 as uuidv1 } from "uuid";
 import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64, type AgentPubKeyB64 } from "@holochain/client";
 import { BoardType } from "./boardList";
 import { toPromise } from "@holochain-open-dev/stores";
-import type { HrlB64WithContext } from "@theweave/api";
 import { cloneDeep } from "lodash";
+import type { WALUrl } from "./util";
 
 export const UngroupedId = "_"
 export class Group {
@@ -17,7 +17,7 @@ export class Group {
 export type BoardProps = {
   bgUrl: string,
   description: string,
-  attachments: Array<HrlB64WithContext>
+  attachments: Array<WALUrl>
 }
 
 export class VoteType {
@@ -31,7 +31,7 @@ export type StickyProps = {
   text: string,
   color: string,
   votes: Object,
-  attachments: Array<HrlB64WithContext>
+  attachments: Array<WALUrl>
 }
 
 export type Sticky = {
@@ -49,7 +49,7 @@ export interface BoardState {
   stickies: Sticky[];
   voteTypes: VoteType[];
   props: BoardProps;
-  boundTo: Array<HrlB64WithContext>
+  boundTo: Array<WALUrl>
 }
   
 export type BoardDelta =

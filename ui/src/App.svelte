@@ -4,7 +4,7 @@
   import ControllerCreate from './ControllerCreate.svelte'
   import { AppWebsocket, AdminWebsocket, type AppWebsocketConnectionOptions } from '@holochain/client';
   import '@shoelace-style/shoelace/dist/themes/light.css';
-  import { WeaveClient, isWeContext, initializeHotReload } from '@theweave/api';
+  import { WeaveClient, isWeaveContext, initializeHotReload } from '@theweave/api';
   import { ProfilesClient, ProfilesStore } from '@holochain-open-dev/profiles';
   import "@holochain-open-dev/profiles/dist/elements/profiles-context.js";
   import "@holochain-open-dev/profiles/dist/elements/profile-prompt.js";
@@ -45,7 +45,7 @@
       }
     }
     let tokenResp;
-    if (!isWeContext()) {
+    if (!isWeaveContext()) {
       console.log("adminPort is", adminPort)
       if (adminPort) {
         const url = `ws://localhost:${adminPort}`
@@ -123,7 +123,7 @@
               throw new Error("Unsupported applet-view type");
           }
           break;
-        case "cross-applet-view":
+        case "cross-group-view":
           switch (this.weaveClient.renderInfo.view.type) {
             case "main":
               // here comes your rendering logic for the cross-applet main view

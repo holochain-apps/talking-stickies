@@ -10,7 +10,7 @@
     import TSLogoIcon from "./icons/TSLogoIcon.svelte";
     import type { EntryHash } from "@holochain/client";
     import { BoardType } from "./boardList";
-    import { isWeContext } from "@theweave/api";
+    import { isWeaveContext } from "@theweave/api";
 
     export let wide = false
 
@@ -44,7 +44,7 @@
 <AboutDialog bind:this={aboutDialog} />
 <div class="board-menu"
     class:wide={wide} >
-    {#if !isWeContext()}
+    {#if !isWeaveContext()}
         <div class="team">
             <h3 class="type-header">Team</h3>
             <div>

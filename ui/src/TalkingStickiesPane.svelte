@@ -325,7 +325,7 @@
   let width, height
   const copyWalToPocket = () => {
     const attachment: WAL = { hrl: [store.dnaHash, activeBoard.hash], context: {} }
-    store.weaveClient?.walToPocket(attachment)
+    store.weaveClient?.assets.assetToPocket(attachment)
   }
 
 </script>
