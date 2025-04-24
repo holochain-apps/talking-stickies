@@ -1,4 +1,4 @@
-import {type AppClient, type DnaHash, CellType, type EntryHash } from "@holochain/client";
+import type { AppClient, DnaHash, EntryHash, ProvisionedCell } from "@holochain/client";
 
 export function onVisible(element, callback) {
     new IntersectionObserver((entries, observer) => {
@@ -29,8 +29,7 @@ export const hashEqual = (a:EntryHash, b:EntryHash) : boolean => {
 
 export const getMyDna = async (role:string, client: AppClient) : Promise<DnaHash>  => {
   const appInfo = await client.appInfo();
-  const dnaHash = (appInfo.cell_info[role][0] as any)[
-    CellType.Provisioned
-  ].cell_id[0];
+  const cellInfo = appInfo.cell_info[role][0].value as ProvisionedCell
+  const dnaHash = cellInfo.cell_id[0]
   return dnaHash
 } 
