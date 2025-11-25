@@ -1,5 +1,5 @@
 ---
-manifest_version: "1"
+manifest_version: "0"
 name: talking-stickies
 description: ~
 roles:
@@ -8,7 +8,7 @@ roles:
       strategy: create
       deferred: false
     dna:
-      bundled: "../dnas/talking-stickies/workdir/talking-stickies.dna"
+      path: "../dnas/talking-stickies/workdir/talking-stickies.dna"
       modifiers:
         network_seed: ~
         properties: ~

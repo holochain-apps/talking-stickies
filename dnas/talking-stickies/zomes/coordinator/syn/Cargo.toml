@@ -8,8 +8,6 @@ crate-type = ["cdylib", "rlib"]
 name = "syn"
 
 [dependencies]
-#chrono = { version = "0.4.22", default-features = false, features = ["clock", "std", "oldtime", "serde"], optional = true }
-#derive_more = "0"
-#serde = { workspace = true }
+serde = { workspace = true }
 
-hc_zome_syn_coordinator = {git = "https://github.com/holochain/syn", branch = "main-0.5"}
+hc_zome_syn_coordinator = {git = "https://github.com/holochain/syn", branch = "main-0.6"}

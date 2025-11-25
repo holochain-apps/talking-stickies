@@ -1,7 +1,7 @@
 ---
-manifest_version: "1"
+manifest_version: "0"
 name: talking-stickies
 ui:
-  bundled: "../ui/dist.zip"
+  path: "../ui/dist.zip"
 happ_manifest:
-  bundled: "./talking-stickies.happ"
+  path: "./talking-stickies.happ"

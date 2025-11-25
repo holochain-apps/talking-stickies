@@ -6,28 +6,33 @@
     "tests"
   ],
   "scripts": {
-    "start": "AGENTS=2 BOOTSTRAP_PORT=$(port) SIGNAL_PORT=$(port) npm run network",
+    "start": "npm run start:electron",
+    "start:electron": "AGENTS=2 BOOTSTRAP_PORT=$(port) SIGNAL_PORT=$BOOTSTRAP_PORT npm run network:electron",
     "dev": "VITE_ADMIN_PORT=$(port) VITE_APP_PORT=$(port) SIGNAL_PORT=$(port) BOOTSTRAP_PORT=$(port) UI_PORT=8888 npm run x",
     "x": "hc s clean &&  npm run build:happ && UI_PORT=8888 concurrently \"npm start -w ui\" \"npm run start:happ\" \"hc run-local-services -b $BOOTSTRAP_PORT -s $SIGNAL_PORT\"",
-    "tool-dev": " UI_PORT=8888 npm run tool-devy",
-    "tool-devy": "concurrently \"npm start -w ui\" \"sleep 1 && weave --agent-idx 1 --dev-config we_dev/config.ts\" \"sleep 10 && weave --agent-idx 2 --dev-config we_dev/config.ts\"",
-    "tool-devx": "BPORT=46263 SPORT=46262; concurrently \"hc run-local-services -b $BPORT -s $SPORT\" \"npm start -w ui\" \"./we_dev/we.AppImage  --dev-config we_dev/config.json --agent-num 1 -b http://127.0.0.1:$BPORT -s ws://127.0.0.1:$SPORT\" \"sleep 10 && ./we_dev/we.AppImage --dev-config we_dev/config.json --agent-num 2 -b http://127.0.0.1:$BPORT -s ws://127.0.0.1:$SPORT\"",
-    "network": "hc s clean && npm run build:happ && UI_PORT=8888 concurrently \"npm start -w ui\" \"npm run launch:happ\" \"holochain-playground\"",
+    "network:electron": "hc s clean && npm run build:happ && INTERNAL_IP=$(internal-ip --ipv4) concurrently -k \"UI_PORT=1420 npm run -w ui start\" \"npm run launch:electron\"",
+
     "test": "npm run build:zomes && hc app pack workdir --recursive && npm t -w tests",
-    "launch:happ": "hc-spin -n $AGENTS workdir/talking-stickies.happ --ui-port $UI_PORT ",
+    "launch:electron": "hc-spin --ui-port 1420 -n $AGENTS  workdir/talking-stickies.happ",
+
+    "start:moss": " UI_PORT=8888 npm run launch:moss",
+    "launch:moss": "concurrently \"npm start -w ui\" \"sleep 1 && weave --agent-idx 1 --dev-config we_dev/config.ts\" \"sleep 10 && weave --agent-idx 2 --dev-config we_dev/config.ts\"",
+
     "package": "npm run build:happ && npm run package -w ui && hc web-app pack workdir --recursive && npm run weave-hash",
     "start:happ": "echo \"starting with admin $VITE_ADMIN_PORT\" && RUST_LOG=warn echo \"pass\" | hc s -f=$VITE_ADMIN_PORT --piped generate workdir/talking-stickies.happ --run=$VITE_APP_PORT -a talking-stickies network -b \"http://127.0.0.1:$BOOTSTRAP_PORT\"  webrtc \"ws://127.0.0.1:$SIGNAL_PORT\"",
     "build:happ": "npm run build:zomes && hc app pack workdir --recursive",
-    "build:zomes": "RUSTFLAGS='' CARGO_TARGET_DIR=target cargo build --release --target wasm32-unknown-unknown",
-    "weave-hash":  "weave hash-webhapp ./workdir/talking-stickies.webhapp"
+    "build:zomes": "RUSTFLAGS='--cfg getrandom_backend=\"custom\"' CARGO_TARGET_DIR=target cargo build --release --target wasm32-unknown-unknown",
+    "weave-hash":  "weave hash-webhapp 0.14.0 ./workdir/talking-stickies.webhapp"
+
   },
   "devDependencies": {
-    "@theweave/cli": "0.14.0-rc.0",
-    "@holochain/hc-spin": "^0.500.0-rc.1",
+    "@theweave/cli": "0.15.5",
+    "@holochain/hc-spin": "^0.600.0",
     "@holochain-playground/cli": "^0.300.1",
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^2.0.0",
     "bestzip": "^2.2.0",
+    "internal-ip": "^7.0.0",
     "concurrently": "^6.2.1",
     "concurrently-repeat": "^0.0.1",
     "cross-env": "^7.0.3",
@@ -37,7 +42,8 @@
     "svelte-check": "^2.0.0",
     "svelte-preprocess": "^4.10.7",
     "tslib": "^2.0.0",
-    "typescript": "^4.0.0"
+    "typescript": "^4.0.0",
+    "internal-ip-cli": "^2.0.0"
   },
   "engines": {
     "npm": ">=7.0.0"
