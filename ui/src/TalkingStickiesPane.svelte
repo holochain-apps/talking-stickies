@@ -382,9 +382,9 @@
       {#if $participants}
         <div class="participants">
           <div style="display:flex; flex-direction: row; align-items:top">
-            <div style="margin-right:5px">
+            <!-- <div style="margin-right:5px">
               <Avatar agentPubKey={store.myAgentPubKey} showNickname={false} size={30} />
-            </div>
+            </div> -->
             {#each Array.from($participants.entries()) as [agentPubKey, sessionData]}
             <div style="margin-right:5px"
               class:idle={Date.now()-sessionData.lastSeen >30000}>
