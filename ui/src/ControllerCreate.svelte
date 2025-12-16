@@ -49,7 +49,7 @@
               disabled={disabled}
               on:click={async ()=>{
               try {
-                const synStore = new SynStore(new SynClient(client, roleName));
+                const synStore = new SynStore(new SynClient(client, roleName), true);
                 //const hrlB64 = hrlWithContextToB64(attachToHrlWithContext)
                 const board = await Board.Create(synStore, {/*boundTo:[hrlB64]*/name: inputElement.value})
                 const dnaHash = await getMyDna(roleName, client)

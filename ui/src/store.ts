@@ -118,7 +118,7 @@ export class TalkingStickiesStore {
           this.roleName,
           this.zomeName
         );
-        this.synStore = new SynStore(new SynClient(this.client,this.roleName,this.zomeName))
+        this.synStore = new SynStore(new SynClient(this.client,this.roleName,this.zomeName), true)
         this.boardList = new BoardList(profilesStore, this.synStore) 
     }
 }
