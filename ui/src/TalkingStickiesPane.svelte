@@ -20,6 +20,7 @@
   import AttachmentsList from "./AttachmentsList.svelte";
   import type { WAL } from "@theweave/api";
   import '@theweave/elements/dist/elements/wal-embed.js';
+  import '@holochain-syn/core/dist/elements/session-participants.js'
 
   Marked.setOptions
   ({
@@ -47,6 +48,7 @@
 
   $: board = activeBoard
   $: participants = activeBoard.participants()
+  $: sessionStore = activeBoard.session
   $: state = activeBoard.readableState()
 
   $: stickies = $state ? $state.stickies : undefined;
@@ -382,16 +384,7 @@
       {#if $participants}
         <div class="participants">
           <div style="display:flex; flex-direction: row; align-items:top">
-            <!-- <div style="margin-right:5px">
-              <Avatar agentPubKey={store.myAgentPubKey} showNickname={false} size={30} />
-            </div> -->
-            {#each Array.from($participants.entries()) as [agentPubKey, sessionData]}
-            <div style="margin-right:5px"
-              class:idle={Date.now()-sessionData.lastSeen >30000}>
-                <Avatar agentPubKey={agentPubKey} showNickname={false} size={30} />
-            </div>
-            {/each}
-
+            <session-participants direction="row" showOffline={true} sessionstore={sessionStore} />
           </div>
         </div>
       {/if}

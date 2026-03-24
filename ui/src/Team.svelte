@@ -8,7 +8,7 @@
   import { joinAsync, pipe, sliceAndJoin, type AsyncReadable } from "@holochain-open-dev/stores";
   import { encodeHashToBase64, type AgentPubKey } from "@holochain/client";
   import type { BoardAndLatestState } from "./boardList";
-  import { LazyHoloHashMap } from "@holochain-open-dev/utils";
+  import { LazyHoloHashMap } from "@holochain/client";
 
   const { getStore } :any = getContext('store');
   const store:TalkingStickiesStore = getStore();

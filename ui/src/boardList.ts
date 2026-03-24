@@ -1,6 +1,6 @@
 import { type SynStore,  WorkspaceStore } from "@holochain-syn/core";
 import { Board } from "./board";
-import { LazyHoloHashMap } from "@holochain-open-dev/utils";
+import { LazyHoloHashMap } from "@holochain/client";
 import { derived, get, writable, type Readable, type Writable } from "svelte/store";
 import type { BoardDelta, BoardState } from "./board";
 import { type AgentPubKey, type EntryHash, type EntryHashB64, encodeHashToBase64 } from "@holochain/client";
