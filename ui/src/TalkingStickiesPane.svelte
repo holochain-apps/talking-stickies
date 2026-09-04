@@ -12,6 +12,7 @@
   import { Group, UngroupedId, type Sticky, type StickyProps, Board } from "./board";
   import EditBoardDialog from "./EditBoardDialog.svelte";
   import { v1 as uuidv1 } from "uuid";
+  import type { Uuid } from "./board";
   import ClickEdit from "./ClickEdit.svelte";
   import Masonry from 'svelte-bricks'
   import type { AgentPubKeyB64 } from "@holochain/client";
@@ -58,9 +59,9 @@
 
   $: unused = groupStickies(stickies);
 
-  let creatingInGroup: uuidv1 | undefined = undefined;
+  let creatingInGroup: Uuid | undefined = undefined;
   let editText = "";
-  let editingStickyId: uuidv1
+  let editingStickyId: Uuid
 
   let groups:{ [key:string]: Group } = {}
   let stickiesMap:{ [key:string]:Sticky } ={}
@@ -84,7 +85,7 @@
     }
   };
 
-  const newGroup = (group: uuidv1) => () => {
+  const newGroup = (group: Uuid) => () => {
     let changes = []
     const groups = cloneDeep($state.groups)
     groups.push(new Group(`group ${groups.length}`))
@@ -94,11 +95,11 @@
     board.requestChanges( changes)
   };
 
-  const newSticky = (group: uuidv1) => () => {
+  const newSticky = (group: Uuid) => () => {
       creatingInGroup = group;
   };
   
-  const createSticky = (_groupId: uuidv1, props: StickyProps) => {
+  const createSticky = (_groupId: Uuid, props: StickyProps) => {
     addSticky(creatingInGroup, props)
     creatingInGroup = undefined
   }
@@ -112,12 +113,15 @@
     clearEdit();
   }
   
-  const editSticky = (id:uuidv1) => {
+  const editSticky = (id:Uuid) => {
     editingStickyId = id;
   };
 
-  const addSticky= (group: uuidv1, props: StickyProps) => {
-      if (group === undefined) {group = 0}
+  const addSticky= (group: Uuid, props: StickyProps) => {
+      // FIXME: pre-existing — a numeric 0 is used as a sentinel for a uuid group id.
+      // Preserved verbatim during the 0.7 upgrade (the cast only restores the
+      // implicit-`any` that `uuidv1`-as-a-type used to provide); it is not new breakage.
+      if (group === undefined) {group = 0 as unknown as Uuid}
       const sticky:Sticky = {
         id: uuidv1(),
         props,
@@ -126,7 +130,7 @@
 
   };
 
-  const updateSticky = (_groupId: uuidv1, props:StickyProps) => {
+  const updateSticky = (_groupId: Uuid, props:StickyProps) => {
       const sticky = stickies.find((sticky) => sticky.id === editingStickyId);
       if (!sticky) {
         console.error("Failed to find item with id", editingStickyId);
@@ -142,11 +146,11 @@
       clearEdit()
   };
     
-  const deleteSticky = (id: uuidv1) => {
+  const deleteSticky = (id: Uuid) => {
         board.requestChanges( [{ type: "delete-sticky", id }])
         clearEdit()
     };
-  const voteOnSticky = (agent:AgentPubKeyB64, stickies, id: uuidv1, type, max) => {
+  const voteOnSticky = (agent:AgentPubKeyB64, stickies, id: Uuid, type, max) => {
         const sticky = stickies.find((sticky) => sticky.id === id);
         if (!sticky) {
           console.error("Failed to find sticky with id", id);

@@ -20,8 +20,9 @@ export const appletServices: AppletServices = {
       }
     },
 
-    // Types of UI widgets/blocks that this Applet supports
-    blockTypes: {},
+    // NOTE (Holochain 0.7 upgrade): `blockTypes` was removed from AppletServices in
+    // @theweave/api 0.7 (it is now creatables + getAssetInfo + search), so the empty
+    // object that used to sit here has been deleted.
 
     bindAsset: async (appletClient: AppClient,
       srcWal: WAL, dstWal: WAL): Promise<void> => {

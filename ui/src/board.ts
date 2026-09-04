@@ -7,9 +7,20 @@ import { toPromise } from "@holochain-open-dev/stores";
 import { cloneDeep } from "lodash";
 import type { WALUrl } from "./util";
 
+/** The id type used throughout the board state: a uuid string, as returned by
+ *  `uuidv1()`.
+ *
+ *  NOTE (Holochain 0.7 upgrade): these ids used to be annotated `Uuid`, i.e. the
+ *  imported *value* used in type position. That only compiled because `uuid` resolved
+ *  to an untyped (implicit-`any`) module under node10 module resolution. Bumping
+ *  `@holochain-open-dev/tryorama` to 0.20 hoists `uuid@14` — which does ship
+ *  declarations — to the workspace root, so those annotations became errors.
+ *  `Uuid` is the honest spelling and erases identically. */
+export type Uuid = string;
+
 export const UngroupedId = "_"
 export class Group {
-      id: uuidv1
+      id: Uuid
       constructor(public name: string) {
           this.id =  uuidv1()
       }
@@ -21,7 +32,7 @@ export type BoardProps = {
 }
 
 export class VoteType {
-  type: uuidv1
+  type: Uuid
   constructor(public emoji: string, public toolTip: string, public maxVotes: number){
       this.type = uuidv1()
   }
@@ -35,7 +46,7 @@ export type StickyProps = {
 }
 
 export type Sticky = {
-  id: uuidv1;
+  id: Uuid;
   props: StickyProps;
 };
 
@@ -45,7 +56,7 @@ export interface BoardState {
   status: string;
   name: string;
   groups: Group[];
-  grouping: { [key:string]: Array<uuidv1> };
+  grouping: { [key:string]: Array<Uuid> };
   stickies: Sticky[];
   voteTypes: VoteType[];
   props: BoardProps;
@@ -64,7 +75,7 @@ export type BoardDelta =
   }
 | {
     type: "add-sticky";
-    group: uuidv1;
+    group: Uuid;
     value: Sticky;
   }
 | {
@@ -85,38 +96,38 @@ export type BoardDelta =
   }
 | {
     type: "set-group-order";
-    id: uuidv1;
-    order: Array<uuidv1>;
+    id: Uuid;
+    order: Array<Uuid>;
   }
 | {
     type: "update-sticky-group";
-    id: uuidv1;
-    group: uuidv1;
+    id: Uuid;
+    group: Uuid;
     index: undefined | number
   }
 | {
     type: "update-sticky-props";
-    id: uuidv1;
+    id: Uuid;
     props: StickyProps;
   }
 | {
     type: "update-sticky-votes";
-    id: uuidv1;
+    id: Uuid;
     voteType: string;
     voter: AgentPubKeyB64;
     count: number
   }
 | {
     type: "merge-stickies";
-    srcId: uuidv1;
-    dstId: uuidv1;
+    srcId: Uuid;
+    dstId: Uuid;
 }
 | {
     type: "delete-sticky";
     id: string;
   };
 
-  const _removeStickyFromGroups = (state: BoardState, stickyId: uuidv1) => {
+  const _removeStickyFromGroups = (state: BoardState, stickyId: Uuid) => {
     _initGrouping(state)
     // remove the item from the group it's in
     Object.entries(state.grouping).forEach(([groupId, itemIds]) =>{
@@ -126,7 +137,7 @@ export type BoardDelta =
       }
     })
   }
-  const _addStickyToGroup = (state: BoardState, groupId: uuidv1, stickyId: uuidv1, index: undefined|number) => {
+  const _addStickyToGroup = (state: BoardState, groupId: Uuid, stickyId: Uuid, index: undefined|number) => {
     _initGrouping(state)
     // add it to the new group
     if (state.grouping[groupId] !== undefined) {

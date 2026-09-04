@@ -9,7 +9,7 @@
     import '@shoelace-style/shoelace/dist/components/menu/menu.js';
     import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
     import '@shoelace-style/shoelace/dist/components/menu-label/menu-label.js';
-    import type { v1 as uuidv1 } from "uuid";
+    import type { Uuid } from "./board";
     import type { TalkingStickiesStore } from "./store";
     import { toPromise } from "@holochain-open-dev/stores";
     import type { BoardState, BoardStateData } from "./board";
@@ -17,7 +17,7 @@
     type FoundSticky = {
         hash: EntryHash,
         state: BoardState,
-        sticky: uuidv1,
+        sticky: Uuid,
         text: string,
     }
     let foundStickies: Array<FoundSticky> = []
@@ -66,7 +66,7 @@
         showSearchResults = false
     }
 
-    const getStickyGroup = (board: BoardState, stickyId: uuidv1) : string => {
+    const getStickyGroup = (board: BoardState, stickyId: Uuid) : string => {
         for (const [gId,stickies] of Object.entries(board.grouping)) {
             if (stickies.includes(stickyId)) {
                 const g = (board.groups.find((g)=>g.id == gId))

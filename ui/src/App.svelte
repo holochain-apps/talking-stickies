@@ -18,6 +18,8 @@
     App,
     Board,
     CreateBoard,
+    // Unreachable since the 0.7 upgrade removed the 'block' AppletView; it was
+    // already unrendered on the 0.6 line. Kept so the enum ordinals do not shift.
     BlockActiveBoards
   }
   let renderType = RenderType.App
@@ -75,15 +77,11 @@
             case "main":
               // here comes your rendering logic for the main view
               break;
-            case "block":
-              switch(weaveClient.renderInfo.view.block) {
-                case "active_boards":
-                  renderType = RenderType.BlockActiveBoards
-                  break;
-                default:
-                  throw new Error("Unknown applet-view block type:"+weaveClient.renderInfo.view.block);
-              }
-              break;
+            // NOTE (Holochain 0.7 upgrade): the 'block' AppletView was removed in
+            // @theweave/api 0.7 (AppletView is now main | asset | creatable), so the
+            // `case "block":` arm that set RenderType.BlockActiveBoards is gone.
+            // Nothing is lost: the 0.6 template had no branch rendering
+            // RenderType.BlockActiveBoards either, so that arm was already dead.
             case "asset":
               if (!weaveClient.renderInfo.view.recordInfo) {
                   throw new Error(

@@ -3,7 +3,7 @@ import { defineConfig } from '@theweave/cli';
 export default defineConfig({
   toolCurations: [
     {
-      url: 'https://raw.githubusercontent.com/lightningrodlabs/weave-tool-curation/refs/heads/test-0.15/0.15/lists/curations-0.15.json',
+      url: 'https://raw.githubusercontent.com/lightningrodlabs/weave-tool-curation/refs/heads/main/0.16/lists/curations-0.16.json',
       useLists: ['default'],
     },
   ],  groups: [
@@ -43,12 +43,16 @@ export default defineConfig({
           registeringAgent: 1,
           joiningAgents: [2],
         },
-        {
-          name: 'kando',
-          instanceName: 'kando',
-          registeringAgent: 1,
-          joiningAgents: [2,3],
-        },
+        // NOTE (Holochain 0.7 upgrade): the `kando` applet below is a published 0.6-line
+        // webhapp (kando v0.16.0). Holochain 0.7 cannot install it, and leaving it in the
+        // group makes the dev launch fail before the TalkingStickies applet is reached.
+        // Re-enable once a 0.7 kando webhapp is published.
+        // {
+        //   name: 'kando',
+        //   instanceName: 'kando',
+        //   registeringAgent: 1,
+        //   joiningAgents: [2,3],
+        // },
         // {
         //   name: 'gamez',
         //   instanceName: 'gamez',
@@ -79,19 +83,20 @@ export default defineConfig({
         uiPort: 8888,
       },
     },
-    {
-      name: 'kando',
-      subtitle: 'kanban boards',
-      description: 'Real-time kanban boards based on syn',
-      icon: {
-        type: "https",
-        url: "https://raw.githubusercontent.com/holochain-apps/kando/main/we_dev/kando_icon.png"
-      },
-      source: {
-        type: "https",
-        url: "https://github.com/holochain-apps/kando/releases/download/v0.16.0/kando.webhapp"
-      },
-    },
+    // NOTE (Holochain 0.7 upgrade): disabled — this is a 0.6-line webhapp. See above.
+    // {
+    //   name: 'kando',
+    //   subtitle: 'kanban boards',
+    //   description: 'Real-time kanban boards based on syn',
+    //   icon: {
+    //     type: "https",
+    //     url: "https://raw.githubusercontent.com/holochain-apps/kando/main/we_dev/kando_icon.png"
+    //   },
+    //   source: {
+    //     type: "https",
+    //     url: "https://github.com/holochain-apps/kando/releases/download/v0.16.0/kando.webhapp"
+    //   },
+    // },
     // {
     //   name: 'gamez',
     //   subtitle: 'play!',

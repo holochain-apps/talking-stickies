@@ -5,7 +5,7 @@
   import CancelIcon from "./icons/CancelIcon.svelte";
   import TrashIcon from "./icons/TrashIcon.svelte";
   import AcceptIcon from "./icons/AcceptIcon.svelte";
-  import type { v1 as uuidv1 } from "uuid";
+  import type { Uuid } from "./board";
   import type { StickyProps } from "./board";
   import { onVisible } from "./util";
   import type { TalkingStickiesStore } from "./store";
@@ -23,7 +23,7 @@
   const DEFAULT_PROPS = {text:"", color:"", votes:{}, attachments:[]}
 
   export let props:StickyProps = DEFAULT_PROPS
-  export let stickyId:uuidv1 = ""
+  export let stickyId:Uuid = ""
   export let groupId = undefined
 
   let inputElement

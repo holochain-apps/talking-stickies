@@ -10,4 +10,4 @@ name = "syn"
 [dependencies]
 serde = { workspace = true }
 
-hc_zome_syn_coordinator = {git = "https://github.com/holochain/syn", branch = "main-0.6"}
+hc_zome_syn_coordinator = { git = "https://github.com/holochain-apps/syn", tag = "v0.700.1" }
