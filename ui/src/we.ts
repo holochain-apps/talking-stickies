@@ -4,7 +4,8 @@ import { asyncDerived, pipe, sliceAndJoin, toPromise } from '@holochain-open-dev
 import { BoardType } from './boardList';
 import type { AppletHash, AppletServices, AssetInfo, RecordInfo, WAL, WeaveServices } from '@theweave/api';
 import { getMyDna } from './util';
-import type { AppClient, RoleName, LazyHoloHashMap, ZomeName } from '@holochain/client';
+import { LazyHoloHashMap } from '@holochain/client';
+import type { AppClient, RoleName, ZomeName } from '@holochain/client';
 
 const ROLE_NAME = "talking-stickies"
 const ZOME_NAME = "syn"
