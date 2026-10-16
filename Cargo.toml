@@ -11,8 +11,8 @@ resolver = "2"
 [workspace.dependencies]
 # Exact `=` pins: this is a frozen DNA line. A later rebuild against any other
 # hdi/hdk produces different wasm and therefore a different DNA hash.
-hdi = "=0.8.0"
-hdk = "=0.7.0"
+hdi = "=0.8.1"
+hdk = "=0.7.1"
 serde = "1"
 
 [workspace.dependencies.talking-stickies]
