@@ -16,6 +16,12 @@ and 0.6 and 0.7 agents form disjoint networks. Boards created on the 0.6 line
 board menu's **Export** item (or **Export All Boards** in the About dialog) on
 the 0.6 install, then **Import Boards** in the About dialog on the 0.7 one.
 
+DNA version 0.17.0 (Holochain 0.7.1, syn 0.701.1, profiles 0.702.0) is again a
+new network. Holochain 0.7.1 changed the capability-grant format, and 0.7.0 and
+0.7.1 conductors cannot gossip. This line cannot see boards from the 0.16.x line
+(`happ-v0.16.0`), so a group has to upgrade together. It needs Moss 0.16.0-rc.1
+or later. Move boards from 0.16.x with the same Export / Import Boards steps.
+
 ## Why the happ is frozen (never rebuilt)
 
 The zome wasm embeds the builder's absolute paths (`~/.cargo/...` and source
